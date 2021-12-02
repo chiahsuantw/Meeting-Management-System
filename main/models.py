@@ -1,18 +1,36 @@
 from main import db
 
+minute_takers = db.Table(
+    'minute_taker',
+    db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
+    db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
+)
+
+attendees = db.Table(
+    'attendee',
+    db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
+    db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True),
+    db.Column('is_present', db.Boolean),
+    db.Column('is_confirmed', db.Boolean)
+)
+
 
 class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     type = db.Column(db.String(50), nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    time = db.Column(db.Time, nullable=False)
+    # date = db.Column(db.Date, nullable=False)
+    # time = db.Column(db.Time, nullable=False)
     location = db.Column(db.String(50), nullable=False)
     chair_speech = db.Column(db.String)  # TODO: What is the max length?
 
     # Change attr. name chairman to chair
     # TODO: Meeting-Person relationship
-    chair = db.relationship('Person', backref=db.backref('meeting', uselist=False))
+    # chair = db.relationship('Person', backref=db.backref('meeting', uselist=False))
+    minute_takers = db.relationship('Person', secondary=minute_takers, lazy='subquery',
+                                    backref=db.backref('meetings_as_minute_taker', lazy=True))
+    attendees = db.relationship('Person', secondary=attendees, lazy='subquery',
+                                backref=db.backref('meetings_as_attendee', lazy=True))
 
     attachments = db.relationship('Attachment', backref='meeting')
     announcements = db.relationship('Announcement', backref='meeting')
@@ -29,11 +47,11 @@ class Person(db.Model):
     # Add new attr. type
     type = db.Column(db.String(10), nullable=False)  # TODO: How to implement choose field?
 
-    expert_info = db.relationship('Expert', backref=db.backref('person', uselist=False))
-    assistant_info = db.relationship('Assistant', backref=db.backref('person', uselist=False))
-    dept_prof_info = db.relationship('DeptProf', backref=db.backref('person', uselist=False))
-    other_prof_info = db.relationship('OtherProf', backref=db.backref('person', uselist=False))
-    student_info = db.relationship('Student', backref=db.backref('person', uselist=False))
+    expert_info = db.relationship('Expert', backref='person', uselist=False)
+    assistant_info = db.relationship('Assistant', backref='person', uselist=False)
+    dept_prof_info = db.relationship('DeptProf', backref='person', uselist=False)
+    other_prof_info = db.relationship('OtherProf', backref='person', uselist=False)
+    student_info = db.relationship('Student', backref='person', uselist=False)
 
 
 class Expert(db.Model):
