@@ -1,18 +1,19 @@
 from main import db
 
-minute_takers = db.Table(
-    'minute_taker',
-    db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
-    db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
-)
 
-attendees = db.Table(
-    'attendee',
-    db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
-    db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True),
-    db.Column('is_present', db.Boolean),
-    db.Column('is_confirmed', db.Boolean)
-)
+# minute_takers = db.Table(
+#     'minute_taker',
+#     db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
+#     db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
+# )
+#
+# attendees = db.Table(
+#     'attendee',
+#     db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
+#     db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True),
+#     db.Column('is_present', db.Boolean),
+#     db.Column('is_confirmed', db.Boolean)
+# )
 
 
 class Meeting(db.Model):
@@ -27,10 +28,10 @@ class Meeting(db.Model):
     # Change attr. name chairman to chair
     # TODO: Meeting-Person relationship
     # chair = db.relationship('Person', backref=db.backref('meeting', uselist=False))
-    minute_takers = db.relationship('Person', secondary=minute_takers, lazy='subquery',
-                                    backref=db.backref('meetings_as_minute_taker', lazy=True))
-    attendees = db.relationship('Person', secondary=attendees, lazy='subquery',
-                                backref=db.backref('meetings_as_attendee', lazy=True))
+    # minute_takers = db.relationship('Person', secondary=minute_takers, lazy='subquery',
+    #                                 backref=db.backref('meetings_as_minute_taker', lazy=True))
+    # attendees = db.relationship('Person', secondary=attendees, lazy='subquery',
+    #                             backref=db.backref('meetings_as_attendee', lazy=True))
 
     attachments = db.relationship('Attachment', backref='meeting')
     announcements = db.relationship('Announcement', backref='meeting')
@@ -47,11 +48,27 @@ class Person(db.Model):
     # Add new attr. type
     type = db.Column(db.String(10), nullable=False)  # TODO: How to implement choose field?
 
-    expert_info = db.relationship('Expert', backref='person', uselist=False)
-    assistant_info = db.relationship('Assistant', backref='person', uselist=False)
-    dept_prof_info = db.relationship('DeptProf', backref='person', uselist=False)
-    other_prof_info = db.relationship('OtherProf', backref='person', uselist=False)
-    student_info = db.relationship('Student', backref='person', uselist=False)
+    expert_info = db.relationship('Expert', backref='basic_info', uselist=False)
+    assistant_info = db.relationship('Assistant', backref='basic_info', uselist=False)
+    dept_prof_info = db.relationship('DeptProf', backref='basic_info', uselist=False)
+    other_prof_info = db.relationship('OtherProf', backref='basic_info', uselist=False)
+    student_info = db.relationship('Student', backref='basic_info', uselist=False)
+
+
+class MinuteTaker(db.Model):
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
+    person = db.relationship('Person', back_populates='minute_takers')
+    meeting = db.relationship('Meeting', back_populates='meeting')
+
+
+class Attendee(db.Model):
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
+    is_present = db.Column(db.Boolean)
+    is_confirmed = db.Column(db.Boolean)
+    person = db.relationship('Person', back_populates='attendees')
+    meeting = db.relationship('Meeting', back_populates='meeting')
 
 
 class Expert(db.Model):
