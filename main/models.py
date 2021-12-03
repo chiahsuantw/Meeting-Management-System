@@ -1,4 +1,7 @@
+from datetime import datetime
 from enum import Enum
+
+from sqlalchemy.ext.associationproxy import association_proxy
 
 from main import db
 
@@ -20,31 +23,31 @@ class MeetingType(Enum):
     pass
 
 
+class StudentProgramType(Enum):
+    UnderGraduate = 'UnderGraduate'
+    Graduate = 'Graduate'
+    PhD = 'PhD'
+
+
+class StudentStudyYearType(Enum):
+    FirstYear = 'FirstYear'
+    SecondYear = 'SecondYear'
+    ThirdYear = 'ThirdYear'
+    ForthYear = 'ForthYear'
+    FifthYear = 'FifthYear'
+
+
 class MotionStatusType(Enum):
-    pass
-
-
-# minute_takers = db.Table(
-#     'minute_taker',
-#     db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
-#     db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
-# )
-#
-# attendees = db.Table(
-#     'attendee',
-#     db.Column('person_id', db.Integer, db.ForeignKey('person.id'), primary_key=True),
-#     db.Column('meeting_id', db.Integer, db.ForeignKey('meeting.id'), primary_key=True),
-#     db.Column('is_present', db.Boolean),
-#     db.Column('is_confirmed', db.Boolean)
-# )
+    InDiscussion = 'InDiscussion'
+    InExecution = 'InExecution'
+    Closed = 'Closed'
 
 
 class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    type = db.Column(db.String(50), nullable=False)
-    # date = db.Column(db.Date, nullable=False)
-    # time = db.Column(db.Time, nullable=False)
+    type = db.Column(db.Enum(MeetingType), nullable=False)
+    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     location = db.Column(db.String(50), nullable=False)
     chair_speech = db.Column(db.Text)
 
@@ -56,7 +59,7 @@ class Meeting(db.Model):
     # attendees = db.relationship('Person', secondary=attendees, lazy='subquery',
     #                             backref=db.backref('meetings_as_attendee', lazy=True))
 
-    minute_takers = db.relationship('MinuteTaker', back_populates='meetings_as_minute_taker')
+    # minute_takers = db.relationship('MinuteTaker', back_populates='meetings_as_minute_taker')
     # attendees = db.relationship('Attendee', back_populates='meetings_as_attendee')
 
     attachments = db.relationship('Attachment', backref='meeting')
@@ -64,13 +67,17 @@ class Meeting(db.Model):
     extempores = db.relationship('Extempore', backref='meeting')
     motions = db.relationship('Motion', backref='meeting')
 
+    chair = association_proxy('chair_association', 'chair')
+    minute_takers = association_proxy('minute_taker_association', 'minute_taker')
+    attendees = association_proxy('attendee_association', 'attendee')
+
 
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    gender = db.Column(db.Enum(GenderType))
+    gender = db.Column(db.Enum(GenderType), nullable=False)
     phone = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), unique=True)
+    email = db.Column(db.String(50), nullable=False, unique=True)
     # Add new attr. type
     type = db.Column(db.Enum(PersonType), nullable=False)
 
@@ -80,24 +87,33 @@ class Person(db.Model):
     other_prof_info = db.relationship('OtherProf', backref='basic_info', uselist=False)
     student_info = db.relationship('Student', backref='basic_info', uselist=False)
 
-    meetings_as_minute_taker = db.relationship('MinuteTaker', back_populates='minute_takers')
-    # meetings_as_attendee = db.relationship('Attendee', back_populates='attendees')
+    meetings_as_chair = association_proxy('chair_association', 'meeting')
+    meetings_as_minute_taker = association_proxy('minute_taker_association', 'meeting')
+    meetings_as_attendee = association_proxy('attendee_association', 'meeting')
+
+
+class Chair(db.Model):
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
+    meeting = db.relationship(Meeting, backref='chair_association')
+    chair = db.relationship(Person, backref='chair_association')
+    is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class MinuteTaker(db.Model):
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
-    minute_takers = db.relationship('Person', back_populates='meetings_as_minute_taker')
-    meetings_as_minute_taker = db.relationship('Meeting', back_populates='minute_takers')
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
+    meeting = db.relationship(Meeting, backref='minute_taker_association')
+    minute_taker = db.relationship(Person, backref='minute_taker_association')
 
 
-# class Attendee(db.Model):
-#     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-#     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
-#     is_present = db.Column(db.Boolean)
-#     is_confirmed = db.Column(db.Boolean)
-#     person = db.relationship('Person', back_populates='attendees')
-#     meeting = db.relationship('Meeting', back_populates='meeting')
+class Attendee(db.Model):
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
+    meeting = db.relationship(Meeting, backref='attendee_association')
+    attendee = db.relationship(Person, backref='attendee_association')
+    is_present = db.Column(db.Boolean, nullable=False, default=False)
+    is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class Expert(db.Model):
@@ -134,8 +150,9 @@ class OtherProf(db.Model):
 class Student(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
     student_id = db.Column(db.String(50), nullable=False)
-    program = db.Column(db.String(50), nullable=False)
-    study_year = db.Column(db.Integer, nullable=False)  # TODO: Should we use constant value instead of study_year?
+    program = db.Column(db.Enum(StudentProgramType), nullable=False)
+    # TODO: Should we use constant value instead of study_year?
+    study_year = db.Column(db.Enum(StudentStudyYearType), nullable=False)
 
 
 class Attachment(db.Model):
@@ -160,7 +177,7 @@ class Extempore(db.Model):
 class Motion(db.Model):
     no = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.Text, nullable=False)
-    content = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text)
     status = db.Column(db.Enum(MotionStatusType))
     resolution = db.Column(db.Text)
     execution = db.Column(db.Text)
