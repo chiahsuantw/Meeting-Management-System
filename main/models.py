@@ -20,7 +20,18 @@ class PersonType(Enum):
 
 
 class MeetingType(Enum):
-    pass
+    # 系務會議
+    DeptAffairs = 'DeptAffairs'
+    # 系教評會
+    FacultyEvaluation = 'FacultyEvaluation'
+    # 系課程委員會
+    DeptCurriculum = 'DeptCurriculum'
+    # 招生暨學生事務委員會
+    StudentAffairs = 'StudentAffairs'
+    # 系發展協會
+    DeptDevelopment = 'DeptDevelopment'
+    # 其他
+    Other = 'Other'
 
 
 class StudentProgramType(Enum):
@@ -35,6 +46,8 @@ class StudentStudyYearType(Enum):
     ThirdYear = 'ThirdYear'
     ForthYear = 'ForthYear'
     FifthYear = 'FifthYear'
+    SixthYear = 'SixthYear'
+    SeventhYear = 'SeventhYear'
 
 
 class MotionStatusType(Enum):
@@ -51,22 +64,12 @@ class Meeting(db.Model):
     location = db.Column(db.String(50), nullable=False)
     chair_speech = db.Column(db.Text)
 
-    # Change attr. name chairman to chair
-    # TODO: Meeting-Person relationship
-    # chair = db.relationship('Person', backref=db.backref('meeting', uselist=False))
-    # minute_takers = db.relationship('Person', secondary=minute_takers, lazy='subquery',
-    #                                 backref=db.backref('meetings_as_minute_taker', lazy=True))
-    # attendees = db.relationship('Person', secondary=attendees, lazy='subquery',
-    #                             backref=db.backref('meetings_as_attendee', lazy=True))
-
-    # minute_takers = db.relationship('MinuteTaker', back_populates='meetings_as_minute_taker')
-    # attendees = db.relationship('Attendee', back_populates='meetings_as_attendee')
-
     attachments = db.relationship('Attachment', backref='meeting')
     announcements = db.relationship('Announcement', backref='meeting')
     extempores = db.relationship('Extempore', backref='meeting')
     motions = db.relationship('Motion', backref='meeting')
 
+    # Change attr. name chairman to chair
     chair = association_proxy('chair_association', 'chair')
     minute_takers = association_proxy('minute_taker_association', 'minute_taker')
     attendees = association_proxy('attendee_association', 'attendee')
