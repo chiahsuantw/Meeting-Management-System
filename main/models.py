@@ -74,6 +74,15 @@ class Meeting(db.Model):
     minute_takers = association_proxy('minute_taker_association', 'minute_taker')
     attendees = association_proxy('attendee_association', 'attendee')
 
+    def __repr__(self):
+        return f'<Person {self.id} {self.title} {self.type.value}>'
+
+    def minute_takers_filter_by(self, **kwargs):
+        return Person.query.filter_by(**kwargs).join(MinuteTaker).join(Meeting).filter_by(id=self.id)
+
+    def attendees_filter_by(self, **kwargs):
+        return Person.query.filter_by(**kwargs).join(Attendee).join(Meeting).filter_by(id=self.id)
+
 
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -94,6 +103,9 @@ class Person(db.Model):
     meetings_as_minute_taker = association_proxy('minute_taker_association', 'meeting')
     meetings_as_attendee = association_proxy('attendee_association', 'meeting')
 
+    def __repr__(self):
+        return f'<Person {self.id} {self.name} {self.type.value}>'
+
 
 class Chair(db.Model):
     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
@@ -109,6 +121,9 @@ class MinuteTaker(db.Model):
     meeting = db.relationship(Meeting, backref='minute_taker_association')
     minute_taker = db.relationship(Person, backref='minute_taker_association')
 
+    def __repr__(self):
+        return f'<MinuteTaker {self.meeting.title} {self.minute_taker.name}>'
+
 
 class Attendee(db.Model):
     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
@@ -117,6 +132,9 @@ class Attendee(db.Model):
     attendee = db.relationship(Person, backref='attendee_association')
     is_present = db.Column(db.Boolean, nullable=False, default=False)
     is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f'<Attendee {self.meeting.title} {self.attendee.name}>'
 
 
 class Expert(db.Model):
