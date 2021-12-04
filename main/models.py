@@ -75,7 +75,7 @@ class Meeting(db.Model):
     attendees = association_proxy('attendee_association', 'attendee')
 
     def __repr__(self):
-        return f'<Person {self.id} {self.title} {self.type.value}>'
+        return f'<Meeting {self.id} {self.title} {self.type.value}>'
 
     def minute_takers_filter_by(self, **kwargs):
         return Person.query.filter_by(**kwargs).join(MinuteTaker).join(Meeting).filter_by(id=self.id)
@@ -172,34 +172,33 @@ class Student(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
     student_id = db.Column(db.String(50), nullable=False)
     program = db.Column(db.Enum(StudentProgramType), nullable=False)
-    # TODO: Should we use constant value instead of study_year?
     study_year = db.Column(db.Enum(StudentStudyYearType), nullable=False)
 
 
 class Attachment(db.Model):
     no = db.Column(db.Integer, primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
     filepath = db.Column(db.String, nullable=False)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'))
 
 
 class Announcement(db.Model):
     no = db.Column(db.Integer, primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'))
 
 
 class Extempore(db.Model):
     no = db.Column(db.Integer, primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'))
 
 
 class Motion(db.Model):
     no = db.Column(db.Integer, primary_key=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     description = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text)
-    status = db.Column(db.Enum(MotionStatusType))
+    status = db.Column(db.Enum(MotionStatusType), nullable=False, default=MotionStatusType.InDiscussion)
     resolution = db.Column(db.Text)
     execution = db.Column(db.Text)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'))
