@@ -93,11 +93,12 @@ class Person(db.Model):
     # Add new attr. type
     type = db.Column(db.Enum(PersonType), nullable=False)
 
-    expert_info = db.relationship('Expert', backref='basic_info', uselist=False)
-    assistant_info = db.relationship('Assistant', backref='basic_info', uselist=False)
-    dept_prof_info = db.relationship('DeptProf', backref='basic_info', uselist=False)
-    other_prof_info = db.relationship('OtherProf', backref='basic_info', uselist=False)
-    student_info = db.relationship('Student', backref='basic_info', uselist=False)
+    # TODO: type constraint to person_type_info
+    expert_info = db.relationship('Expert', backref='basic_info', uselist=False, cascade='all, delete-orphan')
+    assistant_info = db.relationship('Assistant', backref='basic_info', uselist=False, cascade='all, delete-orphan')
+    dept_prof_info = db.relationship('DeptProf', backref='basic_info', uselist=False, cascade='all, delete-orphan')
+    other_prof_info = db.relationship('OtherProf', backref='basic_info', uselist=False, cascade='all, delete-orphan')
+    student_info = db.relationship('Student', backref='basic_info', uselist=False, cascade='all, delete-orphan')
 
     meetings_as_chair = association_proxy('chair_association', 'meeting')
     meetings_as_minute_taker = association_proxy('minute_taker_association', 'meeting')
@@ -170,7 +171,7 @@ class OtherProf(db.Model):
 
 class Student(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-    student_id = db.Column(db.String(50), nullable=False)
+    student_id = db.Column(db.String(50), unique=True, nullable=False)
     program = db.Column(db.Enum(StudentProgramType), nullable=False)
     study_year = db.Column(db.Enum(StudentStudyYearType), nullable=False)
 
