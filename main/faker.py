@@ -1,11 +1,8 @@
 import random
-from datetime import datetime
 
 from faker import Faker
 
-from main import db
-from main.models import Meeting, MeetingType, Person, PersonType, GenderType, Student, StudentProgramType, \
-    StudentStudyYearType
+from main.models import *
 
 faker = Faker('zh_TW')
 
@@ -13,8 +10,8 @@ faker = Faker('zh_TW')
 def add_meetings(num):
     for i in range(num):
         meeting = Meeting()
-        meeting.title = '會議 ' + str(random.randint(0, 100))
-        meeting.type = MeetingType.DeptAffairs
+        meeting.title = '會議 ' + str(faker.pyint())
+        meeting.type = random.choice(list(MeetingType))
         meeting.time = datetime.utcnow()
         meeting.location = faker.address()
         meeting.chair_speech = faker.text()
@@ -40,3 +37,10 @@ def generate_student():
     student.program = random.choice(list(StudentProgramType))
     student.study_year = random.choice(list(StudentStudyYearType))
     return student
+
+
+def generate_motion():
+    motion = Motion()
+    motion.description = faker.sentence()
+    motion.type = random.choice(list(MotionStatusType))
+    return motion
