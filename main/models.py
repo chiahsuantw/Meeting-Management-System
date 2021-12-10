@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import backref
 
 from main import db
 
@@ -72,8 +73,10 @@ class Meeting(db.Model):
     chair_id = db.Column(db.Integer, db.ForeignKey('person.id'))
     chair_speech = db.Column(db.Text)
     chair_confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    minute_takers = association_proxy('minute_taker_association', 'minute_taker')
-    attendees = association_proxy('attendee_association', 'attendee')
+    minute_takers = association_proxy('minute_taker_association', 'minute_taker',
+                                      creator=lambda minute_taker: MinuteTaker(minute_taker=minute_taker))
+    attendees = association_proxy('attendee_association', 'attendee',
+                                  creator=lambda attendee: Attendee(attendee=attendee))
 
     def __repr__(self):
         return f'<Meeting {self.id} {self.title} {self.type.value}>'
@@ -102,8 +105,10 @@ class Person(db.Model):
     student_info = db.relationship('Student', backref='basic_info', uselist=False, cascade='all, delete-orphan')
 
     meetings_as_chair = db.relationship('Meeting', backref='chair')
-    meetings_as_minute_taker = association_proxy('minute_taker_association', 'meeting')
-    meetings_as_attendee = association_proxy('attendee_association', 'meeting')
+    meetings_as_minute_taker = association_proxy('minute_taker_association', 'meeting',
+                                                 creator=lambda meeting: MinuteTaker(meeting=meeting))
+    meetings_as_attendee = association_proxy('attendee_association', 'meeting',
+                                             creator=lambda meeting: Attendee(meeting=meeting))
 
     def __repr__(self):
         return f'<Person {self.id} {self.name} {self.type.value}>'
@@ -112,8 +117,8 @@ class Person(db.Model):
 class MinuteTaker(db.Model):
     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-    meeting = db.relationship(Meeting, backref='minute_taker_association')
-    minute_taker = db.relationship(Person, backref='minute_taker_association')
+    meeting = db.relationship(Meeting, backref=backref('minute_taker_association', cascade='all, delete-orphan'))
+    minute_taker = db.relationship(Person, backref=backref('minute_taker_association', cascade='all, delete-orphan'))
 
     def __repr__(self):
         return f'<MinuteTaker {self.meeting.title} {self.minute_taker.name}>'
@@ -122,8 +127,8 @@ class MinuteTaker(db.Model):
 class Attendee(db.Model):
     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-    meeting = db.relationship(Meeting, backref='attendee_association')
-    attendee = db.relationship(Person, backref='attendee_association')
+    meeting = db.relationship(Meeting, backref=backref('attendee_association', cascade='all, delete-orphan'))
+    attendee = db.relationship(Person, backref=backref('attendee_association', cascade='all, delete-orphan'))
     is_present = db.Column(db.Boolean, nullable=False, default=False)
     is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     is_member = db.Column(db.Boolean, nullable=False, default=True)
