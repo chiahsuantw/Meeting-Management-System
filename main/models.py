@@ -62,7 +62,6 @@ class Meeting(db.Model):
     type = db.Column(db.Enum(MeetingType), nullable=False)
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     location = db.Column(db.String(50), nullable=False)
-    chair_speech = db.Column(db.Text)
 
     attachments = db.relationship('Attachment', backref='meeting', cascade='all, delete-orphan')
     announcements = db.relationship('Announcement', backref='meeting', cascade='all, delete-orphan')
@@ -70,7 +69,9 @@ class Meeting(db.Model):
     motions = db.relationship('Motion', backref='meeting', cascade='all, delete-orphan')
 
     # Change attr. name chairman to chair
-    chair = association_proxy('chair_association', 'chair')
+    chair_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    chair_speech = db.Column(db.Text)
+    chair_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     minute_takers = association_proxy('minute_taker_association', 'minute_taker')
     attendees = association_proxy('attendee_association', 'attendee')
 
@@ -100,20 +101,12 @@ class Person(db.Model):
     other_prof_info = db.relationship('OtherProf', backref='basic_info', uselist=False, cascade='all, delete-orphan')
     student_info = db.relationship('Student', backref='basic_info', uselist=False, cascade='all, delete-orphan')
 
-    meetings_as_chair = association_proxy('chair_association', 'meeting')
+    meetings_as_chair = db.relationship('Meeting', backref='chair')
     meetings_as_minute_taker = association_proxy('minute_taker_association', 'meeting')
     meetings_as_attendee = association_proxy('attendee_association', 'meeting')
 
     def __repr__(self):
         return f'<Person {self.id} {self.name} {self.type.value}>'
-
-
-class Chair(db.Model):
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-    meeting = db.relationship(Meeting, backref='chair_association')
-    chair = db.relationship(Person, backref='chair_association')
-    is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class MinuteTaker(db.Model):
@@ -133,6 +126,7 @@ class Attendee(db.Model):
     attendee = db.relationship(Person, backref='attendee_association')
     is_present = db.Column(db.Boolean, nullable=False, default=False)
     is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    is_member = db.Column(db.Boolean, nullable=False, default=True)
 
     def __repr__(self):
         return f'<Attendee {self.meeting.title} {self.attendee.name}>'
@@ -177,27 +171,27 @@ class Student(db.Model):
 
 
 class Attachment(db.Model):
-    no = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True, autoincrement=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
-    filepath = db.Column(db.String(100), nullable=False)
+    file_path = db.Column(db.String(100), nullable=False)
 
 
 class Announcement(db.Model):
-    no = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True, autoincrement=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     content = db.Column(db.Text, nullable=False)
 
 
 class Extempore(db.Model):
-    no = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True, autoincrement=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     content = db.Column(db.Text, nullable=False)
 
 
 class Motion(db.Model):
-    no = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True, autoincrement=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     description = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text)
     status = db.Column(db.Enum(MotionStatusType), nullable=False, default=MotionStatusType.InDiscussion)
