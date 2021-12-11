@@ -1,6 +1,8 @@
+from flask import render_template
+
 from main import app
 
 
 @app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello World!'
+def home():
+    return render_template('base.html')
