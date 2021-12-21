@@ -1,10 +1,16 @@
 from datetime import datetime
 from enum import Enum
 
+from flask_login import UserMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref
 
-from main import db
+from main import db, login
+
+
+@login.user_loader
+def load_user(person_id):
+    return Person.query.get(int(person_id))
 
 
 class GenderType(Enum):
@@ -63,6 +69,7 @@ class Meeting(db.Model):
     type = db.Column(db.Enum(MeetingType), nullable=False)
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     location = db.Column(db.String(50), nullable=False)
+    is_draft = db.Column(db.Boolean, nullable=False, default=True)
 
     attachments = db.relationship('Attachment', backref='meeting', cascade='all, delete-orphan')
     announcements = db.relationship('Announcement', backref='meeting', cascade='all, delete-orphan')
@@ -88,7 +95,7 @@ class Meeting(db.Model):
         return Person.query.filter_by(**kwargs).join(Attendee).join(Meeting).filter_by(id=self.id)
 
 
-class Person(db.Model):
+class Person(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     gender = db.Column(db.Enum(GenderType), nullable=False)
