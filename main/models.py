@@ -69,20 +69,20 @@ class Meeting(db.Model):
     extempores = db.relationship('Extempore', backref='meeting', cascade='all, delete-orphan')
     motions = db.relationship('Motion', backref='meeting', cascade='all, delete-orphan')
 
-    # Change attr. name chairman to chair
     chair_id = db.Column(db.Integer, db.ForeignKey('person.id'))
     chair_speech = db.Column(db.Text)
     chair_confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    minute_takers = association_proxy('minute_taker_association', 'minute_taker',
-                                      creator=lambda minute_taker: MinuteTaker(minute_taker=minute_taker))
+    chair = db.relationship('Person', foreign_keys=[chair_id], uselist=False, backref='meetings_as_chair')
+
+    minute_taker_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    minute_taker = db.relationship('Person', foreign_keys=[minute_taker_id], uselist=False,
+                                   backref='meetings_as_minute_taker')
+
     attendees = association_proxy('attendee_association', 'attendee',
                                   creator=lambda attendee: Attendee(attendee=attendee))
 
     def __repr__(self):
         return f'<Meeting {self.id} {self.title} {self.type.value}>'
-
-    def minute_takers_filter_by(self, **kwargs):
-        return Person.query.filter_by(**kwargs).join(MinuteTaker).join(Meeting).filter_by(id=self.id)
 
     def attendees_filter_by(self, **kwargs):
         return Person.query.filter_by(**kwargs).join(Attendee).join(Meeting).filter_by(id=self.id)
@@ -94,34 +94,19 @@ class Person(db.Model):
     gender = db.Column(db.Enum(GenderType), nullable=False)
     phone = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    # Add new attr. type
     type = db.Column(db.Enum(PersonType), nullable=False)
 
-    # TODO: type constraint to person_type_info
     expert_info = db.relationship('Expert', backref='basic_info', uselist=False, cascade='all, delete-orphan')
     assistant_info = db.relationship('Assistant', backref='basic_info', uselist=False, cascade='all, delete-orphan')
     dept_prof_info = db.relationship('DeptProf', backref='basic_info', uselist=False, cascade='all, delete-orphan')
     other_prof_info = db.relationship('OtherProf', backref='basic_info', uselist=False, cascade='all, delete-orphan')
     student_info = db.relationship('Student', backref='basic_info', uselist=False, cascade='all, delete-orphan')
 
-    meetings_as_chair = db.relationship('Meeting', backref='chair')
-    meetings_as_minute_taker = association_proxy('minute_taker_association', 'meeting',
-                                                 creator=lambda meeting: MinuteTaker(meeting=meeting))
     meetings_as_attendee = association_proxy('attendee_association', 'meeting',
                                              creator=lambda meeting: Attendee(meeting=meeting))
 
     def __repr__(self):
         return f'<Person {self.id} {self.name} {self.type.value}>'
-
-
-class MinuteTaker(db.Model):
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
-    meeting = db.relationship(Meeting, backref=backref('minute_taker_association', cascade='all, delete-orphan'))
-    minute_taker = db.relationship(Person, backref=backref('minute_taker_association', cascade='all, delete-orphan'))
-
-    def __repr__(self):
-        return f'<MinuteTaker {self.meeting.title} {self.minute_taker.name}>'
 
 
 class Attendee(db.Model):
@@ -140,7 +125,6 @@ class Attendee(db.Model):
 class Expert(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
     company_name = db.Column(db.String(50), nullable=False)
-    # Change attr. name from position to job_title
     job_title = db.Column(db.String(50), nullable=False)
     office_tel = db.Column(db.String(20))
     address = db.Column(db.String(500))
