@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="h-100 d-flex justify-content-center">
+        <main class="w-100 m-auto" style="max-width: 330px">
+            <form action="" class="needs-validation" method="post" novalidate>
+                <div class="d-flex justify-content-center align-items-center mb-5">
+                    <img src="{{ url_for('static', filename='images/csie_logo.png') }}" alt="" width="65">
+                    <h1 class="text-center ms-2">會議管理系統</h1>
+                </div>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="input-group mb-3">
+                    <input name="email" type="email" class="form-control" placeholder="電子郵件" aria-label="Email"
+                           required>
+                    <button class="btn btn-outline-primary rounded-end" type="submit">登 入</button>
+                    <div class="invalid-feedback">
+                        請輸入正確的電子郵件
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
+{% endblock %}
