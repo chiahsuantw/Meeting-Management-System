@@ -1,0 +1,24 @@
+<header class="py-3 border-bottom">
+    <div class="container-fluid d-flex gap-3 align-items-center">
+        <a class="text-dark text-decoration-none" href="{{ url_for('home') }}"><h4 class="mb-0">會議管理系統</h4></a>
+        <form class="flex-fill d-none d-sm-block px-md-5" style="max-width: 600px">
+            <label for="search-bar" class="d-none"></label>
+            <input id="search-bar" type="search" class="form-control" placeholder="搜尋">
+        </form>
+        <div class="d-flex align-items-center ms-auto">
+            <div class="flex-shrink-0 dropdown">
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2"
+                   data-bs-toggle="dropdown">
+                    <img src="https://img.icons8.com/fluency/48/000000/user-male-circle.png" alt="" width="32"
+                         height="32" class="rounded-circle"/>
+                </a>
+                <ul class="dropdown-menu text-small shadow mt-2">
+                    <li>
+                        <div class="px-3 py-2">{{ current_user.name }}</div>
+                    </li>
+                    <li><a class="dropdown-item" href="{{ url_for('logout') }}">登出</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
