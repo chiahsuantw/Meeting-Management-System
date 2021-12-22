@@ -4,7 +4,7 @@
     {# NavBar #}
     <header class="py-3 border-bottom">
         <div class="container-fluid d-flex gap-3 align-items-center">
-            <h4 class="mb-0">會議管理系統</h4>
+            <a class="text-dark text-decoration-none" href="{{ url_for('home') }}"><h4 class="mb-0">會議管理系統</h4></a>
             <form class="flex-fill d-none d-sm-block px-md-5" style="max-width: 600px">
                 <label for="search-bar" class="d-none"></label>
                 <input id="search-bar" type="search" class="form-control" placeholder="搜尋">
@@ -17,6 +17,9 @@
                              height="32" class="rounded-circle"/>
                     </a>
                     <ul class="dropdown-menu text-small shadow mt-2">
+                        <li>
+                            <div class="px-3 py-2">{{ current_user.name }}</div>
+                        </li>
                         <li><a class="dropdown-item" href="{{ url_for('logout') }}">登出</a></li>
                     </ul>
                 </div>
@@ -33,7 +36,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link py-3" title="會議列表">
+                    <a href="{{ url_for('home') }}" class="nav-link py-3" title="會議列表">
                         <img src="https://img.icons8.com/fluency/48/000000/conference-foreground-selected.png"
                              width="40"
                              height="40" alt=""/>

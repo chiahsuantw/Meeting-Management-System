@@ -8,10 +8,10 @@
                     <img src="{{ url_for('static', filename='images/csie_logo.png') }}" alt="" width="65">
                     <h1 class="text-center ms-2">會議管理系統</h1>
                 </div>
-                {% with messages = get_flashed_messages() %}
+                {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-danger" role="alert">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" role="alert">
                                 {{ message }}
                             </div>
                         {% endfor %}
