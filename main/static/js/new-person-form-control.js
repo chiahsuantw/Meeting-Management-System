@@ -10,6 +10,13 @@ const studentIdInput = $('#pStudentIdInput');
 const programInput = $('#pProgramInput');
 const studyYearInput = $('#pStudyYearInput');
 const allSelectPicker = $('.selectpicker');
+const personTypeSwitch = {
+    'DeptProf': '系上教師',
+    'Assistant': '系助理',
+    'OtherProf': '校外教師',
+    'Expert': '業界專家',
+    'Student': '學生'
+}
 
 $(document).ready(function () {
     // Run this function after the Html has loaded
@@ -117,7 +124,7 @@ $('#newPersonBtn').on('click', function () {
             url: $SCRIPT_ROOT + '/new/person',
             data: form_data,
             success: (data) => {
-                if (data.validate === 'success') {
+                if (data.validate === 'Success') {
                     // Reset the form
                     $('#newPersonForm').trigger('reset');
                     personType.val('');
@@ -125,6 +132,9 @@ $('#newPersonBtn').on('click', function () {
                     personTypeFormControl();
                     // Close the modal
                     $('#newPersonModal').modal('hide');
+                    // Dynamic add person options
+                    $('.person-select').append('Hello');
+                    allSelectPicker.selectpicker('refresh');
                 } else {
                     // TODO: If validation failed -> show error message
                     console.log(data.validate);

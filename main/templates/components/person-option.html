@@ -1,14 +1,16 @@
+{% set typeSwitch =  {
+    'DeptProf': '系上教師',
+    'Assistant': '系助理',
+    'OtherProf': '校外教師',
+    'Expert': '業界專家',
+    'Student': '學生'
+} %}
 {% for person in people %}
-    {% if person.type.value == 'DeptProf' %}
-        {% set typeValue = '系上教師' %}
-    {% elif person.type.value == 'Assistant' %}
-        {% set typeValue = '系助理' %}
-    {% elif person.type.value == 'OtherProf' %}
-        {% set typeValue = '校外教師' %}
-    {% elif person.type.value == 'Expert' %}
-        {% set typeValue = '業界專家' %}
-    {% elif person.type.value == 'Student' %}
-        {% set typeValue = '學生' %}
-    {% endif %}
-    <option value="{{ person.id }}" data-subtext="({{ person.email }}) {{ typeValue }}">{{ person.name }}</option>
+    <option value="{{ person.id }}" data-subtext="({{ person.email }}) {{ typeSwitch[person.type.value] }}">{{ person.name }}</option>
 {% endfor %}
+
+
+{#'<option value="' + data.person.id +#}
+{#                        '" data-subtext="(' + data.person.email +#}
+{#                        ') ' + personTypeSwitch[data.person.type] +#}
+{#                        '">' + data.person.name + '</option>'#}

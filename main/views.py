@@ -1,7 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user
 from sqlalchemy.exc import DataError
-from werkzeug.exceptions import BadRequestKeyError
 
 from main import app
 from main.models import Person, db, Student
@@ -63,7 +62,9 @@ def new_person():
     except DataError:
         return jsonify({'validate': 'Error'})
     finally:
-        return jsonify({'validate': 'Success'})
+        return jsonify({'validate': 'Success',
+                        'person': {'id': person.id, 'name': person.name, 'email': person.email,
+                                   'type': person.type.value}})
 
 
 @app.route('/login', methods=['GET', 'POST'])
