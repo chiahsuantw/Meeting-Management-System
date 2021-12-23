@@ -135,11 +135,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="newPersonModalLabel">新增人員</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    <button type="button" class="btn-close close-new-person" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="newPersonForm">
                         <div class="mb-3">
                             <label for="pNameInput" class="form-label">姓名</label>
                             <input type="text" class="form-control" id="pNameInput">
@@ -233,8 +233,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-success">新增</button>
+                    <button type="button" class="btn btn-danger close-new-person" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" id="newPersonBtn">新增</button>
                 </div>
             </div>
         </div>
@@ -252,4 +252,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/i18n/defaults-zh_TW.min.js"></script>
     <script defer src="{{ url_for('static', filename='js/new-person-form-control.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/new-meeting-form-control.js') }}"></script>
+    {# person_api #}
+    <script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root | tojson | safe }};</script>
 {% endblock %}

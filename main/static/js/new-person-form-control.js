@@ -9,25 +9,37 @@ const bankAccountInput = $('#pBankAccountInput');
 const studentIdInput = $('#pStudentIdInput');
 const programInput = $('#pProgramInput');
 const studyYearInput = $('#pStudyYearInput');
+const allSelectPicker = $('.selectpicker');
 
 $(document).ready(function () {
     // Run this function after the Html has loaded
     personTypeFormControl();
-    personType.change(personTypeFormControl);
+    personType.on('change', personTypeFormControl);
 });
 
 function personTypeFormControl() {
     // Control the display of fields depending on personType
     companyNameInput.parent().hide();
+    companyNameInput.val('');
     univNameInput.parent().hide();
+    univNameInput.val('');
     deptNameInput.parent().hide();
+    deptNameInput.val('');
     jobTitleInput.parent().hide();
+    jobTitleInput.val('')
     officeTelInput.parent().hide();
+    officeTelInput.val('');
     addressInput.parent().hide();
+    addressInput.val('');
     bankAccountInput.parent().hide();
+    bankAccountInput.val('');
     studentIdInput.parent().hide();
+    studentIdInput.val('');
     programInput.parent().parent().hide();
+    programInput.val('');
     studyYearInput.parent().parent().hide();
+    studentIdInput.val('');
+    allSelectPicker.selectpicker('refresh');
 
     switch (personType.val()) {
         case 'DeptProf':
@@ -59,3 +71,74 @@ function personTypeFormControl() {
             break;
     }
 }
+
+$('#newPersonBtn').on('click', function () {
+        let form_data = new FormData();
+
+        form_data.append('name', $('#pNameInput').val());
+        form_data.append('gender', $('#pGenderInput1').prop('checked') ? 'Male' : 'Female');
+        form_data.append('phone', $('#pPhoneInput').val());
+        form_data.append('email', $('#pEmailInput').val());
+        form_data.append('type', $('#pTypeInput').val());
+
+        switch (personType.val()) {
+            case 'DeptProf':
+                form_data.append('jobTitle', jobTitleInput.val());
+                form_data.append('officeTel', officeTelInput.val());
+                break;
+            case 'Assistant':
+                form_data.append('officeTel', officeTelInput.val());
+                break;
+            case 'OtherProf':
+                form_data.append('univName', univNameInput.val());
+                form_data.append('deptName', deptNameInput.val());
+                form_data.append('jobTitle', jobTitleInput.val());
+                form_data.append('officeTel', officeTelInput.val());
+                form_data.append('address', addressInput.val());
+                form_data.append('bankAccount', bankAccountInput.val());
+                break;
+            case 'Expert':
+                form_data.append('companyName', companyNameInput.val());
+                form_data.append('jobTitle', jobTitleInput.val());
+                form_data.append('officeTel', officeTelInput.val());
+                form_data.append('address', addressInput.val());
+                form_data.append('bankAccount', bankAccountInput.val());
+                break;
+            case 'Student':
+                form_data.append('studentId', studentIdInput.val());
+                form_data.append('program', programInput.val());
+                form_data.append('studyYear', studyYearInput.val());
+                break;
+        }
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: $SCRIPT_ROOT + '/new/person',
+            data: form_data,
+            success: (data) => {
+                if (data.validate === 'success') {
+                    // Reset the form
+                    $('#newPersonForm').trigger('reset');
+                    personType.val('');
+                    personType.selectpicker('refresh');
+                    personTypeFormControl();
+                    // Close the modal
+                    $('#newPersonModal').modal('hide');
+                } else {
+                    // TODO: If validation failed -> show error message
+                    console.log(data.validate);
+                }
+            },
+            contentType: false,
+            processData: false,
+        });
+    }
+);
+
+$('.close-new-person').on('click', function () {
+    $('#newPersonForm').trigger('reset');
+    personType.val('');
+    personType.selectpicker('refresh');
+    personTypeFormControl();
+});

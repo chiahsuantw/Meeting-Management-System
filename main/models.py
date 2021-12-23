@@ -112,6 +112,43 @@ class Person(db.Model, UserMixin):
     meetings_as_attendee = association_proxy('attendee_association', 'meeting',
                                              creator=lambda meeting: Attendee(meeting=meeting))
 
+    def add_expert(self, company_name, job_title, office_tel, address, bank_account):
+        expert = Expert()
+        expert.company_name = company_name
+        expert.job_title = job_title
+        expert.office_tel = office_tel
+        expert.address = address
+        expert.bank_account = bank_account
+        self.expert_info = expert
+
+    def add_assistant(self, office_tel):
+        assistant = Assistant()
+        assistant.office_tel = office_tel
+        self.assistant_info = assistant
+
+    def add_dept_prof(self, job_title, office_tel):
+        dept_prof = DeptProf()
+        dept_prof.job_title = job_title
+        dept_prof.office_tel = office_tel
+        self.dept_prof_info = dept_prof
+
+    def add_other_prof(self, univ_name, dept_name, job_title, office_tel, address, bank_account):
+        other_prof = OtherProf()
+        other_prof.univ_name = univ_name
+        other_prof.dept_name = dept_name
+        other_prof.job_title = job_title
+        other_prof.office_tel = office_tel
+        other_prof.address = address
+        other_prof.bank_account = bank_account
+        self.other_prof_info = other_prof
+
+    def add_student(self, student_id, program, study_year):
+        student = Student()
+        student.student_id = student_id
+        student.program = program
+        student.study_year = study_year
+        self.student_info = student
+
     def __repr__(self):
         return f'<Person {self.id} {self.name} {self.type.value}>'
 
