@@ -57,11 +57,11 @@ announcementSection.on('click', 'div > a', function () {
 })
 
 motionSection.on('click', 'div > a', function () {
-    // Delete the announcement
+    // Delete the motion
     $(this).parent().remove();
 })
 
 extemporeSection.on('click', 'div > a', function () {
-    // Delete the announcement
+    // Delete the extempore
     $(this).parent().remove();
 })

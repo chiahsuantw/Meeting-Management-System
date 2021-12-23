@@ -10,6 +10,7 @@ const studentIdInput = $('#pStudentIdInput');
 const programInput = $('#pProgramInput');
 const studyYearInput = $('#pStudyYearInput');
 const allSelectPicker = $('.selectpicker');
+
 const personTypeSwitch = {
     'DeptProf': '系上教師',
     'Assistant': '系助理',
@@ -131,10 +132,15 @@ $('#newPersonBtn').on('click', function () {
                     personType.selectpicker('refresh');
                     personTypeFormControl();
                     // Close the modal
+                    // noinspection JSUnresolvedFunction
                     $('#newPersonModal').modal('hide');
-                    // Dynamic add person options
-                    $('.person-select').append('Hello');
-                    allSelectPicker.selectpicker('refresh');
+                    // Add person options dynamically
+                    const optionElement =
+                        '<option value="' + data['person']['id'] +
+                        '" data-subtext="(' + data['person']['email'] + ') ' +
+                        personTypeSwitch[data['person']['type']] +
+                        '">' + data['person']['name'] + '</option>'
+                    $('.person-select > select').append(optionElement).selectpicker('refresh');
                 } else {
                     // TODO: If validation failed -> show error message
                     console.log(data.validate);
