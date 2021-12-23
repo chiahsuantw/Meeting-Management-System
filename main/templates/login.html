@@ -18,8 +18,8 @@
                     {% endif %}
                 {% endwith %}
                 <div class="input-group mb-3">
-                    <input name="email" type="email" class="form-control" placeholder="電子郵件" aria-label="Email"
-                           required>
+                    <input name="email" type="email" class="form-control" placeholder="電子郵件"
+                           aria-label="Email" required>
                     <button class="btn btn-outline-primary rounded-end" type="submit">登 入</button>
                     <div class="invalid-feedback">
                         請輸入正確的電子郵件
@@ -28,7 +28,7 @@
             </form>
         </main>
     </div>
-{% endblock content %}
+{% endblock %}
 
 {% block script %}
     <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>

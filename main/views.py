@@ -10,6 +10,11 @@ def home():
     return render_template('meeting.html')
 
 
+@app.route('/new')
+def create():
+    return render_template('create.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     email = request.form.get('email')
