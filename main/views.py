@@ -14,7 +14,8 @@ def home():
 
 @app.route('/new')
 def create():
-    return render_template('create.html')
+    people = Person.query.all()
+    return render_template('create.html', people=people)
 
 
 @app.route('/new/person', methods=['POST'])

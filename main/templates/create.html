@@ -50,38 +50,33 @@
                         <div class="d-flex flex-column mb-3">
                             <label for="mChairInput" class="form-label fs-5">主席</label>
                             <select class="selectpicker" id="mChairInput" data-style="bg-white"
-                                    data-width="100%" data-live-search="true">
+                                    data-width="100%" data-live-search="true" data-size="5">
                                 <option value="">請選擇</option>
-                                <option value="1" data-subtext="系上教師">張保榮</option>
-                                <option value="2" data-subtext="系上教師">林文揚</option>
-                                <option value="3" data-subtext="系助理">淑貞姊</option>
+                                {% include 'components/person-option.html' %}
                             </select>
                         </div>
                         <div class="d-flex flex-column mb-3">
                             <label for="mMinuteTakerInput" class="form-label fs-5">紀錄</label>
-                            <select class="selectpicker" id="mMinuteTakerInput" data-style="bg-white" data-width="100%">
+                            <select class="selectpicker" id="mMinuteTakerInput" data-style="bg-white"
+                                    data-width="100%" data-live-search="true" data-size="5">
                                 <option value="">請選擇</option>
-                                <option value="1" data-subtext="系上教授">張保榮</option>
-                                <option value="2" data-subtext="系上教授">林文揚</option>
-                                <option value="3" data-subtext="系助理">淑貞姊</option>
+                                {% include 'components/person-option.html' %}
                             </select>
                         </div>
                         <div class="d-flex flex-column mb-3">
                             <label for="mAttendeeInput" class="form-label fs-5">與會者</label>
-                            <select class="selectpicker" id="mAttendeeInput" data-style="bg-white" data-width="100%"
-                                    data-live-search="true" multiple data-selected-text-format="count">
-                                <option value="1" data-subtext="系上教授">張保榮</option>
-                                <option value="2" data-subtext="系上教授">林文揚</option>
-                                <option value="3" data-subtext="系助理">淑貞姊</option>
+                            <select class="selectpicker" id="mAttendeeInput" data-style="bg-white"
+                                    data-width="100%" data-size="5" data-live-search="true"
+                                    multiple data-selected-text-format="count > 15">
+                                {% include 'components/person-option.html' %}
                             </select>
                         </div>
                         <div class="d-flex flex-column mb-3">
                             <label for="mGuestInput" class="form-label fs-5">列席</label>
-                            <select class="selectpicker" id="mGuestInput" data-style="bg-white" data-width="100%"
-                                    data-live-search="true" multiple data-selected-text-format="count">
-                                <option value="1" data-subtext="系上教授">張保榮</option>
-                                <option value="2" data-subtext="系上教授">林文揚</option>
-                                <option value="3" data-subtext="系助理">淑貞姊</option>
+                            <select class="selectpicker" id="mGuestInput" data-style="bg-white"
+                                    data-width="100%" data-size="5" data-live-search="true"
+                                    multiple data-selected-text-format="count > 15">
+                                {% include 'components/person-option.html' %}
                             </select>
                         </div>
                         <hr class="my-5">
