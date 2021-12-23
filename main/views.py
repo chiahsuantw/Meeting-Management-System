@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user
 
 from main import app
@@ -33,3 +33,13 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.route('/person_api')
+def person_api():
+    person_dict = {}
+    people = Person.query.all()
+    for person in people:
+        person_dict[person.id] = {"name": person.name, "type": person.type.value}
+
+    return jsonify(person_dict)
