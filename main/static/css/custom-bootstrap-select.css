@@ -1,0 +1,21 @@
+.bootstrap-select .btn {
+    border: 1px solid #ced4da;
+}
+
+.bootstrap-select .btn:focus {
+    outline: none !important;
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+
+.bootstrap-select .bs-searchbox {
+    margin-bottom: 4px;
+}
+
+.bootstrap-select .no-results {
+    background: #fff;
+    padding-left: 12px;
+}
