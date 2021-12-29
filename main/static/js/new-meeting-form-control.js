@@ -12,7 +12,7 @@ newAnnouncementBtn.on('click', function () {
         '<textarea class="form-control" rows="2" ' +
         'aria-label="AnnouncementContent" placeholder="內容"></textarea>' +
         '<a href="javascript:void(0)" class="my-auto ms-2">' +
-        '<img src="static/images/trash-fill.svg" width="20" alt=""></a></div>';
+        '<img src="/static/images/trash-fill.svg" width="20" alt=""></a></div>';
     announcementSection.append(announcementElement);
 });
 
@@ -36,7 +36,7 @@ newMotionBtn.on('click', function () {
         '</div><div class=mb-2>' +
         '<h6>執行</h6><textarea type=text class=form-control rows=3 aria-label=MotionExecution></textarea>' +
         '</div></div><a href=javascript:void(0) class="my-auto ms-2">' +
-        '<img src=static/images/trash-fill.svg width=20 alt=""></a></div>';
+        '<img src=/static/images/trash-fill.svg width=20 alt=""></a></div>';
     motionSection.append(motionElement);
     $('select').selectpicker();
 });
@@ -47,7 +47,7 @@ newExtemporeBtn.on('click', function () {
         '<textarea class="form-control" rows="2" ' +
         'aria-label="ExtemporeContent" placeholder="內容"></textarea>' +
         '<a href="javascript:void(0)" class="my-auto ms-2">' +
-        '<img src="static/images/trash-fill.svg" width="20" alt=""></a></div>';
+        '<img src="/static/images/trash-fill.svg" width="20" alt=""></a></div>';
     extemporeSection.append(extemporeElement);
 });
 

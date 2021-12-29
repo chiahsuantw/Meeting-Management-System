@@ -9,7 +9,6 @@ const bankAccountInput = $('#pBankAccountInput');
 const studentIdInput = $('#pStudentIdInput');
 const programInput = $('#pProgramInput');
 const studyYearInput = $('#pStudyYearInput');
-const allSelectPicker = $('.selectpicker');
 
 const personTypeSwitch = {
     'DeptProf': '系上教師',
@@ -44,10 +43,9 @@ function personTypeFormControl() {
     studentIdInput.parent().hide();
     studentIdInput.val('');
     programInput.parent().parent().hide();
-    programInput.val('');
+    programInput.val('').selectpicker('refresh');
     studyYearInput.parent().parent().hide();
-    studentIdInput.val('');
-    allSelectPicker.selectpicker('refresh');
+    studyYearInput.val('').selectpicker('refresh');
 
     switch (personType.val()) {
         case 'DeptProf':
@@ -120,16 +118,15 @@ $('#newPersonBtn').on('click', function () {
         }
 
         $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: $SCRIPT_ROOT + '/new/person',
-            data: form_data,
-            success: (data) => {
-                if (data.validate === 'Success') {
+            'type': 'POST',
+            'dataType': 'json',
+            'url': $SCRIPT_ROOT + '/new/person',
+            'data': form_data,
+            'success': (data) => {
+                if (data['message'] === 'Success') {
                     // Reset the form
                     $('#newPersonForm').trigger('reset');
-                    personType.val('');
-                    personType.selectpicker('refresh');
+                    personType.val('').selectpicker('refresh');
                     personTypeFormControl();
                     // Close the modal
                     // noinspection JSUnresolvedFunction
@@ -143,18 +140,17 @@ $('#newPersonBtn').on('click', function () {
                     $('.person-select > select').append(optionElement).selectpicker('refresh');
                 } else {
                     // TODO: If validation failed -> show error message
-                    console.log(data.validate);
+                    console.log(data['message']);
                 }
             },
-            contentType: false,
-            processData: false,
+            'contentType': false,
+            'processData': false,
         });
     }
 );
 
 $('.close-new-person').on('click', function () {
     $('#newPersonForm').trigger('reset');
-    personType.val('');
-    personType.selectpicker('refresh');
+    personType.val('').selectpicker('refresh');
     personTypeFormControl();
 });

@@ -5,12 +5,10 @@
     'Expert': '業界專家',
     'Student': '學生'
 } %}
+
 {% for person in people %}
-    <option value="{{ person.id }}" data-subtext="({{ person.email }}) {{ typeSwitch[person.type.value] }}">{{ person.name }}</option>
+    <option value="{{ person.id }}"
+            data-subtext="({{ person.email }}) {{ typeSwitch[person.type.value] }}">
+        {{ person.name }}
+    </option>
 {% endfor %}
-
-
-{#'<option value="' + data.person.id +#}
-{#                        '" data-subtext="(' + data.person.email +#}
-{#                        ') ' + personTypeSwitch[data.person.type] +#}
-{#                        '">' + data.person.name + '</option>'#}

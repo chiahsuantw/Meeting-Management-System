@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request, jsonify
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required
 from sqlalchemy.exc import DataError
 
 from main import app
@@ -7,23 +7,25 @@ from main.models import Person, db, Student
 
 
 @app.route('/')
+@login_required
 def home():
     return render_template('meeting.html')
 
 
-@app.route('/new')
+@app.route('/new/meeting')
+@login_required
 def create():
     people = Person.query.all()
     return render_template('create.html', people=people)
 
 
 @app.route('/new/person', methods=['POST'])
+@login_required
 def new_person():
     form = request.form
-    print(form)
 
     if Person.query.filter_by(email=form['email']).first():
-        return jsonify({'validate': 'Person already exists'})
+        return jsonify({'message': 'Person already exists'})
 
     person = Person()
     person.name = form['name']
@@ -33,38 +35,49 @@ def new_person():
     person.type = form['type']
 
     if person.type == 'DeptProf':
-        person.add_dept_prof(job_title=form['jobTitle'],
-                             office_tel=form['officeTel'])
+        person.add_dept_prof_info(
+            job_title=form['jobTitle'],
+            office_tel=form['officeTel']
+        )
     elif person.type == 'Assistant':
-        person.add_assistant(office_tel=form['officeTel'])
+        person.add_assistant_info(
+            office_tel=form['officeTel']
+        )
     elif person.type == 'OtherProf':
-        person.add_other_prof(univ_name=form['univName'],
-                              dept_name=form['deptName'],
-                              job_title=form['jobTitle'],
-                              office_tel=form['officeTel'],
-                              address=form['address'],
-                              bank_account=form['bankAccount'])
+        person.add_other_prof_info(
+            univ_name=form['univName'],
+            dept_name=form['deptName'],
+            job_title=form['jobTitle'],
+            office_tel=form['officeTel'],
+            address=form['address'],
+            bank_account=form['bankAccount']
+        )
     elif person.type == 'Expert':
-        person.add_expert(company_name=form['companyName'],
-                          job_title=form['jobTitle'],
-                          office_tel=form['officeTel'],
-                          address=form['address'],
-                          bank_account=form['bankAccount'])
+        person.add_expert_info(
+            company_name=form['companyName'],
+            job_title=form['jobTitle'],
+            office_tel=form['officeTel'],
+            address=form['address'],
+            bank_account=form['bankAccount']
+        )
     elif person.type == 'Student':
         if Student.query.filter_by(student_id=form['studentId']).first():
-            return jsonify({'validate': 'Student ID already exists'})
-        person.add_student(student_id=form['studentId'],
-                           program=form['program'],
-                           study_year=form['studyYear'])
+            return jsonify({'message': 'Student ID already exists'})
+        person.add_student_info(
+            student_id=form['studentId'],
+            program=form['program'],
+            study_year=form['studyYear']
+        )
+
     try:
         db.session.add(person)
         db.session.commit()
     except DataError:
-        return jsonify({'validate': 'Error'})
+        return jsonify({'message': 'Error'})
     finally:
-        return jsonify({'validate': 'Success',
-                        'person': {'id': person.id, 'name': person.name, 'email': person.email,
-                                   'type': person.type.value}})
+        return jsonify({'message': 'Success',
+                        'person': {'id': person.id, 'name': person.name,
+                                   'email': person.email, 'type': person.type.value}})
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -73,7 +86,7 @@ def login():
     if email:
         user = Person.query.filter_by(email=email).first()
         if user:
-            login_user(user)
+            login_user(user, remember=True)
             return redirect(url_for('home'))
         else:
             flash('登入資訊不正確，請再試一次', 'danger')
@@ -85,13 +98,3 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-
-
-@app.route('/person_api')
-def person_api():
-    person_dict = {}
-    people = Person.query.all()
-    for person in people:
-        person_dict[person.id] = {"name": person.name, "type": person.type.value}
-
-    return jsonify(person_dict)

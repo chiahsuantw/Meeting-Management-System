@@ -7,6 +7,10 @@ from sqlalchemy.orm import backref
 
 from main import db, login
 
+login.login_view = 'login'
+login.login_message = '請先登入系統'
+login.login_message_category = 'info'
+
 
 @login.user_loader
 def load_user(person_id):
@@ -112,7 +116,7 @@ class Person(db.Model, UserMixin):
     meetings_as_attendee = association_proxy('attendee_association', 'meeting',
                                              creator=lambda meeting: Attendee(meeting=meeting))
 
-    def add_expert(self, company_name, job_title, office_tel, address, bank_account):
+    def add_expert_info(self, company_name, job_title, office_tel, address, bank_account):
         expert = Expert()
         expert.company_name = company_name
         expert.job_title = job_title
@@ -121,18 +125,18 @@ class Person(db.Model, UserMixin):
         expert.bank_account = bank_account
         self.expert_info = expert
 
-    def add_assistant(self, office_tel):
+    def add_assistant_info(self, office_tel):
         assistant = Assistant()
         assistant.office_tel = office_tel
         self.assistant_info = assistant
 
-    def add_dept_prof(self, job_title, office_tel):
+    def add_dept_prof_info(self, job_title, office_tel):
         dept_prof = DeptProf()
         dept_prof.job_title = job_title
         dept_prof.office_tel = office_tel
         self.dept_prof_info = dept_prof
 
-    def add_other_prof(self, univ_name, dept_name, job_title, office_tel, address, bank_account):
+    def add_other_prof_info(self, univ_name, dept_name, job_title, office_tel, address, bank_account):
         other_prof = OtherProf()
         other_prof.univ_name = univ_name
         other_prof.dept_name = dept_name
@@ -142,7 +146,7 @@ class Person(db.Model, UserMixin):
         other_prof.bank_account = bank_account
         self.other_prof_info = other_prof
 
-    def add_student(self, student_id, program, study_year):
+    def add_student_info(self, student_id, program, study_year):
         student = Student()
         student.student_id = student_id
         student.program = program
