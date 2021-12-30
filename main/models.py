@@ -234,3 +234,10 @@ class Motion(db.Model):
     status = db.Column(db.Enum(MotionStatusType), nullable=False, default=MotionStatusType.InDiscussion)
     resolution = db.Column(db.Text)
     execution = db.Column(db.Text)
+
+    def update(self, description, content, status, resolution, execution):
+        self.description = description
+        self.content = content
+        self.status = status
+        self.resolution = resolution
+        self.execution = execution

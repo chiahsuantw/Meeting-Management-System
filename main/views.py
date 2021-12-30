@@ -12,11 +12,19 @@ def home():
     return render_template('meeting.html')
 
 
-@app.route('/new/meeting')
+@app.route('/new')
 @login_required
 def create():
     people = Person.query.all()
     return render_template('create.html', people=people)
+
+
+@app.route('/new/meeting', methods=['POST'])
+@login_required
+def new_meeting():
+    form = request.data
+    print(form)
+    return jsonify({'message': 'Success'})
 
 
 @app.route('/new/person', methods=['POST'])
