@@ -16,7 +16,6 @@ const guestInput = $('#mGuestInput');
 const chairSpeechInput = $('#mChairSpeechInput');
 
 
-
 newAnnouncementBtn.on('click', function () {
     // Add an announcement to the meeting
     const announcementElement = '<div class="d-flex mb-2">' +
@@ -78,69 +77,67 @@ extemporeSection.on('click', 'div > a', function () {
 })
 
 $('#newMeetingBtn').on('click', function () {
+    // formData contains: { json_form: body_form_save_as_json, attachments: FileList }
+    let formData = new FormData();
+    let meetingForm = {};
 
-        // form_data contain: { json_form: body_form_save_as_json, attachments: FileList }
-        let form_data = new FormData();
-        let meetingForm = {};
-
-        meetingForm['title'] = titleInput.val();
-        meetingForm['time'] = timeInput.val();
-        meetingForm['location'] = locationInput.val();
-        meetingForm['type'] = typeInput.val();
-        meetingForm['minuteTaker'] = minuteTakerInput.val();
-        meetingForm['attendee'] = attendeeInput.val();
-        meetingForm['guest'] = guestInput.val();
-        meetingForm['chairSpeech'] = chairSpeechInput.val();
+    meetingForm['title'] = titleInput.val();
+    meetingForm['time'] = timeInput.val();
+    meetingForm['location'] = locationInput.val();
+    meetingForm['type'] = typeInput.val();
+    meetingForm['minuteTaker'] = minuteTakerInput.val();
+    meetingForm['attendee'] = attendeeInput.val();
+    meetingForm['guest'] = guestInput.val();
+    meetingForm['chairSpeech'] = chairSpeechInput.val();
 
         let announcementList = [];
         let motionList = [];
         let extemporeList = [];
 
-        $('#pAnnouncement').children().each(function(){
-            announcementList.push($(this).children().val());
-        })
+    $('#pAnnouncement').children().each(function () {
+        announcementList.push($(this).children().val());
+    })
 
         let motionRaw = $('#pMotion')[0].getElementsByClassName('motion-form');
-        for (let i = 0; i < motionRaw.length/6; i++) {
-            motionList.push({
-                'MotionDescription': motionRaw[0].value,
-                'MotionStatus': motionRaw[2].value,
-                'MotionContent': motionRaw[3].value,
-                'MotionResolution': motionRaw[4].value,
-                'MotionExecution': motionRaw[5].value
-            })
-        }
-
-        $('#pExtempore').children().each(function(){
-            extemporeList.push($(this).children().val());
+    for (let i = 0; i < motionRaw.length / 6; i++) {
+        motionList.push({
+            'MotionDescription': motionRaw[0].value,
+            'MotionStatus': motionRaw[2].value,
+            'MotionContent': motionRaw[3].value,
+            'MotionResolution': motionRaw[4].value,
+            'MotionExecution': motionRaw[5].value
         })
+    }
 
-        meetingForm['announcement'] = announcementList;
-        meetingForm['motion'] = motionList;
-        meetingForm['extempore'] = extemporeList;
+    $('#pExtempore').children().each(function () {
+        extemporeList.push($(this).children().val());
+    })
 
-        form_data.append('json_form', JSON.stringify(meetingForm));
-        // file upload
-        let attachments = document.getElementById('mAttachmentInput');
-        form_data.append('attachments', attachments.files);
+    meetingForm['announcement'] = announcementList;
+    meetingForm['motion'] = motionList;
+    meetingForm['extempore'] = extemporeList;
 
+    formData.append('json_form', JSON.stringify(meetingForm));
 
+    // File uploads
+    let attachments = document.getElementById('mAttachmentInput');
+    formData.append('attachments', attachments.files);
 
-        $.ajax({
-            'type': 'POST',
-            'dataType': 'json',
-            'url': $SCRIPT_ROOT + '/new/meeting',
-            'data': form_data,
-            'success': (data) => {
-                if (data['message'] === 'Success') {
-                    console.log(data['message'])
-                } else {
-                    // TODO: If validation failed -> show error message
-                    console.log(data['message']);
-                }
-            },
-            'contentType': false,
-            'processData': false,
+    $.ajax({
+        'type': 'POST',
+        'dataType': 'json',
+        'url': $SCRIPT_ROOT + '/new/meeting',
+        'data': formData,
+        'success': (data) => {
+            if (data['message'] === 'Success') {
+                console.log(data['message'])
+            } else {
+                // TODO: If validation failed -> show error message
+                console.log(data['message']);
+            }
+        },
+        'contentType': false,
+        'processData': false,
         });
     }
 );

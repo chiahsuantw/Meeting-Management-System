@@ -79,49 +79,49 @@ function personTypeFormControl() {
 }
 
 $('#newPersonBtn').on('click', function () {
-        let form_data = new FormData();
+    let formData = new FormData();
 
-        form_data.append('name', $('#pNameInput').val());
-        form_data.append('gender', $('#pGenderInput1').prop('checked') ? 'Male' : 'Female');
-        form_data.append('phone', $('#pPhoneInput').val());
-        form_data.append('email', $('#pEmailInput').val());
-        form_data.append('type', $('#pTypeInput').val());
+    formData.append('name', $('#pNameInput').val());
+    formData.append('gender', $('#pGenderInput1').prop('checked') ? 'Male' : 'Female');
+    formData.append('phone', $('#pPhoneInput').val());
+    formData.append('email', $('#pEmailInput').val());
+    formData.append('type', $('#pTypeInput').val());
 
-        switch (personType.val()) {
-            case 'DeptProf':
-                form_data.append('jobTitle', jobTitleInput.val());
-                form_data.append('officeTel', officeTelInput.val());
-                break;
-            case 'Assistant':
-                form_data.append('officeTel', officeTelInput.val());
-                break;
-            case 'OtherProf':
-                form_data.append('univName', univNameInput.val());
-                form_data.append('deptName', deptNameInput.val());
-                form_data.append('jobTitle', jobTitleInput.val());
-                form_data.append('officeTel', officeTelInput.val());
-                form_data.append('address', addressInput.val());
-                form_data.append('bankAccount', bankAccountInput.val());
-                break;
-            case 'Expert':
-                form_data.append('companyName', companyNameInput.val());
-                form_data.append('jobTitle', jobTitleInput.val());
-                form_data.append('officeTel', officeTelInput.val());
-                form_data.append('address', addressInput.val());
-                form_data.append('bankAccount', bankAccountInput.val());
-                break;
-            case 'Student':
-                form_data.append('studentId', studentIdInput.val());
-                form_data.append('program', programInput.val());
-                form_data.append('studyYear', studyYearInput.val());
-                break;
+    switch (personType.val()) {
+        case 'DeptProf':
+            formData.append('jobTitle', jobTitleInput.val());
+            formData.append('officeTel', officeTelInput.val());
+            break;
+        case 'Assistant':
+            formData.append('officeTel', officeTelInput.val());
+            break;
+        case 'OtherProf':
+            formData.append('univName', univNameInput.val());
+            formData.append('deptName', deptNameInput.val());
+            formData.append('jobTitle', jobTitleInput.val());
+            formData.append('officeTel', officeTelInput.val());
+            formData.append('address', addressInput.val());
+            formData.append('bankAccount', bankAccountInput.val());
+            break;
+        case 'Expert':
+            formData.append('companyName', companyNameInput.val());
+            formData.append('jobTitle', jobTitleInput.val());
+            formData.append('officeTel', officeTelInput.val());
+            formData.append('address', addressInput.val());
+            formData.append('bankAccount', bankAccountInput.val());
+            break;
+        case 'Student':
+            formData.append('studentId', studentIdInput.val());
+            formData.append('program', programInput.val());
+            formData.append('studyYear', studyYearInput.val());
+            break;
         }
 
         $.ajax({
             'type': 'POST',
             'dataType': 'json',
             'url': $SCRIPT_ROOT + '/new/person',
-            'data': form_data,
+            'data': formData,
             'success': (data) => {
                 if (data['message'] === 'Success') {
                     // Reset the form
