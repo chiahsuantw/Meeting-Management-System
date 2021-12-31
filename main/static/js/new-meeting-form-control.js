@@ -120,12 +120,15 @@ $('#newMeetingBtn').on('click', function () {
     formData.append('json_form', JSON.stringify(meetingForm));
 
     // File uploads
-    let attachments = document.getElementById('mAttachmentInput');
-    formData.append('attachments', attachments.files);
+    let attachments = document.getElementById('mAttachmentInput').files;
+    for (let i = 0; i < attachments.length; i++) {
+        formData.append('files[]', attachments[i]);
+    }
 
     $.ajax({
         'type': 'POST',
         'dataType': 'json',
+        'mimeType': 'multipart/form-data',
         'url': $SCRIPT_ROOT + '/new/meeting',
         'data': formData,
         'success': (data) => {

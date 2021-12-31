@@ -1,9 +1,13 @@
+import json
+from os import path
+
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required
 from sqlalchemy.exc import DataError
+from werkzeug.utils import secure_filename
 
 from main import app
-from main.models import Person, db, Student
+from main.models import Person, db, Student, Attachment, Meeting, Attendee, Announcement
 
 
 @app.route('/')
@@ -23,7 +27,37 @@ def create():
 @login_required
 def new_meeting():
     form = request.form
-    print(form)
+    data = json.loads(form['json_form'])
+    files = request.files.getlist('files[]')
+
+    meeting = Meeting()
+    meeting.title = data['title']
+    meeting.time = data['time']
+    meeting.location = data['location']
+    meeting.type = data['type']
+    meeting.minute_taker = int(data['minuteTaker'])
+
+    for att_id in data['attendee']:
+        meeting.attendees.append(Attendee(int(att_id), True))
+
+    for gue_id in data['guest']:
+        meeting.attendees.append(Attendee(int(gue_id), False))
+    meeting.chair_speech = int(data['chairSpeech'])
+
+    for ann in data['announcement']:
+        meeting.announcements.append(Announcement(ann))
+
+    for file in files:
+        filename = secure_filename(file.filename)
+        filepath = path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        attachment = Attachment(filename, filepath)
+        meeting.attachments.append(attachment)
+
+    # commit point
+
+    # print(meeting.attachments)
+
     return jsonify({'message': 'Success'})
 
 
