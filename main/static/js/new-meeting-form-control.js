@@ -6,10 +6,12 @@ const announcementSection = $('#pAnnouncement');
 const motionSection = $('#pMotion');
 const extemporeSection = $('#pExtempore');
 
+const newMeetingForm = $('#newMeetingForm');
 const titleInput = $('#mTitleInput');
 const timeInput = $('#mTimeInput');
 const locationInput = $('#mLocationInput');
 const typeInput = $('#mTypeInput');
+const chairInput = $('#mChairInput');
 const minuteTakerInput = $('#mMinuteTakerInput');
 const attendeeInput = $('#mAttendeeInput');
 const guestInput = $('#mGuestInput');
@@ -77,6 +79,27 @@ extemporeSection.on('click', 'div > a', function () {
 })
 
 $('#newMeetingBtn').on('click', function () {
+    // Check form validity
+    newMeetingForm.validate({
+        ignore: ':hidden:not(.selectpicker)',
+        errorElement: 'span',
+        rules: {
+            'mTitleInput': 'required',
+            'mTimeInput': 'required',
+            'mLocationInput': 'required',
+            'mTypeInput': 'required',
+            'mChairInput': 'required',
+            'mMinuteTakerInput': 'required',
+            'mAttendeeInput': 'required',
+            'mGuestInput': 'required',
+        }
+    });
+
+    if (!newMeetingForm.valid()) {
+        // If NewMeetingForm is invalid -> Don't send form post
+        return;
+    }
+
     // formData contains: { json_form: body_form_save_as_json, attachments: FileList }
     let formData = new FormData();
     let meetingForm = {};
@@ -85,20 +108,21 @@ $('#newMeetingBtn').on('click', function () {
     meetingForm['time'] = timeInput.val();
     meetingForm['location'] = locationInput.val();
     meetingForm['type'] = typeInput.val();
+    meetingForm['chair'] = chairInput.val();
     meetingForm['minuteTaker'] = minuteTakerInput.val();
     meetingForm['attendee'] = attendeeInput.val();
     meetingForm['guest'] = guestInput.val();
     meetingForm['chairSpeech'] = chairSpeechInput.val();
 
-        let announcementList = [];
-        let motionList = [];
-        let extemporeList = [];
+    let announcementList = [];
+    let motionList = [];
+    let extemporeList = [];
 
     $('#pAnnouncement').children().each(function () {
         announcementList.push($(this).children().val());
     })
 
-        let motionRaw = $('#pMotion')[0].getElementsByClassName('motion-form');
+    let motionRaw = $('#pMotion')[0].getElementsByClassName('motion-form');
     for (let i = 0; i < motionRaw.length / 6; i++) {
         motionList.push({
             'MotionDescription': motionRaw[0].value,
@@ -141,6 +165,31 @@ $('#newMeetingBtn').on('click', function () {
         },
         'contentType': false,
         'processData': false,
-        });
-    }
-);
+    });
+});
+
+typeInput.on('change', function () {
+    // If mChairInput changes -> refresh form validation state
+    newMeetingForm.valid();
+});
+
+
+chairInput.on('change', function () {
+    // If MeetingChair changes -> refresh form validation state
+    newMeetingForm.valid();
+});
+
+minuteTakerInput.on('change', function () {
+    // If mMinuteTakerInput changes -> refresh form validation state
+    newMeetingForm.valid();
+});
+
+attendeeInput.on('change', function () {
+    // If mAttendeeInput changes -> refresh form validation state
+    newMeetingForm.valid();
+});
+
+guestInput.on('change', function () {
+    // If mGuestInput changes -> refresh form validation state
+    newMeetingForm.valid();
+});
