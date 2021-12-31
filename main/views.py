@@ -22,7 +22,7 @@ def create():
 @app.route('/new/meeting', methods=['POST'])
 @login_required
 def new_meeting():
-    form = request.data
+    form = request.form
     print(form)
     return jsonify({'message': 'Success'})
 

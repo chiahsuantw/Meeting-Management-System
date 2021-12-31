@@ -78,8 +78,10 @@ extemporeSection.on('click', 'div > a', function () {
 })
 
 $('#newMeetingBtn').on('click', function () {
-        // meetingForm will be transfer as json
-        let meetingForm = {}
+
+        // form_data contain: { json_form: body_form_save_as_json, attachments: FileList }
+        let form_data = new FormData();
+        let meetingForm = {};
 
         meetingForm['title'] = titleInput.val();
         meetingForm['time'] = timeInput.val();
@@ -117,7 +119,10 @@ $('#newMeetingBtn').on('click', function () {
         meetingForm['motion'] = motionList;
         meetingForm['extempore'] = extemporeList;
 
-        //TODO: File uploading part
+        form_data.append('json_form', JSON.stringify(meetingForm));
+        // file upload
+        let attachments = document.getElementById('mAttachmentInput');
+        form_data.append('attachments', attachments.files);
 
 
 
@@ -125,7 +130,7 @@ $('#newMeetingBtn').on('click', function () {
             'type': 'POST',
             'dataType': 'json',
             'url': $SCRIPT_ROOT + '/new/meeting',
-            'data': JSON.stringify(meetingForm),
+            'data': form_data,
             'success': (data) => {
                 if (data['message'] === 'Success') {
                     console.log(data['message'])
