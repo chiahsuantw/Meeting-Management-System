@@ -81,7 +81,6 @@ extemporeSection.on('click', 'div > a', function () {
 $('#newMeetingBtn').on('click', function () {
     // Check form validity
     newMeetingForm.validate({
-        ignore: ':hidden:not(.selectpicker)',
         errorElement: 'span',
         rules: {
             'mTitleInput': 'required',
@@ -92,11 +91,19 @@ $('#newMeetingBtn').on('click', function () {
             'mMinuteTakerInput': 'required',
             'mAttendeeInput': 'required',
             'mGuestInput': 'required',
+        },
+        invalidHandler: function (form, validator) {
+            let numberOfInvalids = validator.numberOfInvalids();
+            if (numberOfInvalids) {
+                $('#newMeetingFormError').removeClass('d-none').children().children('div')
+                    .html('有 ' + numberOfInvalids + ' 個欄位不正確');
+            }
         }
     });
 
     if (!newMeetingForm.valid()) {
         // If NewMeetingForm is invalid -> Don't send form post
+        $('#contentArea').animate({scrollTop: 10000}, 1);
         return;
     }
 
@@ -165,28 +172,9 @@ $('#newMeetingBtn').on('click', function () {
     });
 });
 
-typeInput.on('change', function () {
-    // If mChairInput changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-
-chairInput.on('change', function () {
-    // If MeetingChair changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-minuteTakerInput.on('change', function () {
-    // If mMinuteTakerInput changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-attendeeInput.on('change', function () {
-    // If mAttendeeInput changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-guestInput.on('change', function () {
-    // If mGuestInput changes -> refresh form validation state
-    newMeetingForm.valid();
+newMeetingForm.on('change', function () {
+    // If fields in the form changes -> refresh form validation state
+    if (newMeetingForm.valid()) {
+        $('#newMeetingFormError').toggleClass('d-none')
+    }
 });

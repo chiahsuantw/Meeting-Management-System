@@ -9,7 +9,7 @@ from main import db, login
 
 login.login_view = 'login'
 login.login_message = '請先登入系統'
-login.login_message_category = 'info'
+login.login_message_category = 'primary'
 
 
 @login.user_loader
