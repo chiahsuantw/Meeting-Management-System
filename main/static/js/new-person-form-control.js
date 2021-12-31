@@ -1,3 +1,4 @@
+const newPersonForm = $('#newPersonForm');
 const personType = $('#pTypeInput');
 const companyNameInput = $('#pCompanyNameInput');
 const univNameInput = $('#pUnivNameInput');
@@ -78,7 +79,58 @@ function personTypeFormControl() {
     }
 }
 
+const newPersonFormValidator = newPersonForm.validate({
+    'errorElement': 'span',
+    'rules': {
+        'pNameInput': 'required',
+        'pPhoneInput': 'required',
+        'pEmailInput': {
+            required: true,
+            email: true
+        },
+        'pTypeInput': 'required',
+        'pCompanyNameInput': 'required',
+        'pUnivNameInput': 'required',
+        'pDeptNameInput': 'required',
+        'pJobTitleInput': 'required',
+        'pOfficeTelInput': 'required',
+        'pAddressInput': 'required',
+        'pBankAccountInput': 'required',
+        'pStudentIdInput': 'required',
+        'pProgramInput': 'required',
+        'pStudyYearInput': 'required'
+    },
+    'invalidHandler': function (form, validator) {
+        let numberOfInvalids = validator.numberOfInvalids();
+        if (numberOfInvalids) {
+            $('#newPersonFormError').removeClass('d-none').children().children('div')
+                .html('有 ' + numberOfInvalids + ' 個欄位不正確');
+        }
+    }
+});
+
+newPersonForm.on('change', function () {
+    // If fields in the form changes -> refresh form validation state
+    if (newPersonForm.hasClass('has-validated')) {
+        if (newPersonForm.valid()) {
+            $('#newPersonFormError').addClass('d-none');
+        }
+    }
+});
+
 $('#newPersonBtn').on('click', function () {
+    // The form validation state updates when changes were made in the form
+    // And it triggers the validation process before clicking the submit button
+    // We add .has-validated class to mark if the button was clicked
+    // and remove it if the user decided to cancel the process
+    newPersonForm.addClass('has-validated');
+
+    if (!newPersonForm.valid()) {
+        // If NewMeetingForm is invalid -> Don't send form post
+        $('#personFormArea').animate({scrollTop: 10000}, 1);
+        return;
+    }
+
     let formData = new FormData();
 
     formData.append('name', $('#pNameInput').val());
@@ -115,42 +167,48 @@ $('#newPersonBtn').on('click', function () {
             formData.append('program', programInput.val());
             formData.append('studyYear', studyYearInput.val());
             break;
-        }
-
-        $.ajax({
-            'type': 'POST',
-            'dataType': 'json',
-            'url': $SCRIPT_ROOT + '/new/person',
-            'data': formData,
-            'success': (data) => {
-                if (data['message'] === 'Success') {
-                    // Reset the form
-                    $('#newPersonForm').trigger('reset');
-                    personType.val('').selectpicker('refresh');
-                    personTypeFormControl();
-                    // Close the modal
-                    // noinspection JSUnresolvedFunction
-                    $('#newPersonModal').modal('hide');
-                    // Add person options dynamically
-                    const optionElement =
-                        '<option value="' + data['person']['id'] +
-                        '" data-subtext="(' + data['person']['email'] + ') ' +
-                        personTypeSwitch[data['person']['type']] +
-                        '">' + data['person']['name'] + '</option>'
-                    $('.person-select > select').append(optionElement).selectpicker('refresh');
-                } else {
-                    // TODO: If validation failed -> show error message
-                    console.log(data['message']);
-                }
-            },
-            'contentType': false,
-            'processData': false,
-        });
     }
-);
+
+    $.ajax({
+        'type': 'POST',
+        'dataType': 'json',
+        'url': $SCRIPT_ROOT + '/new/person',
+        'data': formData,
+        'success': (data) => {
+            if (data['message'] === 'Success') {
+                // Reset the form
+                newPersonForm.trigger('reset');
+                personType.val('').selectpicker('refresh');
+                personTypeFormControl();
+                // Close the modal
+                // noinspection JSUnresolvedFunction
+                $('#newPersonModal').modal('hide');
+                // Add person options dynamically
+                const optionElement =
+                    '<option value="' + data['person']['id'] +
+                    '" data-subtext="(' + data['person']['email'] + ') ' +
+                    personTypeSwitch[data['person']['type']] +
+                    '">' + data['person']['name'] + '</option>'
+                $('.person-select > select').append(optionElement).selectpicker('refresh');
+                newPersonFormValidator.resetForm();
+                newPersonForm.removeClass('has-validated');
+                $('#newPersonFormError').addClass('d-none');
+            } else {
+                // TODO: If validation failed -> show error message
+                console.log(data['message']);
+            }
+        },
+        'contentType': false,
+        'processData': false,
+    });
+});
 
 $('.close-new-person').on('click', function () {
-    $('#newPersonForm').trigger('reset');
+    // If the user close (cancel) the form -> Reset the form
+    newPersonForm.trigger('reset');
     personType.val('').selectpicker('refresh');
     personTypeFormControl();
+    newPersonFormValidator.resetForm();
+    newPersonForm.removeClass('has-validated');
+    $('#newPersonFormError').addClass('d-none');
 });

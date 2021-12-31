@@ -4,7 +4,7 @@
     {% include 'components/navbar.html' %}
     <main class="d-flex flex-fill flex-row overflow-hidden">
         {% include 'components/sidebar.html' %}
-        <div id="contentArea" class="container-fluid flex-fill py-5 overflow-auto">
+        <div id="meetingFormArea" class="container-fluid flex-fill py-5 overflow-auto">
             <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-8">
                     <h1 class="mt-3 mb-5">新增會議</h1>
@@ -162,11 +162,13 @@
                     <button type="button" class="btn-close close-new-person" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="personFormArea">
                     <form id="newPersonForm">
                         <div class="mb-3">
                             <label for="pNameInput" class="form-label">姓名</label>
-                            <input type="text" class="form-control" id="pNameInput">
+                            <input type="text" class="form-control" id="pNameInput" name="pNameInput"
+                                   aria-describedby="pNameInputError">
+                            <span class="error invalid-feedback" id="pNameInputError"></span>
                         </div>
                         <div class="mb-3">
                             <h6>性別</h6>
@@ -183,15 +185,21 @@
                         </div>
                         <div class="mb-3">
                             <label for="pPhoneInput" class="form-label">手機</label>
-                            <input type="tel" class="form-control" id="pPhoneInput">
+                            <input type="tel" class="form-control" id="pPhoneInput" name="pPhoneInput"
+                                   aria-describedby="pPhoneInputError">
+                            <span class="error invalid-feedback" id="pPhoneInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pEmailInput" class="form-label">電子郵件</label>
-                            <input type="email" class="form-control" id="pEmailInput">
+                            <input type="email" class="form-control" id="pEmailInput" name="pEmailInput"
+                                   aria-describedby="pEmailInputError">
+                            <span class="error invalid-feedback" id="pEmailInputError"></span>
                         </div>
                         <div class="d-flex flex-column mb-3">
                             <label for="pTypeInput" class="form-label">類別</label>
-                            <select class="selectpicker" id="pTypeInput" data-style="bg-white" data-width="100%">
+                            <select class="selectpicker" id="pTypeInput" name="pTypeInput"
+                                    aria-describedby="pTypeInputError"
+                                    data-style="bg-white" data-width="100%">
                                 <option value="">請選擇</option>
                                 <option value="DeptProf">系上教師</option>
                                 <option value="Assistant">系助理</option>
@@ -199,51 +207,73 @@
                                 <option value="Expert">業界專家</option>
                                 <option value="Student">學生</option>
                             </select>
+                            <span class="error invalid-feedback" id="pTypeInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pCompanyNameInput" class="form-label">公司名稱</label>
-                            <input type="text" class="form-control" id="pCompanyNameInput">
+                            <input type="text" class="form-control" id="pCompanyNameInput" name="pCompanyNameInput"
+                                   aria-describedby="pCompanyNameInputError">
+                            <span class="error invalid-feedback" id="pCompanyNameInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pUnivNameInput" class="form-label">學校名稱</label>
-                            <input type="text" class="form-control" id="pUnivNameInput">
+                            <input type="text" class="form-control" id="pUnivNameInput" name="pUnivNameInput"
+                                   aria-describedby="pUnivNameInputError">
+                            <span class="error invalid-feedback" id="pUnivNameInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pDeptNameInput" class="form-label">系所名稱</label>
-                            <input type="text" class="form-control" id="pDeptNameInput">
+                            <input type="text" class="form-control" id="pDeptNameInput" name="pDeptNameInput"
+                                   aria-describedby="pDeptNameInputError">
+                            <span class="error invalid-feedback" id="pDeptNameInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pJobTitleInput" class="form-label">職稱</label>
-                            <input type="text" class="form-control" id="pJobTitleInput">
+                            <input type="text" class="form-control" id="pJobTitleInput" name="pJobTitleInput"
+                                   aria-describedby="pJobTitleInputError">
+                            <span class="error invalid-feedback" id="pJobTitleInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pOfficeTelInput" class="form-label">辦公室電話</label>
-                            <input type="tel" class="form-control" id="pOfficeTelInput">
+                            <input type="tel" class="form-control" id="pOfficeTelInput" name="pOfficeTelInput"
+                                   aria-describedby="pOfficeTelInputError">
+                            <span class="error invalid-feedback" id="pOfficeTelInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pAddressInput" class="form-label">地址</label>
-                            <input type="text" class="form-control" id="pAddressInput">
+                            <input type="text" class="form-control" id="pAddressInput" name="pAddressInput"
+                                   aria-describedby="pAddressInputError">
+                            <span class="error invalid-feedback" id="pAddressInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pBankAccountInput" class="form-label">銀行帳戶</label>
-                            <input type="text" class="form-control" id="pBankAccountInput">
+                            <input type="text" class="form-control" id="pBankAccountInput" name="pBankAccountInput"
+                                   aria-describedby="pBankAccountInputError">
+                            <span class="error invalid-feedback" id="pBankAccountInputError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="pStudentIdInput" class="form-label">學號</label>
-                            <input type="text" class="form-control" id="pStudentIdInput">
+                            <input type="text" class="form-control" id="pStudentIdInput" name="pStudentIdInput"
+                                   aria-describedby="pStudentIdInputError">
+                            <span class="error invalid-feedback" id="pStudentIdInputError"></span>
                         </div>
                         <div class="flex-column mb-3">
                             <label for="pProgramInput" class="form-label">學制</label>
-                            <select class="selectpicker" id="pProgramInput" data-style="bg-white" data-width="100%">
+                            <select class="selectpicker" id="pProgramInput" name="pProgramInput"
+                                    aria-describedby="pProgramInputError"
+                                    data-style="bg-white" data-width="100%">
                                 <option value="">請選擇</option>
                                 <option value="UnderGraduate">大學部</option>
                                 <option value="Graduate">碩士班</option>
                                 <option value="PhD">博士班</option>
                             </select>
+                            <span class="error invalid-feedback" id="pProgramInputError"></span>
                         </div>
                         <div class="flex-column mb-3">
                             <label for="pStudyYearInput" class="form-label">年級</label>
-                            <select class="selectpicker" id="pStudyYearInput" data-style="bg-white" data-width="100%">
+                            <select class="selectpicker" id="pStudyYearInput" name="pStudyYearInput"
+                                    aria-describedby="pStudyYearInputError"
+                                    data-style="bg-white" data-width="100%">
                                 <option value="">請選擇</option>
                                 <option value="FirstYear">一年級</option>
                                 <option value="SecondYear">二年級</option>
@@ -253,6 +283,16 @@
                                 <option value="SixthYear">六年級</option>
                                 <option value="SeventhYear">七年級</option>
                             </select>
+                            <span class="error invalid-feedback" id="pStudyYearInputError"></span>
+                        </div>
+                        <div class="d-none mt-4" id="newPersonFormError">
+                            <div class="alert alert-danger d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                     class="bi flex-shrink-0 me-2" viewBox="0 0 16 16">
+                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                                </svg>
+                                <div>有一個或多個欄位不正確</div>
+                            </div>
                         </div>
                     </form>
                 </div>
