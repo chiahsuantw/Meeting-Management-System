@@ -17,7 +17,6 @@ const attendeeInput = $('#mAttendeeInput');
 const guestInput = $('#mGuestInput');
 const chairSpeechInput = $('#mChairSpeechInput');
 
-
 newAnnouncementBtn.on('click', function () {
     // Add an announcement to the meeting
     const announcementElement = '<div class="d-flex mb-2">' +
@@ -78,25 +77,39 @@ extemporeSection.on('click', 'div > a', function () {
     $(this).parent().remove();
 })
 
-$('#newMeetingBtn').on('click', function () {
-    // Check form validity
-    newMeetingForm.validate({
-        ignore: ':hidden:not(.selectpicker)',
-        errorElement: 'span',
-        rules: {
-            'mTitleInput': 'required',
-            'mTimeInput': 'required',
-            'mLocationInput': 'required',
-            'mTypeInput': 'required',
-            'mChairInput': 'required',
-            'mMinuteTakerInput': 'required',
-            'mAttendeeInput': 'required',
-            'mGuestInput': 'required',
+// Set up the form validator
+newMeetingForm.validate({
+    'errorElement': 'span',
+    'rules': {
+        'mTitleInput': 'required',
+        'mTimeInput': 'required',
+        'mLocationInput': 'required',
+        'mTypeInput': 'required',
+        'mChairInput': 'required',
+        'mMinuteTakerInput': 'required',
+        'mAttendeeInput': 'required',
+        'mGuestInput': 'required',
+    },
+    'invalidHandler': function (form, validator) {
+        let numberOfInvalids = validator.numberOfInvalids();
+        if (numberOfInvalids) {
+            $('#newMeetingFormError').removeClass('d-none').children().children('div')
+                .html('有 ' + numberOfInvalids + ' 個欄位不正確');
         }
-    });
+    }
+});
 
+newMeetingForm.on('change', function () {
+    // If fields in the form changes -> refresh form validation state
+    if (newMeetingForm.valid()) {
+        $('#newMeetingFormError').addClass('d-none')
+    }
+});
+
+$('#newMeetingBtn').on('click', function () {
     if (!newMeetingForm.valid()) {
         // If NewMeetingForm is invalid -> Don't send form post
+        $('#meetingFormArea').animate({scrollTop: 10000}, 1);
         return;
     }
 
@@ -167,30 +180,4 @@ $('#newMeetingBtn').on('click', function () {
         'contentType': false,
         'processData': false,
     });
-});
-
-typeInput.on('change', function () {
-    // If mChairInput changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-
-chairInput.on('change', function () {
-    // If MeetingChair changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-minuteTakerInput.on('change', function () {
-    // If mMinuteTakerInput changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-attendeeInput.on('change', function () {
-    // If mAttendeeInput changes -> refresh form validation state
-    newMeetingForm.valid();
-});
-
-guestInput.on('change', function () {
-    // If mGuestInput changes -> refresh form validation state
-    newMeetingForm.valid();
 });
