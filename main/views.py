@@ -39,8 +39,6 @@ def new_meeting():
     meeting.minute_taker_id = int(data['minuteTaker'])
     meeting.chair_speech = data['chairSpeech']
 
-    print(data)
-
     for att_id in data['attendee']:
         person = Person.query.get(int(att_id))
         meeting.attendees.append(person)
@@ -67,7 +65,7 @@ def new_meeting():
         meeting.extempores.append(extempore)
 
     for file in files:
-        filename = secure_filename(file.filename)
+        filename = str(meeting.id) + '-' + secure_filename(file.filename)
         filepath = path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         attachment = Attachment(filename, filepath)

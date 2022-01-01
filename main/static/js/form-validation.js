@@ -17,3 +17,9 @@
             }, false)
         })
 })()
+
+// TODO: new meeting validation (strip space)
+
+// TODO: announcement, motion, extempore blank detection
+
+// TODO: attendee and guest same person elimination
