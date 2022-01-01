@@ -37,6 +37,8 @@ def new_meeting():
     data = json.loads(form['json_form'])
     files = request.files.getlist('files[]')
 
+    print(data)
+
     meeting = Meeting()
     meeting.title = data['title']
     meeting.time = data['time']

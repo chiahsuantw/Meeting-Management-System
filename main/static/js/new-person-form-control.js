@@ -186,8 +186,7 @@ $('#newPersonBtn').on('click', function () {
                 const optionElement =
                     '<option value="' + data['person']['id'] +
                     '" data-subtext="(' + data['person']['email'] + ') ' +
-                    personTypeSwitch[data['person']['type']] +
-                    '">' + data['person']['name'] + '</option>'
+                    data['person']['type'] + '">' + data['person']['name'] + '</option>'
                 $('.person-select > select').append(optionElement).selectpicker('refresh');
                 newPersonFormValidator.resetForm();
                 newPersonForm.removeClass('has-validated');

@@ -18,53 +18,47 @@ def load_user(person_id):
 
 
 class GenderType(Enum):
-    Male = 'Male'
-    Female = 'Female'
+    Male = '男'
+    Female = '女'
 
 
 class PersonType(Enum):
-    Expert = 'Expert'
-    Assistant = 'Assistant'
-    DeptProf = 'DeptProf'
-    OtherProf = 'OtherProf'
-    Student = 'Student'
+    Expert = '業界專家'
+    Assistant = '系助理'
+    DeptProf = '系上教師'
+    OtherProf = '校外教師'
+    Student = '學生'
 
 
 class MeetingType(Enum):
-    # 系務會議
-    DeptAffairs = 'DeptAffairs'
-    # 系教評會
-    FacultyEvaluation = 'FacultyEvaluation'
-    # 系課程委員會
-    DeptCurriculum = 'DeptCurriculum'
-    # 招生暨學生事務委員會
-    StudentAffairs = 'StudentAffairs'
-    # 系發展協會
-    DeptDevelopment = 'DeptDevelopment'
-    # 其他
-    Other = 'Other'
+    DeptAffairs = '系務會議'
+    FacultyEvaluation = '系教評會'
+    DeptCurriculum = '系課程委員會'
+    StudentAffairs = '招生暨學生事務委員會'
+    DeptDevelopment = '系發展協會'
+    Other = '其他'
 
 
 class StudentProgramType(Enum):
-    UnderGraduate = 'UnderGraduate'
-    Graduate = 'Graduate'
-    PhD = 'PhD'
+    UnderGraduate = '大學部'
+    Graduate = '碩士班'
+    PhD = '博士班'
 
 
 class StudentStudyYearType(Enum):
-    FirstYear = 'FirstYear'
-    SecondYear = 'SecondYear'
-    ThirdYear = 'ThirdYear'
-    ForthYear = 'ForthYear'
-    FifthYear = 'FifthYear'
-    SixthYear = 'SixthYear'
-    SeventhYear = 'SeventhYear'
+    FirstYear = '一年級'
+    SecondYear = '二年級'
+    ThirdYear = '三年級'
+    ForthYear = '四年級'
+    FifthYear = '五年級'
+    SixthYear = '六年級'
+    SeventhYear = '七年級'
 
 
 class MotionStatusType(Enum):
-    InDiscussion = 'InDiscussion'
-    InExecution = 'InExecution'
-    Closed = 'Closed'
+    InDiscussion = '討論中'
+    InExecution = '執行中'
+    Closed = '結案'
 
 
 class Meeting(db.Model):

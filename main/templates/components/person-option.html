@@ -1,14 +1,6 @@
-{% set typeSwitch =  {
-    'DeptProf': '系上教師',
-    'Assistant': '系助理',
-    'OtherProf': '校外教師',
-    'Expert': '業界專家',
-    'Student': '學生'
-} %}
-
 {% for person in people %}
     <option value="{{ person.id }}"
-            data-subtext="({{ person.email }}) {{ typeSwitch[person.type.value] }}">
+            data-subtext="({{ person.email }}) {{ person.type.value }}">
         {{ person.name }}
     </option>
 {% endfor %}
