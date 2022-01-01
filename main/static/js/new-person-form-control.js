@@ -10,6 +10,7 @@ const bankAccountInput = $('#pBankAccountInput');
 const studentIdInput = $('#pStudentIdInput');
 const programInput = $('#pProgramInput');
 const studyYearInput = $('#pStudyYearInput');
+const newPersonFormError = $('#newPersonFormError');
 
 const personTypeSwitch = {
     'DeptProf': '系上教師',
@@ -103,7 +104,7 @@ const newPersonFormValidator = newPersonForm.validate({
     'invalidHandler': function (form, validator) {
         let numberOfInvalids = validator.numberOfInvalids();
         if (numberOfInvalids) {
-            $('#newPersonFormError').removeClass('d-none').children().children('div')
+            newPersonFormError.removeClass('d-none').children().children('div')
                 .html('有 ' + numberOfInvalids + ' 個欄位不正確');
         }
     }
@@ -111,10 +112,8 @@ const newPersonFormValidator = newPersonForm.validate({
 
 newPersonForm.on('change', function () {
     // If fields in the form changes -> refresh form validation state
-    if (newPersonForm.hasClass('has-validated')) {
-        if (newPersonForm.valid()) {
-            $('#newPersonFormError').addClass('d-none');
-        }
+    if (newPersonForm.hasClass('has-validated') && newPersonForm.valid()) {
+        newPersonFormError.addClass('d-none');
     }
 });
 
@@ -192,7 +191,7 @@ $('#newPersonBtn').on('click', function () {
                 $('.person-select > select').append(optionElement).selectpicker('refresh');
                 newPersonFormValidator.resetForm();
                 newPersonForm.removeClass('has-validated');
-                $('#newPersonFormError').addClass('d-none');
+                newPersonFormError.addClass('d-none');
             } else {
                 // TODO: If validation failed -> show error message
                 console.log(data['message']);
@@ -210,5 +209,5 @@ $('.close-new-person').on('click', function () {
     personTypeFormControl();
     newPersonFormValidator.resetForm();
     newPersonForm.removeClass('has-validated');
-    $('#newPersonFormError').addClass('d-none');
+    newPersonFormError.addClass('d-none');
 });

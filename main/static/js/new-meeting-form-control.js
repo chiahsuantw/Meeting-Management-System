@@ -89,6 +89,21 @@ newMeetingForm.validate({
         'mMinuteTakerInput': 'required',
         'mAttendeeInput': 'required',
         'mGuestInput': 'required',
+        'mAttachmentInput[]': {
+            'accept': 'jpg,jpeg,png,doc,docx,ppt,pptx,xls,xlsx,pdf',
+            'maxsize': 104857600,
+        }
+    },
+    'messages': {
+        'mAttachmentInput[]': {
+            'accept': '只接受圖片與文件',
+            'maxsize': '檔案大小應小於 100 MB'
+        }
+    },
+    'onfocusout': function (element) {
+        if (element.id === "mAttachmentInput[]") {
+            this.element(element);
+        }
     },
     'invalidHandler': function (form, validator) {
         let numberOfInvalids = validator.numberOfInvalids();
@@ -101,15 +116,22 @@ newMeetingForm.validate({
 
 newMeetingForm.on('change', function () {
     // If fields in the form changes -> refresh form validation state
-    if (newMeetingForm.valid()) {
-        $('#newMeetingFormError').addClass('d-none')
+    if (newMeetingForm.hasClass('has-validated') && newMeetingForm.valid()) {
+        $('#newMeetingFormError').addClass('d-none');
     }
 });
 
 $('#newMeetingBtn').on('click', function () {
+    // The form validation state updates when changes were made in the form
+    // And it triggers the validation process before clicking the submit button
+    // We add .has-validated class to mark if the button was clicked
+    // and remove it if the user decided to cancel the process
+    newMeetingForm.addClass('has-validated');
+
     if (!newMeetingForm.valid()) {
-        // If NewMeetingForm is invalid -> Don't send form post
+        // Show the error message at the bottom
         $('#meetingFormArea').animate({scrollTop: 10000}, 1);
+        // If NewMeetingForm is invalid -> Don't send form post
         return;
     }
 
@@ -157,7 +179,6 @@ $('#newMeetingBtn').on('click', function () {
 
     formData.append('json_form', JSON.stringify(meetingForm));
 
-    // File uploads
     let attachments = document.getElementById('mAttachmentInput').files;
     for (let i = 0; i < attachments.length; i++) {
         formData.append('files[]', attachments[i]);
