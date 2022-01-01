@@ -86,8 +86,8 @@ const newPersonFormValidator = newPersonForm.validate({
         'pNameInput': 'required',
         'pPhoneInput': 'required',
         'pEmailInput': {
-            required: true,
-            email: true
+            'required': true,
+            'email': true
         },
         'pTypeInput': 'required',
         'pCompanyNameInput': 'required',

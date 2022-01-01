@@ -90,7 +90,16 @@ newMeetingForm.validate({
         'mAttendeeInput': 'required',
         'mGuestInput': 'required',
         'mAttachmentInput[]': {
-            'accept': 'jpg,jpeg,png,doc,docx,ppt,pptx,xls,xlsx,pdf',
+            'accept':
+                'image/jpeg,' +
+                'image/png,' +
+                'application/msword,' +
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document,' +
+                'application/vnd.ms-powerpoint,' +
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation,' +
+                'application/vnd.ms-excel,' +
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,' +
+                'application/pdf',
             'maxsize': 104857600,
         }
     },

@@ -3,7 +3,7 @@
 {% block body %}
     <div class="h-100 d-flex justify-content-center">
         <main class="w-100 m-auto" style="max-width: 330px">
-            <form action="" class="needs-validation" method="post" novalidate>
+            <form id="loginForm" action="" method="post">
                 <div class="d-flex justify-content-center align-items-center mb-5">
                     <img src="{{ url_for('static', filename='images/csie-logo.png') }}" alt="" width="65">
                     <h1 class="text-center ms-2">會議管理系統</h1>
@@ -19,11 +19,9 @@
                 {% endwith %}
                 <div class="input-group mb-3">
                     <input name="email" type="email" class="form-control" placeholder="電子郵件"
-                           aria-label="Email" required>
+                           aria-label="Email" aria-describedby="emailError" required>
                     <button class="btn btn-outline-primary rounded-end" type="submit">登 入</button>
-                    <div class="invalid-feedback">
-                        請輸入正確的電子郵件
-                    </div>
+                    <span class="error invalid-feedback" id="emailError"></span>
                 </div>
             </form>
         </main>
@@ -31,5 +29,8 @@
 {% endblock %}
 
 {% block script %}
-    <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/i18n/defaults-zh_TW.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="{{ url_for('static', filename='js/login-form-control.js') }}"></script>
 {% endblock %}
