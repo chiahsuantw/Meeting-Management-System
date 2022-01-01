@@ -7,7 +7,7 @@ from sqlalchemy.exc import DataError
 from werkzeug.utils import secure_filename
 
 from main import app
-from main.models import Person, db, Student, Attachment, Meeting, Attendee, Announcement
+from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore
 
 
 @app.route('/')
@@ -35,17 +35,36 @@ def new_meeting():
     meeting.time = data['time']
     meeting.location = data['location']
     meeting.type = data['type']
-    meeting.minute_taker = int(data['minuteTaker'])
+    meeting.chair_id = int(data['chair'])
+    meeting.minute_taker_id = int(data['minuteTaker'])
+    meeting.chair_speech = data['chairSpeech']
+
+    print(data)
 
     for att_id in data['attendee']:
-        meeting.attendees.append(Attendee(int(att_id), True))
+        person = Person.query.get(int(att_id))
+        meeting.attendees.append(person)
 
     for gue_id in data['guest']:
-        meeting.attendees.append(Attendee(int(gue_id), False))
-    meeting.chair_speech = int(data['chairSpeech'])
+        person = Person.query.get(int(gue_id))
+        meeting.attendees.append(person)
+        meeting.attendee_association[-1].is_member = False
 
-    for ann in data['announcement']:
-        meeting.announcements.append(Announcement(ann))
+    for content in data['announcement']:
+        announcement = Announcement(content)
+        meeting.announcements.append(announcement)
+
+    for motion_form in data['motion']:
+        motion = Motion(motion_form['MotionDescription'],
+                        motion_form['MotionContent'],
+                        motion_form['MotionStatus'],
+                        motion_form['MotionResolution'],
+                        motion_form['MotionExecution'])
+        meeting.motions.append(motion)
+
+    for content in data['extempore']:
+        extempore = Extempore(content)
+        meeting.extempores.append(extempore)
 
     for file in files:
         filename = secure_filename(file.filename)
@@ -54,9 +73,8 @@ def new_meeting():
         attachment = Attachment(filename, filepath)
         meeting.attachments.append(attachment)
 
-    # commit point
-
-    # print(meeting.attachments)
+    db.session.add(meeting)
+    db.session.commit()
 
     return jsonify({'message': 'Success'})
 

@@ -38,9 +38,8 @@ def generate_student():
     student.study_year = random.choice(list(StudentStudyYearType))
     return student
 
-
-def generate_motion():
-    motion = Motion()
-    motion.description = faker.sentence()
-    motion.type = random.choice(list(MotionStatusType))
-    return motion
+# def generate_motion():
+#     motion = Motion()
+#     motion.description = faker.sentence()
+#     motion.type = random.choice(list(MotionStatusType))
+#     return motion

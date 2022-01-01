@@ -141,3 +141,4 @@ cython_debug/
 
 # Customize
 main/db.sqlite3
+main/static/uploads

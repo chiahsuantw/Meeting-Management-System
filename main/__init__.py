@@ -1,4 +1,5 @@
 from os import path
+from pathlib import Path
 
 from flask import Flask
 from flask_login import LoginManager
@@ -12,6 +13,10 @@ app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = path.join(app.root_path, 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 # TODO: Set allowed extensions
+
+# Create upload folder if it doesn't exist
+Path(app.config['UPLOAD_FOLDER']).mkdir(parents=True, exist_ok=True)
+
 db = SQLAlchemy(app)
 login = LoginManager(app)
 

@@ -169,10 +169,6 @@ class Attendee(db.Model):
     def __repr__(self):
         return f'<Attendee {self.meeting.title} {self.attendee.name}>'
 
-    def __init__(self, person_id, is_member):
-        self.person_id = person_id
-        self.is_member = is_member
-
 
 class Expert(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), primary_key=True)
@@ -215,7 +211,7 @@ class Attachment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
-    file_path = db.Column(db.String(100), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
 
     def __init__(self, filename, filepath):
         self.filename = filename
@@ -236,6 +232,9 @@ class Extempore(db.Model):
     meeting_id = db.Column(db.Integer, db.ForeignKey('meeting.id'), primary_key=True)
     content = db.Column(db.Text, nullable=False)
 
+    def __init__(self, content):
+        self.content = content
+
 
 class Motion(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -245,6 +244,13 @@ class Motion(db.Model):
     status = db.Column(db.Enum(MotionStatusType), nullable=False, default=MotionStatusType.InDiscussion)
     resolution = db.Column(db.Text)
     execution = db.Column(db.Text)
+
+    def __init__(self, description, content, status, resolution, execution):
+        self.description = description
+        self.content = content
+        self.status = status
+        self.resolution = resolution
+        self.execution = execution
 
     def update(self, description, content, status, resolution, execution):
         self.description = description

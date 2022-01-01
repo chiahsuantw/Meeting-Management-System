@@ -124,12 +124,13 @@ $('#newMeetingBtn').on('click', function () {
 
     let motionRaw = $('#pMotion')[0].getElementsByClassName('motion-form');
     for (let i = 0; i < motionRaw.length / 6; i++) {
+        let head = i * 6;
         motionList.push({
-            'MotionDescription': motionRaw[0].value,
-            'MotionStatus': motionRaw[2].value,
-            'MotionContent': motionRaw[3].value,
-            'MotionResolution': motionRaw[4].value,
-            'MotionExecution': motionRaw[5].value
+            'MotionDescription': motionRaw[head].value,
+            'MotionStatus': motionRaw[head + 2].value,
+            'MotionContent': motionRaw[head + 3].value,
+            'MotionResolution': motionRaw[head + 4].value,
+            'MotionExecution': motionRaw[head + 5].value
         })
     }
 
