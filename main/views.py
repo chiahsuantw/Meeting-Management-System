@@ -13,7 +13,14 @@ from main.models import Person, db, Student, Attachment, Meeting, Announcement, 
 @app.route('/')
 @login_required
 def home():
-    return render_template('meeting.html')
+    return redirect(url_for('meeting'))
+
+
+@app.route('/meeting')
+@app.route('/meeting/<int:meeting_id>')
+@login_required
+def meeting(meeting_id=None):
+    return render_template('meeting.html', meetings=Meeting.query, selected_meeting_id=meeting_id)
 
 
 @app.route('/new')
