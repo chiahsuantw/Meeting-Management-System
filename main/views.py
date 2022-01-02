@@ -1,8 +1,9 @@
 import json
 from os import path
 
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import render_template, redirect, url_for, flash, request, jsonify, send_file, abort
 from flask_login import login_user, logout_user, login_required
+from sqlalchemy import desc
 from sqlalchemy.exc import DataError
 from werkzeug.utils import secure_filename
 
@@ -13,14 +14,25 @@ from main.models import Person, db, Student, Attachment, Meeting, Announcement, 
 @app.route('/')
 @login_required
 def home():
-    return redirect(url_for('meeting'))
+    return redirect(url_for('meeting_page'))
 
 
 @app.route('/meeting')
 @app.route('/meeting/<int:meeting_id>')
 @login_required
-def meeting(meeting_id=None):
-    return render_template('meeting.html', meetings=Meeting.query, selected_meeting_id=meeting_id)
+def meeting_page(meeting_id=None):
+    meetings = Meeting.query.order_by(desc(Meeting.time))
+    return render_template('meeting.html', meetings=meetings, selected_meeting_id=meeting_id)
+
+
+@app.route('/get/meeting')
+@login_required
+def meeting_view():
+    meeting_id = request.args.get('id')
+    if not meeting_id:
+        return abort(404)
+    meeting = Meeting.query.get_or_404(int(meeting_id))
+    return render_template('components/meeting-view.html', meeting=meeting)
 
 
 @app.route('/new')
@@ -145,6 +157,13 @@ def new_person():
         return jsonify({'message': 'Success',
                         'person': {'id': person.id, 'name': person.name,
                                    'email': person.email, 'type': person.type.value}})
+
+
+@app.route('/uploads/<int:file_id>', methods=['GET', 'POST'])
+def download(file_id):
+    file = Attachment.query.filter_by(id=file_id).first()
+    return send_file(path_or_file=file.file_path, as_attachment=False,
+                     download_name=file.filename.split('-', 1)[1])
 
 
 @app.route('/login', methods=['GET', 'POST'])
