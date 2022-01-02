@@ -74,49 +74,74 @@
                     <p>出席人員：</p>
                     <p>列席人員：</p>
                     <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">主席致詞</h4>
+                    <div>
+                        {{ selected_meeting.chair_speech }}
+                    </div>
                     <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">報告事項</h4>
-                    <div class="d-flex">
-                        <p class="flex-shrink-0">1. </p>
-                        <div>
-                            工學院團拜時間為 110 年 2 月 26 日(五)上午 11:30-12:00,工學中庭(SDG Corner,電機系辦和
-                            資工系辦中間)
+                    {% set announcements = selected_meeting.announcements %}
+                    {% for announcement in announcements %}
+                        <div class="d-flex">
+                            <p class="flex-shrink-0">{{ announcements.index(announcement) + 1 }}. </p>
+                            <div>
+                                {{ announcement.content }}
+                            </div>
                         </div>
-                    </div>
+                    {% endfor %}
                     <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">討論事項</h4>
-                    <h5 class="my-3">提案 1</h5>
-                    <div class="d-flex">
-                        <p class="flex-shrink-0">案由：</p>
-                        <div>109 學年度第一學期修讀核心基礎課程獎勵名單，提請討論。</div>
-                    </div>
-                    <div class="d-flex">
-                        <p class="flex-shrink-0">說明：</p>
-                        <div>
-                            每名得獎人頒給獎狀乙紙(期末由任課老師頒發)及獎學金 1 仟元整。
-                            該學期操行成績八十分以上,且修讀本系核心基礎課程成績為該班前三名者
-                            ,同分參酌順序由任課老師決定之。下列核心基礎課程獎勵名單:
+                    {% set motions = selected_meeting.motions %}
+                    {% for motion in motions %}
+                        <h5 class="my-3">提案 {{ motions.index(motion) + 1 }}</h5>
+                        <div class="d-flex">
+                            <p class="flex-shrink-0">案由：</p>
+                            <div>{{ motion.description }}</div>
                         </div>
-                    </div>
-                    <div class="d-flex">
-                        <p class="flex-shrink-0">決議：</p>
-                        <div></div>
-                    </div>
+                        <div class="d-flex">
+                            <p class="flex-shrink-0">狀態：</p>
+                            <div>{{ motion.status.value }}</div>
+                        </div>
+                        <div class="d-flex">
+                            <p class="flex-shrink-0">內容：</p>
+                            <div>{{ motion.content }}</div>
+                        </div>
+                        <div class="d-flex">
+                            <p class="flex-shrink-0">決策：</p>
+                            <div>{{ motion.resolution }}</div>
+                        </div>
+                        <div class="d-flex">
+                            <p class="flex-shrink-0">執行：</p>
+                            <div>{{ motion.execution }}</div>
+                        </div>
+                    {% endfor %}
                     <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">臨時動議</h4>
+                    {% set extempores = selected_meeting.extempores %}
+                    {% for extempore in extempores %}
+                        <div class="d-flex">
+                            <p class="flex-shrink-0">{{ extempores.index(extempore) + 1 }}. </p>
+                            <div>
+                                {{ extempore.content }}
+                            </div>
+                        </div>
+                    {% endfor %}
                     {# Attachment #}
                     <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">附件</h4>
-                    <div class="d-flex flex-wrap">
-                        <a href="#" class="text-dark text-decoration-none me-3 mb-3">
-                            <div class="card bg-light">
-                                <div class="card-body d-flex align-items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">
-                                        <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"></path>
-                                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"></path>
-                                    </svg>
-                                    <p class="card-text">網路通訊概論期末專題報告.docx</p>
+                    {% set attachments = selected_meeting.attachments %}
+                    {% for attachment in attachments %}
+                        <div class="d-flex flex-wrap">
+                            <a href="#" class="text-dark text-decoration-none me-3 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body d-flex align-items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor"
+                                             class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">
+                                            <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"></path>
+                                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"></path>
+                                        </svg>
+                                        <p class="card-text">{{ attachment.filename.split('-', 1)[1] }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
+                            </a>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         {% endif %}

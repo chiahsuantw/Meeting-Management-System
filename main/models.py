@@ -211,6 +211,9 @@ class Attachment(db.Model):
         self.filename = filename
         self.file_path = filepath
 
+    def __repr__(self):
+        return f'<Person {self.id} {self.meeting_id} {self.filename}>'
+
 
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
