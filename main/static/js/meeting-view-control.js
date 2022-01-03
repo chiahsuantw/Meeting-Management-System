@@ -3,7 +3,7 @@ const meetingViewArea = $('#meetingViewArea');
 
 meetingTiles.on('click', function () {
     meetingTiles.removeClass('active');
-    $(this).toggleClass('active');
+    $(this).addClass('active');
 
     $.ajax({
         'url': $SCRIPT_ROOT + '/get/meeting',

@@ -29,25 +29,42 @@ newAnnouncementBtn.on('click', function () {
 
 newMotionBtn.on('click', function () {
     // Add a motion to the meeting
-    const motionElement =
-        '<div class="d-flex mb-2"><div class="border rounded px-2 flex-fill">' +
-        '<div class=my-2>' +
-        '<h6>案由</h6><input class="form-control motion-form" aria-label=MotionDescription>' +
-        '</div><div class=mb-2><h6>狀態</h6>' +
-        '<select class="selectpicker motion-form" data-style=bg-white data-width=100% aria-label=MotionStatus>' +
-        '<option value=InDiscussion selected>討論中</option>' +
-        '<option value=InExecution>執行中</option>' +
-        '<option value=Closed>結案</option>' +
-        '</select></div>' +
-        '<div class=mb-2>' +
-        '<h6>內容</h6>' +
-        '<textarea type=text class="form-control motion-form" rows=3 aria-label=MotionContent></textarea></div>' +
-        '<div class=mb-2>' +
-        '<h6>決策</h6><textarea type=text class="form-control motion-form" rows=3 aria-label=MotionResolution></textarea>' +
-        '</div><div class=mb-2>' +
-        '<h6>執行</h6><textarea type=text class="form-control motion-form" rows=3 aria-label=MotionExecution></textarea>' +
-        '</div></div><a href=javascript:void(0) class="my-auto ms-2">' +
-        '<img src=/static/images/trash-fill.svg width=20 alt=""></a></div>';
+    // noinspection HtmlUnknownTarget
+    const motionElement = `
+        <div class="d-flex mb-2">
+            <div class="border rounded px-2 flex-fill">
+                <div class=my-2>
+                    <h6>案由</h6>
+                    <input class="form-control motion-form" aria-label=MotionDescription>
+                </div>
+                <div class=mb-2><h6>狀態</h6>
+                    <select class="selectpicker motion-form" data-style=bg-white 
+                            data-width=100% aria-label=MotionStatus>
+                        <option value=InDiscussion selected>討論中</option>
+                        <option value=InExecution>執行中</option>
+                        <option value=Closed>結案</option>
+                    </select></div>
+                <div class=mb-2>
+                    <h6>內容</h6>
+                    <textarea type=text class="form-control motion-form" 
+                              rows=3 aria-label=MotionContent></textarea>
+                </div>
+                <div class=mb-2>
+                    <h6>決策</h6>
+                    <textarea type=text class="form-control motion-form" 
+                              rows=3 aria-label=MotionResolution></textarea>
+                </div>
+                <div class=mb-2>
+                    <h6>執行</h6>
+                    <textarea type=text class="form-control motion-form" 
+                              rows=3 aria-label=MotionExecution></textarea>
+                </div>
+            </div>
+            <a href=javascript:void(0) class="my-auto ms-2">
+                <img src=/static/images/trash-fill.svg width=20 alt="">
+            </a>
+        </div>
+    `;
     motionSection.append(motionElement);
     $('select').selectpicker();
 });
