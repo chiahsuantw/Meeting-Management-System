@@ -5,8 +5,8 @@
     <main class="d-flex flex-fill flex-row overflow-hidden">
         {% include 'components/sidebar.html' %}
         {# ListView #}
-        <div class="flex-column align-items-stretch overflow-auto flex-shrink-0 bg-white border-end"
-             style="width: 380px;">
+        <div class="flex-column align-items-stretch overflow-auto flex-grow-1 flex-lg-grow-0 bg-white border-end"
+             style="min-width: 380px;">
             <div class="list-group list-group-flush border-bottom">
                 {% for meeting in meetings %}
                     <a href="javascript:void(0)" id="meetingTile-{{ meeting.id }}"
@@ -21,7 +21,7 @@
             </div>
         </div>
         {# MainView #}
-        <div class="d-flex flex-column flex-fill" id="meetingViewArea">
+        <div class="d-none d-lg-flex flex-column flex-fill" id="meetingViewArea">
             <div class="d-flex flex-fill flex-column align-items-center justify-content-center">
                 <img src="https://img.icons8.com/fluency/100/000000/literature.png" alt=""/><br>
                 <strong>選取要讀取的會議</strong>
@@ -29,6 +29,19 @@
             </div>
         </div>
     </main>
+
+    <div class="modal" id="meetingViewModal">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    ...
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block script %}
