@@ -5,7 +5,6 @@ from flask import render_template, redirect, url_for, flash, request, jsonify, s
 from flask_login import login_user, logout_user, login_required
 from sqlalchemy import desc
 from sqlalchemy.exc import DataError
-from werkzeug.utils import secure_filename
 
 from main import app
 from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore
@@ -18,11 +17,10 @@ def home():
 
 
 @app.route('/meeting')
-@app.route('/meeting/<int:meeting_id>')
 @login_required
-def meeting_page(meeting_id=None):
+def meeting_page():
     meetings = Meeting.query.order_by(desc(Meeting.time))
-    return render_template('meeting.html', meetings=meetings, selected_meeting_id=meeting_id)
+    return render_template('meeting.html', meetings=meetings)
 
 
 @app.route('/get/meeting')
@@ -86,7 +84,8 @@ def new_meeting():
         meeting.extempores.append(extempore)
 
     for file in files:
-        filename = str(meeting.id) + '-' + secure_filename(file.filename)
+        # secure_filename() does not allow Chinese characters
+        filename = str(meeting.id) + '-' + file.filename
         filepath = path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         attachment = Attachment(filename, filepath)

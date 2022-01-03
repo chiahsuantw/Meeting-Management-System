@@ -113,13 +113,33 @@
                class="text-dark text-decoration-none" title="{{ attachment.filename.split('-', 1)[1] }}">
                 <div class="card bg-light">
                     <div class="card-body d-flex align-items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                             fill="currentColor"
-                             class="bi bi-file-earmark-arrow-down me-2" viewBox="0 0 16 16">
-                            <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"></path>
-                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"></path>
-                        </svg>
-                        <p class="card-text">{{ attachment.filename.split('-', 1)[1] }}</p>
+                        {% set file_type = attachment.filename.split('.')[-1] %}
+                        {% if file_type in ['jpg', 'jpeg', 'png'] %}
+                            <img src="https://img.icons8.com/fluency/240/000000/photos.png"
+                                 width="24" height="24" alt="">
+                        {% elif file_type == 'pdf' %}
+                            <img src="https://img.icons8.com/fluency/240/000000/adobe-acrobat.png"
+                                 width="24" height="24" alt="">
+                        {% elif file_type == 'txt' %}
+                            <img src="https://img.icons8.com/fluency/240/000000/notepad.png"
+                                 width="24" height="24" alt="">
+                        {% elif file_type in ['ppt', 'pptx'] %}
+                            <img src="https://img.icons8.com/fluency/240/000000/microsoft-powerpoint-2019.png"
+                                 width="24" height="24" alt="">
+                        {% elif file_type in ['xls', 'xlsx'] %}
+                            <img src="https://img.icons8.com/fluency/240/000000/microsoft-excel-2019.png"
+                                 width="24" height="24" alt="">
+                        {% elif file_type in ['doc', 'docx'] %}
+                            <img src="https://img.icons8.com/fluency/240/000000/microsoft-word-2019.png"
+                                 width="24" height="24" alt="">
+                        {% else %}
+                            <img src="https://img.icons8.com/fluency/240/000000/file.png"
+                                 width="24" height="24" alt="">
+                        {% endif %}
+                        {% set len_of_filetype = attachment.filename.split('.')[-1]|length %}
+                        {% set filename = attachment.filename.split('-', 1)[1][:-len_of_filetype-1] %}
+                        {% set filename_display = filename if filename|length <= 20 else filename[:20]+'...' %}
+                        <p class="ms-1 card-text">{{ filename_display }}</p>
                     </div>
                 </div>
             </a>

@@ -110,6 +110,7 @@ newMeetingForm.validate({
             'accept':
                 'image/jpeg,' +
                 'image/png,' +
+                'text/plain,' +
                 'application/msword,' +
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document,' +
                 'application/vnd.ms-powerpoint,' +
@@ -218,7 +219,8 @@ $('#newMeetingBtn').on('click', function () {
         'data': formData,
         'success': (data) => {
             if (data['message'] === 'Success') {
-                console.log(data['message'])
+                // Redirect to homepage if the submission is successful
+                window.location.href = '/';
             } else {
                 // TODO: If validation failed -> show error message
                 console.log(data['message']);
