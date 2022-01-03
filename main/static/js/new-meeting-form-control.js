@@ -148,18 +148,6 @@ newMeetingForm.on('change', function () {
     }
 });
 
-// TODO get change val()
-$(".person-select").on('change', function () {
-    if (this.id === 'mChairInput') {
-        console.log(this.id, $(this).val());
-    } else if (this.id === 'mAttendeeInput') {
-        console.log(this.id, $(this).val());
-    } else if (this.id === 'mGuestInput') {
-        console.log(this.id, $(this).val());
-    }
-
-})
-
 $('#newMeetingBtn').on('click', function () {
     // The form validation state updates when changes were made in the form
     // And it triggers the validation process before clicking the submit button
@@ -241,4 +229,39 @@ $('#newMeetingBtn').on('click', function () {
         'contentType': false,
         'processData': false,
     });
+});
+
+const attendanceInput = $('#mAttendanceInput');
+$('.person-select').on('change', function () {
+    // Add selected people to AttendanceCheckList
+    if (this.id === 'mAttendeeInput' || this.id === 'mGuestInput') {
+        // Clear the section
+        attendanceInput.html('');
+        let personSet = new Set(attendeeInput.val().concat(guestInput.val()));
+        // Add people to the section
+        personSet.forEach(function (value) {
+            attendanceInput.append(`
+                <div>
+                    <a href="javascript:void(0)" style="background-color: #c8e6c9"
+                       class="px-2 border border-success rounded-pill text-decoration-none text-dark">[${value}]姓名</a>
+                    <input type="checkbox" class="d-none" autocomplete="off" aria-label="" checked>
+                </div>
+            `);
+        });
+    }
+})
+
+attendanceInput.on('click', 'div > a', function () {
+    const checkBox = $(this).siblings('input')
+    if (checkBox.prop('checked') === true) {
+        checkBox.prop('checked', false);
+        $(this).css('background-color', '#ffcdd2');
+        $(this).removeClass('border border-success');
+        $(this).addClass('border border-danger');
+    } else {
+        checkBox.prop('checked', true);
+        $(this).css('background-color', '#c8e6c9');
+        $(this).removeClass('border border-danger');
+        $(this).addClass('border border-success');
+    }
 });

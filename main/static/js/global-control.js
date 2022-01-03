@@ -1,11 +1,11 @@
 // Toggle the sidebar
 $('#sidebarBtn').on('click', function () {
     const sidebar = $('#sidebar');
-    if (sidebar.hasClass('d-flex')) {
-        sidebar.removeClass('d-flex');
+    if (sidebar.hasClass('d-md-flex')) {
+        sidebar.removeClass('d-md-flex');
         sidebar.addClass('d-none');
     } else {
         sidebar.removeClass('d-none');
-        sidebar.addClass('d-flex');
+        sidebar.addClass('d-md-flex');
     }
 });
