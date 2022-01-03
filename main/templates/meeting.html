@@ -4,9 +4,16 @@
     {% include 'components/navbar.html' %}
     <main class="d-flex flex-fill flex-row overflow-hidden">
         {% include 'components/sidebar.html' %}
+        <style>
+            @media only screen and (min-width: 992px) {
+                .list-view {
+                    min-width: 380px;
+                    max-width: 380px;
+                }
+            }
+        </style>
         {# ListView #}
-        <div class="flex-column align-items-stretch overflow-auto flex-grow-1 flex-lg-grow-0 bg-white border-end"
-             style="min-width: 380px;">
+        <div class="flex-column align-items-stretch overflow-auto flex-grow-1 flex-lg-grow-0 bg-white border-end list-view">
             <div class="list-group list-group-flush border-bottom">
                 {% for meeting in meetings %}
                     <a href="javascript:void(0)" id="meetingTile-{{ meeting.id }}"
