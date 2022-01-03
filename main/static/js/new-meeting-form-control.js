@@ -148,6 +148,18 @@ newMeetingForm.on('change', function () {
     }
 });
 
+// TODO get change val()
+$(".person-select").on('change', function () {
+    if (this.id === 'mChairInput') {
+        console.log(this.id, $(this).val());
+    } else if (this.id === 'mAttendeeInput') {
+        console.log(this.id, $(this).val());
+    } else if (this.id === 'mGuestInput') {
+        console.log(this.id, $(this).val());
+    }
+
+})
+
 $('#newMeetingBtn').on('click', function () {
     // The form validation state updates when changes were made in the form
     // And it triggers the validation process before clicking the submit button
