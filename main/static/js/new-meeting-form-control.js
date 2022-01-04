@@ -240,19 +240,20 @@ $('.person-select').on('change', function () {
         let personSet = new Set(attendeeInput.val().concat(guestInput.val()));
         // Add people to the section
         personSet.forEach(function (value) {
+            const name = $(`#mChairInput option[value=${value}]`).html().trim();
             attendanceInput.append(`
                 <div>
                     <a href="javascript:void(0)" style="background-color: #c8e6c9"
-                       class="px-2 border border-success rounded-pill text-decoration-none text-dark">[${value}]姓名</a>
+                       class="px-2 border border-success rounded-pill text-decoration-none text-dark">${name}</a>
                     <input type="checkbox" class="d-none" autocomplete="off" aria-label="" checked>
                 </div>
             `);
         });
     }
-})
+});
 
 attendanceInput.on('click', 'div > a', function () {
-    const checkBox = $(this).siblings('input')
+    const checkBox = $(this).siblings('input');
     if (checkBox.prop('checked') === true) {
         checkBox.prop('checked', false);
         $(this).css('background-color', '#ffcdd2');
