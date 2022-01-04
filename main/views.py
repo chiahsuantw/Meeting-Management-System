@@ -42,9 +42,29 @@ def person_page():
 def meeting_view():
     meeting_id = request.args.get('id')
     if not meeting_id:
-        return abort(404)
+        return abort(400)
     meeting = Meeting.query.get_or_404(int(meeting_id))
     return render_template('components/meeting-view.html', meeting=meeting)
+
+
+@app.route('/get/motion')
+@login_required
+def motion_view():
+    motion_id = request.args.get('id')
+    if not motion_id:
+        return abort(400)
+    motion = Motion.query.filter_by(id=motion_id).first_or_404(int(motion_id))
+    return render_template('components/motion-view.html', motion=motion)
+
+
+@app.route('/get/person')
+@login_required
+def person_view():
+    person_id = request.args.get('id')
+    if not person_id:
+        return abort(400)
+    person = Person.query.get_or_404(int(person_id))
+    return render_template('components/person-view.html', person=person)
 
 
 @app.route('/new')
