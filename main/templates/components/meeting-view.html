@@ -64,11 +64,16 @@
     <div class="d-flex">
         <p class="flex-shrink-0">與會人員：</p>
         <div class="d-flex flex-wrap gap-1 align-content-start mb-3">
-            {% for attendees in meeting.attendees %}
-                {% if attendees.attendee_association[0].is_member %}
+            {% for attendee in attendees.filter_by(is_member=True) %}
+                {% if attendee.is_present %}
                     <a href="{{ url_for('person_page', person_id=attendees.id) }}" style="background-color: #c8e6c9"
                        class="px-2 border border-success rounded-pill text-decoration-none text-dark">
-                        {{ attendees.name }}
+                        {{ attendee.attendee.name }}
+                    </a>
+                {% else %}
+                    <a href="#" style="background-color: #ffcdd2"
+                       class="px-2 border border-danger rounded-pill text-decoration-none text-dark">
+                        {{ attendee.attendee.name }}
                     </a>
                 {% endif %}
             {% endfor %}
@@ -77,11 +82,16 @@
     <div class="d-flex">
         <p class="flex-shrink-0">列席人員：</p>
         <div class="d-flex flex-wrap gap-1 align-content-start">
-            {% for attendees in meeting.attendees %}
-                {% if not attendees.attendee_association[0].is_member %}
+            {% for attendee in attendees.filter_by(is_member=False) %}
+                {% if attendee.is_present %}
                     <a href="{{ url_for('person_page', person_id=attendees.id) }}" style="background-color: #c8e6c9"
                        class="px-2 border border-success rounded-pill text-decoration-none text-dark">
-                        {{ attendees.name }}
+                        {{ attendee.attendee.name }}
+                    </a>
+                {% else %}
+                    <a href="#" style="background-color: #ffcdd2"
+                       class="px-2 border border-danger rounded-pill text-decoration-none text-dark">
+                        {{ attendee.attendee.name }}
                     </a>
                 {% endif %}
             {% endfor %}

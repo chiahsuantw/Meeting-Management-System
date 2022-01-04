@@ -7,7 +7,7 @@ from sqlalchemy import desc
 from sqlalchemy.exc import DataError
 
 from main import app
-from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore
+from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee
 
 
 @app.route('/')
@@ -48,7 +48,8 @@ def meeting_view():
     if not meeting_id:
         return abort(400)
     meeting = Meeting.query.get_or_404(int(meeting_id))
-    return render_template('components/meeting-view.html', meeting=meeting)
+    attendees = Attendee.query.filter_by(meeting_id=meeting_id)
+    return render_template('components/meeting-view.html', meeting=meeting, attendees=attendees)
 
 
 @app.route('/get/motion')
@@ -86,6 +87,7 @@ def new_meeting():
     files = request.files.getlist('files[]')
 
     print(data)
+    print(data['present'])
 
     meeting = Meeting()
     meeting.title = data['title']
@@ -104,6 +106,15 @@ def new_meeting():
         person = Person.query.get(int(gue_id))
         meeting.attendees.append(person)
         meeting.attendee_association[-1].is_member = False
+
+    attendees = Attendee.query.filter_by(meeting_id=meeting.id)
+
+    present = data['present']
+    for attendee in attendees:
+        if attendee.person_id in present:
+            attendee.is_present = True
+        else:
+            attendee.is_present = False
 
     for content in data['announcement']:
         announcement = Announcement(content)

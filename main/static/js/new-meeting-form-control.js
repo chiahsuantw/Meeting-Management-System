@@ -184,6 +184,14 @@ $('#newMeetingBtn').on('click', function () {
         announcementList.push($(this).children().val());
     })
 
+    let present = [];
+    $('.attendanceCheck').each(function () {
+        if ($(this).siblings('input').prop('checked')) {
+            present.push(parseInt(this.id.split('-')[1]));
+        }
+    });
+    meetingForm['present'] = present;
+
     let motionRaw = $('#pMotion')[0].getElementsByClassName('motion-form');
     for (let i = 0; i < motionRaw.length / 6; i++) {
         let head = i * 6;
@@ -243,8 +251,9 @@ $('.person-select').on('change', function () {
             const name = $(`#mChairInput option[value=${value}]`).html().trim();
             attendanceInput.append(`
                 <div>
-                    <a href="javascript:void(0)" style="background-color: #c8e6c9"
-                       class="px-2 border border-success rounded-pill text-decoration-none text-dark">${name}</a>
+                    <a href="javascript:void(0)" style="background-color: #c8e6c9" id="attendace-${value}"
+                       class="attendanceCheck px-2 border border-success 
+                              rounded-pill text-decoration-none text-dark">${name}</a>
                     <input type="checkbox" class="d-none" autocomplete="off" aria-label="" checked>
                 </div>
             `);
