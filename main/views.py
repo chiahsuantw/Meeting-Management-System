@@ -22,7 +22,8 @@ def home():
 def meeting_page(meeting_id=None):
     meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
     meetings = Meeting.query.order_by(desc(Meeting.time))
-    return render_template('meeting.html', meetings=meetings, meeting=meeting)
+    attendees = Attendee.query.filter_by(meeting_id=meeting_id)
+    return render_template('meeting.html', meetings=meetings, meeting=meeting, attendees=attendees)
 
 
 @app.route('/motion')

@@ -52,7 +52,7 @@
     <div class="d-flex">
         <p class="flex-shrink-0">主 席：</p>
         <div class="d-flex flex-wrap gap-1 align-content-start">
-            <a href="{{ url_for('person_page', person_id=meeting.chair.id) }}" style="background-color: #f5f5f5"
+            <a href="{{ url_for('person_page', person_id=meeting.chair_id) }}" style="background-color: #f5f5f5"
                class="px-2 border border-secondary rounded-pill text-decoration-none text-dark">
                 {{ meeting.chair.name }}
             </a>
@@ -61,7 +61,7 @@
     <div class="d-flex">
         <p class="flex-shrink-0">紀 錄：</p>
         <div class="d-flex flex-wrap gap-1 align-content-start">
-            <a href="{{ url_for('person_page', person_id=meeting.minute_taker.id) }}" style="background-color: #f5f5f5"
+            <a href="{{ url_for('person_page', person_id=meeting.minute_taker_id) }}" style="background-color: #f5f5f5"
                class="px-2 border border-secondary rounded-pill text-decoration-none text-dark">
                 {{ meeting.minute_taker.name }}
             </a>
@@ -72,12 +72,14 @@
         <div class="d-flex flex-wrap gap-1 align-content-start mb-3">
             {% for attendee in attendees.filter_by(is_member=True) %}
                 {% if attendee.is_present %}
-                    <a href="{{ url_for('person_page', person_id=attendees.id) }}" style="background-color: #c8e6c9"
+                    <a href="{{ url_for('person_page', person_id=attendee.person_id) }}"
+                       style="background-color: #c8e6c9"
                        class="px-2 border border-success rounded-pill text-decoration-none text-dark">
                         {{ attendee.attendee.name }}
                     </a>
                 {% else %}
-                    <a href="#" style="background-color: #ffcdd2"
+                    <a href="{{ url_for('person_page', person_id=attendee.person_id) }}"
+                       style="background-color: #ffcdd2"
                        class="px-2 border border-danger rounded-pill text-decoration-none text-dark">
                         {{ attendee.attendee.name }}
                     </a>
@@ -90,12 +92,14 @@
         <div class="d-flex flex-wrap gap-1 align-content-start">
             {% for attendee in attendees.filter_by(is_member=False) %}
                 {% if attendee.is_present %}
-                    <a href="{{ url_for('person_page', person_id=attendees.id) }}" style="background-color: #c8e6c9"
+                    <a href="{{ url_for('person_page', person_id=attendee.person_id) }}"
+                       style="background-color: #c8e6c9"
                        class="px-2 border border-success rounded-pill text-decoration-none text-dark">
                         {{ attendee.attendee.name }}
                     </a>
                 {% else %}
-                    <a href="#" style="background-color: #ffcdd2"
+                    <a href="{{ url_for('person_page', person_id=attendee.person_id) }}"
+                       style="background-color: #ffcdd2"
                        class="px-2 border border-danger rounded-pill text-decoration-none text-dark">
                         {{ attendee.attendee.name }}
                     </a>
