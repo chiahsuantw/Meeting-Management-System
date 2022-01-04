@@ -22,7 +22,15 @@
                             <strong class="mb-1 text-nowrap text-truncate">{{ motion.description }}</strong>
                         </div>
                         <div class="mb-1 small text-nowrap text-truncate">{{ motion.meeting.title }}</div>
-                        <div class="mb-0 small">{{ motion.status.value }}</div>
+                        <div class="mb-0 small">
+                            {% if motion.status.value == '討論中' %}
+                                <span class="badge bg-danger">{{ motion.status.value }}</span>
+                            {% elif motion.status.value == '執行中' %}
+                                <span class="badge bg-warning">{{ motion.status.value }}</span>
+                            {% elif motion.status.value == '結案' %}
+                                <span class="badge bg-success">{{ motion.status.value }}</span>
+                            {% endif %}
+                        </div>
                     </a>
                 {% endfor %}
             </div>

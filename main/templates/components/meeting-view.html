@@ -39,7 +39,7 @@
 </div>
 {# Meeting minutes viewer #}
 <div class="d-flex flex-column flex-fill overflow-auto p-3 p-lg-5">
-    <h3 class="text-center text-bold mb-5">{{ meeting.title }}</h3>
+    <h3 class="text-center fw-bolder mb-5">{{ meeting.title }}</h3>
     <p>時 間：{{ meeting.time }}</p>
     <p>地 點：{{ meeting.location }}</p>
     <p>類 型：{{ meeting.type.value }}</p>
@@ -87,26 +87,34 @@
             {% endfor %}
         </div>
     </div>
-    <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">主席致詞</h4>
+    <h4 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">主席致詞</h4>
     {{ meeting.chair_speech }}
-    <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">報告事項</h4>
+    <h4 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">報告事項</h4>
     {% for announcement in meeting.announcements %}
         <div class="d-flex">
             <p class="flex-shrink-0">{{ loop.index }}.&nbsp;</p>
             <div class="mb-3">{{ announcement.content }}</div>
         </div>
     {% endfor %}
-    <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">討論事項</h4>
+    <h4 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">討論事項</h4>
     {% for motion in meeting.motions %}
-        <h5 class="my-3">提案 {{ loop.index }}</h5>
+        <h5 class="my-3 fw-bolder">提案 {{ loop.index }}</h5>
         <div class="ps-4">
             <div class="d-flex">
                 <p class="flex-shrink-0">案由：</p>
-                <div class="mb-3">{{ motion.description }}</div>
+                <div class="mb-3 fw-bold">{{ motion.description }}</div>
             </div>
             <div class="d-flex">
                 <p class="flex-shrink-0">狀態：</p>
-                <div class="mb-3">{{ motion.status.value }}</div>
+                <div class="mb-3">
+                    {% if motion.status.value == '討論中' %}
+                        <span class="badge bg-danger">{{ motion.status.value }}</span>
+                    {% elif motion.status.value == '執行中' %}
+                        <span class="badge bg-warning">{{ motion.status.value }}</span>
+                    {% elif motion.status.value == '結案' %}
+                        <span class="badge bg-success">{{ motion.status.value }}</span>
+                    {% endif %}
+                </div>
             </div>
             <div class="d-flex">
                 <p class="flex-shrink-0">內容：</p>
@@ -122,7 +130,7 @@
             </div>
         </div>
     {% endfor %}
-    <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">臨時動議</h4>
+    <h4 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">臨時動議</h4>
     {% for extempore in meeting.extempores %}
         <div class="d-flex">
             <p class="flex-shrink-0">{{ loop.index }}.&nbsp;</p>
@@ -130,7 +138,7 @@
         </div>
     {% endfor %}
     {# Attachment #}
-    <h4 class="mt-5 mb-3 pb-3 text-bold border-bottom border-3">附件</h4>
+    <h4 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">附件</h4>
     <div class="d-flex flex-wrap gap-2">
         {% for attachment in meeting.attachments %}
             <a href="{{ url_for('download', file_id=attachment.id) }}" target="_blank"
