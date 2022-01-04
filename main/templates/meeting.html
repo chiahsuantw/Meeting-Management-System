@@ -4,6 +4,7 @@
     {% include 'components/navbar.html' %}
     <main class="d-flex flex-fill flex-row overflow-hidden">
         {% include 'components/sidebar.html' %}
+        {# ListView #}
         <style>
             @media only screen and (min-width: 992px) {
                 .list-view {
@@ -12,11 +13,10 @@
                 }
             }
         </style>
-        {# ListView #}
         <div class="flex-column align-items-stretch overflow-auto flex-grow-1 flex-lg-grow-0 bg-white border-end list-view">
             <div class="list-group list-group-flush border-bottom">
                 {% for meeting in meetings %}
-                    <a href="javascript:void(0)" id="meetingTile-{{ meeting.id }}"
+                    <a href="javascript:void(0)" id="meetingTile-{{ meeting.id }}" title="{{ meeting.title }}"
                        class="list-group-item list-group-item-action py-3 lh-tight meetingTile">
                         <div class="d-flex w-100 align-items-center justify-content-between">
                             <strong class="mb-1 text-nowrap text-truncate">{{ meeting.title }}</strong>
@@ -29,9 +29,9 @@
         </div>
         {# MainView #}
         <div class="d-none d-lg-flex flex-column flex-fill" id="meetingViewArea">
-            <div class="d-flex flex-fill flex-column align-items-center justify-content-center">
+            <div class="d-flex flex-fill flex-column align-items-center justify-content-center bg-light">
                 <img src="https://img.icons8.com/fluency/100/000000/literature.png" alt=""/><br>
-                <strong>選取要讀取的會議</strong>
+                <strong>選取要檢視的會議</strong>
                 <p>未選取任何項目</p>
             </div>
         </div>

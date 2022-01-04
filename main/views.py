@@ -23,6 +23,20 @@ def meeting_page():
     return render_template('meeting.html', meetings=meetings)
 
 
+@app.route('/motion')
+@login_required
+def motion_page():
+    motions = Motion.query
+    return render_template('motion.html', motions=motions)
+
+
+@app.route('/person')
+@login_required
+def person_page():
+    people = Person.query
+    return render_template('person.html', people=people)
+
+
 @app.route('/get/meeting')
 @login_required
 def meeting_view():
