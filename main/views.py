@@ -17,10 +17,12 @@ def home():
 
 
 @app.route('/meeting')
+@app.route('/meeting/<int:meeting_id>')
 @login_required
-def meeting_page():
+def meeting_page(meeting_id=None):
+    meeting = Meeting.query.get(meeting_id)
     meetings = Meeting.query.order_by(desc(Meeting.time))
-    return render_template('meeting.html', meetings=meetings)
+    return render_template('meeting.html', meetings=meetings, meeting=meeting)
 
 
 @app.route('/motion')
@@ -31,10 +33,12 @@ def motion_page():
 
 
 @app.route('/person')
+@app.route('/person/<int:person_id>')
 @login_required
-def person_page():
+def person_page(person_id=None):
+    person = Person.query.get(person_id)
     people = Person.query
-    return render_template('person.html', people=people)
+    return render_template('person.html', people=people, person=person)
 
 
 @app.route('/get/meeting')

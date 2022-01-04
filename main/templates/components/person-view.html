@@ -23,5 +23,46 @@
 </div>
 
 <div class="d-flex flex-column flex-fill overflow-auto p-3 p-lg-5">
-    {{ person.name }}
+    <div class="d-flex flex-column align-items-center justify-content-center">
+        {% if person.gender.name == 'Female' %}
+            <img src="https://img.icons8.com/fluency/100/000000/person-female.png" width="100" height="100" alt=""/>
+        {% else %}
+            <img src="https://img.icons8.com/fluency/100/000000/person-male.png" width="100" height="100" alt=""/>
+        {% endif %}
+        <h2 class="mt-4"><strong>{{ person.name }}</strong></h2>
+        <p>（{{ person.type.value }}）</p>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-xl-5">
+            <h5 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">基本資料</h5>
+            <p class="mb-3">性別：{{ person.gender.value }}</p>
+            <p class="mb-3">手機：{{ person.phone }}</p>
+            <p class="mb-3">電子郵件：{{ person.email }}</p>
+        </div>
+        <div class="col-xl-5">
+            <h5 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">詳細資料</h5>
+            {% if person.type.name == 'Expert' %}
+                <p class="mb-3">公司名稱：{{ person.expert_info.company_name }}</p>
+                <p class="mb-3">職稱：{{ person.expert_info.job_title }}</p>
+                <p class="mb-3">辦公室電話：{{ person.expert_info.office_tel }}</p>
+                <p class="mb-3">地址：{{ person.expert_info.address }}</p>
+                <p class="mb-3">銀行帳戶：{{ person.expert_info.bank_account }}</p>
+            {% elif person.type.name == 'Assistant' %}
+                <p class="mb-3">辦公室電話：{{ person.assistant_info.office_tel }}</p>
+            {% elif person.type.name == 'DeptProf' %}
+                <p class="mb-3">職稱：{{ person.dept_prof_info.job_title }}</p>
+                <p class="mb-3">辦公室電話：{{ person.dept_prof_info.office_tel }}</p>
+            {% elif person.type.name == 'OtherProf' %}
+                <p class="mb-3">學校名稱：{{ person.other_prof_info.univ_name }}</p>
+                <p class="mb-3">職稱：{{ person.other_prof_info.job_title }}</p>
+                <p class="mb-3">辦公室電話：{{ person.other_prof_info.office_tel }}</p>
+                <p class="mb-3">地址：{{ person.other_prof_info.address }}</p>
+                <p class="mb-3">銀行帳戶：{{ person.expert_info.bank_account }}</p>
+            {% elif person.type.name == 'Student' %}
+                <p class="mb-3">學號：{{ person.student_info.student_id }}</p>
+                <p class="mb-3">學制：{{ person.student_info.program.value }}</p>
+                <p class="mb-3">年級：{{ person.student_info.study_year.value }}</p>
+            {% endif %}
+        </div>
+    </div>
 </div>

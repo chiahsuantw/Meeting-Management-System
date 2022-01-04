@@ -4,37 +4,43 @@
     {% include 'components/navbar.html' %}
     <main class="d-flex flex-fill flex-row overflow-hidden">
         {% include 'components/sidebar.html' %}
-        {# ListView #}
-        <style>
-            @media only screen and (min-width: 992px) {
-                .list-view {
-                    min-width: 380px;
-                    max-width: 380px;
+        {% if person %}
+            <div class="d-flex flex-column flex-fill" id="meetingViewArea">
+                {% include 'components/person-view.html' %}
+            </div>
+        {% else %}
+            {# ListView #}
+            <style>
+                @media only screen and (min-width: 992px) {
+                    .list-view {
+                        min-width: 380px;
+                        max-width: 380px;
+                    }
                 }
-            }
-        </style>
-        <div class="flex-column align-items-stretch overflow-auto flex-grow-1 flex-lg-grow-0 bg-white border-end list-view">
-            <div class="list-group list-group-flush border-bottom">
-                {% for person in people %}
-                    <a href="javascript:void(0)" id="personTile-{{ person.id }}" title="{{ person.name }}"
-                       class="list-group-item list-group-item-action py-3 lh-tight personTile">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <strong class="mb-1 text-nowrap text-truncate">{{ person.name }}</strong>
-                        </div>
-                        <div class="mb-1 small">{{ person.type.value }}</div>
-                        <div class="mb-0 small">{{ person.email }}</div>
-                    </a>
-                {% endfor %}
+            </style>
+            <div class="flex-column align-items-stretch overflow-auto flex-grow-1 flex-lg-grow-0 bg-white border-end list-view">
+                <div class="list-group list-group-flush border-bottom">
+                    {% for person in people %}
+                        <a href="javascript:void(0)" id="personTile-{{ person.id }}" title="{{ person.name }}"
+                           class="list-group-item list-group-item-action py-3 lh-tight personTile">
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <strong class="mb-1 text-nowrap text-truncate">{{ person.name }}</strong>
+                            </div>
+                            <div class="mb-1 small">{{ person.type.value }}</div>
+                            <div class="mb-0 small">{{ person.email }}</div>
+                        </a>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        {# MainView #}
-        <div class="d-none d-lg-flex flex-column flex-fill" id="personViewArea">
-            <div class="d-flex flex-fill flex-column align-items-center justify-content-center bg-light">
-                <img src="https://img.icons8.com/fluency/100/000000/find-user-male.png" alt=""/><br>
-                <strong>選取要檢視的人員</strong>
-                <p>未選取任何項目</p>
+            {# MainView #}
+            <div class="d-none d-lg-flex flex-column flex-fill" id="personViewArea">
+                <div class="d-flex flex-fill flex-column align-items-center justify-content-center bg-light">
+                    <img src="https://img.icons8.com/fluency/100/000000/find-user-male.png" alt=""/><br>
+                    <strong>選取要檢視的人員</strong>
+                    <p>未選取任何項目</p>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </main>
 
     <div class="modal" id="personViewModal">
