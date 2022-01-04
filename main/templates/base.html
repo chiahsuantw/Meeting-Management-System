@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+    {{ moment.include_moment() }}
+    {{ moment.locale('zh_TW') }}
     {% block style %}
     {% endblock %}
     <title>{% if title %}{{ title }} - {% endif %}會議管理系統</title>

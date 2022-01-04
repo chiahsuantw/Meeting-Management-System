@@ -27,7 +27,7 @@
                                 <strong class="mb-1 text-nowrap text-truncate">{{ meeting.title }}</strong>
                             </div>
                             <div class="mb-1 small">{{ meeting.type.value }}</div>
-                            <div class="mb-0 small">{{ meeting.time }}</div>
+                            <div class="mb-0 small">{{ moment(meeting.time).calendar() }}</div>
                         </a>
                     {% endfor %}
                 </div>

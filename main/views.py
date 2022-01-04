@@ -20,7 +20,7 @@ def home():
 @app.route('/meeting/<int:meeting_id>')
 @login_required
 def meeting_page(meeting_id=None):
-    meeting = Meeting.query.get(meeting_id)
+    meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
     meetings = Meeting.query.order_by(desc(Meeting.time))
     return render_template('meeting.html', meetings=meetings, meeting=meeting)
 
@@ -36,7 +36,7 @@ def motion_page():
 @app.route('/person/<int:person_id>')
 @login_required
 def person_page(person_id=None):
-    person = Person.query.get(person_id)
+    person = Person.query.get_or_404(person_id) if person_id else None
     people = Person.query
     return render_template('person.html', people=people, person=person)
 
