@@ -130,26 +130,77 @@ extemporeSection.on('click', 'div > a', function () {
     $(this).parent().remove();
 })
 
-// Set up the form validator
-jQuery.validator.addMethod('chair', function () {
-    // Check if there exists duplicated selection of people for different roles
-    return !(chairInput.val() === minuteTakerInput.val());
-}, '與會人員只能被指派一種身份');
+// Detect duplicates in selecting person section
+// If someone is selected -> Disable the option for the other picker
+let oldChairIndex = 0
+let oldMinuteTakerIndex = 0
+chairInput.on('changed.bs.select', function (e, clickedIndex) {
+    minuteTakerInput.children()[clickedIndex].disabled = true;
+    minuteTakerInput.children()[oldChairIndex].disabled = false;
 
-jQuery.validator.addMethod('attendee', function () {
-    // Check if there exists duplicated selection of people for different roles
-    return !(attendeeInput.val().includes(chairInput.val()) || attendeeInput.val().includes(minuteTakerInput.val()));
-}, '與會人員只能被指派一種身份');
+    if (clickedIndex) {
+        attendeeInput.children()[clickedIndex - 1].disabled = true;
+        guestInput.children()[clickedIndex - 1].disabled = true;
+    }
+    if (oldChairIndex > 0) {
+        attendeeInput.children()[oldChairIndex - 1].disabled = false;
+        guestInput.children()[oldChairIndex - 1].disabled = false;
+    }
+    minuteTakerInput.selectpicker('refresh');
+    attendeeInput.selectpicker('refresh');
+    guestInput.selectpicker('refresh');
 
-jQuery.validator.addMethod('guest', function () {
-    // Check if there exists duplicated selection of people for different roles
+    oldChairIndex = clickedIndex;
+});
 
-    let personList = attendeeInput.val().concat(guestInput.val());
-    let personSet = new Set(attendeeInput.val().concat(guestInput.val()));
-    let check1 = guestInput.val().includes(chairInput.val()) || guestInput.val().includes(minuteTakerInput.val());
-    let check2 = personList.length !== personSet.size
-    return !(check1 || check2);
-}, '與會人員只能被指派一種身份');
+minuteTakerInput.on('changed.bs.select', function (e, clickedIndex) {
+    chairInput.children()[clickedIndex].disabled = true;
+    chairInput.children()[oldMinuteTakerIndex].disabled = false;
+
+    if (clickedIndex > 0) {
+        attendeeInput.children()[clickedIndex - 1].disabled = true;
+        guestInput.children()[clickedIndex - 1].disabled = true;
+    }
+    if (oldMinuteTakerIndex > 0) {
+        attendeeInput.children()[oldMinuteTakerIndex - 1].disabled = false;
+        guestInput.children()[oldMinuteTakerIndex - 1].disabled = false;
+    }
+    chairInput.selectpicker('refresh');
+    attendeeInput.selectpicker('refresh');
+    guestInput.selectpicker('refresh');
+
+    oldMinuteTakerIndex = clickedIndex;
+});
+
+attendeeInput.on('changed.bs.select', function (e, clickedIndex, newValue) {
+    if (newValue) {
+        chairInput.children()[clickedIndex + 1].disabled = true;
+        minuteTakerInput.children()[clickedIndex + 1].disabled = true;
+        guestInput.children()[clickedIndex].disabled = true;
+    } else {
+        chairInput.children()[clickedIndex + 1].disabled = false;
+        minuteTakerInput.children()[clickedIndex + 1].disabled = false;
+        guestInput.children()[clickedIndex].disabled = false;
+    }
+    chairInput.selectpicker('refresh');
+    minuteTakerInput.selectpicker('refresh');
+    guestInput.selectpicker('refresh');
+});
+
+guestInput.on('changed.bs.select', function (e, clickedIndex, newValue) {
+    if (newValue) {
+        chairInput.children()[clickedIndex + 1].disabled = true;
+        minuteTakerInput.children()[clickedIndex + 1].disabled = true;
+        attendeeInput.children()[clickedIndex].disabled = true;
+    } else {
+        chairInput.children()[clickedIndex + 1].disabled = false;
+        minuteTakerInput.children()[clickedIndex + 1].disabled = false;
+        attendeeInput.children()[clickedIndex].disabled = false;
+    }
+    chairInput.selectpicker('refresh');
+    minuteTakerInput.selectpicker('refresh');
+    attendeeInput.selectpicker('refresh');
+});
 
 newMeetingForm.validate({
     'errorElement': 'span',
@@ -158,19 +209,10 @@ newMeetingForm.validate({
         'mTimeInput': 'required',
         'mLocationInput': 'required',
         'mTypeInput': 'required',
-        'mChairInput': {
-            'required': true,
-            'chair': true
-        },
+        'mChairInput': 'required',
         'mMinuteTakerInput': 'required',
-        'mAttendeeInput': {
-            'required': true,
-            'attendee': true
-        },
-        'mGuestInput': {
-            'required': true,
-            'guest': true
-        },
+        'mAttendeeInput': 'required',
+        'mGuestInput': 'required',
         'mAttachmentInput[]': {
             'accept':
                 'image/jpeg,' +
