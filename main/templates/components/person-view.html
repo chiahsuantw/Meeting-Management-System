@@ -57,7 +57,7 @@
                 <p class="mb-3">職稱：{{ person.other_prof_info.job_title }}</p>
                 <p class="mb-3">辦公室電話：{{ person.other_prof_info.office_tel }}</p>
                 <p class="mb-3">地址：{{ person.other_prof_info.address }}</p>
-                <p class="mb-3">銀行帳戶：{{ person.expert_info.bank_account }}</p>
+                <p class="mb-3">銀行帳戶：{{ person.other_prof_info.bank_account }}</p>
             {% elif person.type.name == 'Student' %}
                 <p class="mb-3">學號：{{ person.student_info.student_id }}</p>
                 <p class="mb-3">學制：{{ person.student_info.program.value }}</p>
