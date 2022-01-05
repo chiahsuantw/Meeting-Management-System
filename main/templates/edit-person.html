@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% include 'components/navbar.html' %}
+    <main class="d-flex flex-fill flex-row overflow-hidden">
+        {% include 'components/sidebar.html' %}
+        <div id="personFormArea" class="container-fluid flex-fill py-5 overflow-auto">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8">
+                    <h1 class="mt-3 mb-5">修改人員資料</h1>
+                    {% include 'components/person-form.html' %}
+                    <div class="d-grid col-lg-2 mt-4 mx-auto">
+                        <button id="editPersonBtn" class="btn btn-primary">送出修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="d-none">
+        <div id="person-data-id">{{ person.id }}</div>
+        <div id="person-data-name">{{ person.name }}</div>
+        <div id="person-data-gender">{{ person.gender.name }}</div>
+        <div id="person-data-phone">{{ person.phone }}</div>
+        <div id="person-data-email">{{ person.email }}</div>
+        <div id="person-data-type">{{ person.type.name }}</div>
+        {% if person.type.name == 'Expert' %}
+            <div id="person-data-company_name">{{ person.expert_info.company_name }}</div>
+            <div id="person-data-job_title">{{ person.expert_info.job_title }}</div>
+            <div id="person-data-office_tel">{{ person.expert_info.office_tel }}</div>
+            <div id="person-data-address">{{ person.expert_info.address }}</div>
+            <div id="person-data-bank_account">{{ person.expert_info.bank_account }}</div>
+        {% elif person.type.name == 'Assistant' %}
+            <div id="person-data-office_tel">{{ person.assistant_info.office_tel }}</div>
+        {% elif person.type.name == 'DeptProf' %}
+            <div id="person-data-job_title">{{ person.dept_prof_info.job_title }}</div>
+            <div id="person-data-office_tel">{{ person.dept_prof_info.office_tel }}</div>
+        {% elif person.type.name == 'OtherProf' %}
+            <div id="person-data-univ_name">{{ person.other_prof_info.univ_name }}</div>
+            <div id="person-data-dept_name">{{ person.other_prof_info.dept_name }}</div>
+            <div id="person-data-job_title">{{ person.other_prof_info.job_title }}</div>
+            <div id="person-data-office_tel">{{ person.other_prof_info.office_tel }}</div>
+            <div id="person-data-address">{{ person.other_prof_info.address }}</div>
+            <div id="person-data-bank_account">{{ person.other_prof_info.bank_account }}</div>
+        {% elif person.type.name == 'Student' %}
+            <div id="person-data-student_id">{{ person.student_info.student_id }}</div>
+            <div id="person-data-program">{{ person.student_info.program.name }}</div>
+            <div id="person-data-study_year">{{ person.student_info.study_year.name }}</div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-bootstrap-select.css') }}">
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/i18n/defaults-zh_TW.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/localization/messages_zh_TW.min.js"></script>
+    <script defer src="{{ url_for('static', filename='js/new-person-form-control.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/edit-person-form-control.js') }}"></script>
+{% endblock %}

@@ -214,6 +214,13 @@ def edit_meeting(meeting_id):
     return render_template('edit-meeting.html', meeting=meeting)
 
 
+@app.route('/edit/person/<int:person_id>')
+@login_required
+def edit_person(person_id):
+    person = Person.query.get_or_404(int(person_id))
+    return render_template('edit-person.html', person=person)
+
+
 @app.route('/uploads/<int:file_id>', methods=['GET', 'POST'])
 def download(file_id):
     file = Attachment.query.filter_by(id=file_id).first()
