@@ -153,6 +153,19 @@ chairInput.on('changed.bs.select', function (e, clickedIndex) {
     oldChairIndex = clickedIndex;
 });
 
+$(document).ready(function () {
+    minuteTakerInput.val($('#current-user-id').text());
+    minuteTakerInput.children().each(function (index) {
+        if ($(this).val() === $('#current-user-id').text()) {
+            oldMinuteTakerIndex = index
+            chairInput.children()[index].disabled = true;
+            attendeeInput.children()[index - 1].disabled = true;
+            guestInput.children()[index - 1].disabled = true;
+        }
+    });
+    $('.selectpicker').selectpicker('refresh');
+});
+
 minuteTakerInput.on('changed.bs.select', function (e, clickedIndex) {
     chairInput.children()[clickedIndex].disabled = true;
     chairInput.children()[oldMinuteTakerIndex].disabled = false;
