@@ -131,16 +131,25 @@ extemporeSection.on('click', 'div > a', function () {
 })
 
 // Set up the form validator
-jQuery.validator.addMethod('only-one', function (value, element) {
+jQuery.validator.addMethod('chair', function () {
     // Check if there exists duplicated selection of people for different roles
-    let personList = chairInput.val()
-        .concat(minuteTakerInput.val())
-        .concat(attendeeInput.val())
-        .concat(guestInput.val());
-    let personSet = new Set(personList);
-    return personList.length === personSet.size;
+    return !(chairInput.val() === minuteTakerInput.val());
 }, '與會人員只能被指派一種身份');
 
+jQuery.validator.addMethod('attendee', function () {
+    // Check if there exists duplicated selection of people for different roles
+    return !(attendeeInput.val().includes(chairInput.val()) || attendeeInput.val().includes(minuteTakerInput.val()));
+}, '與會人員只能被指派一種身份');
+
+jQuery.validator.addMethod('guest', function () {
+    // Check if there exists duplicated selection of people for different roles
+
+    let personList = attendeeInput.val().concat(guestInput.val());
+    let personSet = new Set(attendeeInput.val().concat(guestInput.val()));
+    let check1 = guestInput.val().includes(chairInput.val()) || guestInput.val().includes(minuteTakerInput.val());
+    let check2 = personList.length !== personSet.size
+    return !(check1 || check2);
+}, '與會人員只能被指派一種身份');
 
 newMeetingForm.validate({
     'errorElement': 'span',
@@ -151,19 +160,16 @@ newMeetingForm.validate({
         'mTypeInput': 'required',
         'mChairInput': {
             'required': true,
-            'only-one': true
+            'chair': true
         },
-        'mMinuteTakerInput': {
-            'required': true,
-            'only-one': true
-        },
+        'mMinuteTakerInput': 'required',
         'mAttendeeInput': {
             'required': true,
-            'only-one': true
+            'attendee': true
         },
         'mGuestInput': {
             'required': true,
-            'only-one': true
+            'guest': true
         },
         'mAttachmentInput[]': {
             'accept':
