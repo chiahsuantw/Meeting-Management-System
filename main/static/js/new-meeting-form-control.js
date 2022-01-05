@@ -17,16 +17,31 @@ const attendeeInput = $('#mAttendeeInput');
 const guestInput = $('#mGuestInput');
 const chairSpeechInput = $('#mChairSpeechInput');
 
+// This is used for giving each extemporeElement a specific name
+// because jQuery validate needs unique name to work
+let announcementElementCounter = 0;
 newAnnouncementBtn.on('click', function () {
     // Add an announcement to the meeting
-    const announcementElement = '<div class="d-flex mb-2">' +
-        '<textarea class="form-control" rows="2" ' +
-        'aria-label="AnnouncementContent" placeholder="內容"></textarea>' +
-        '<a href="javascript:void(0)" class="my-auto ms-2">' +
-        '<img src="/static/images/trash-fill.svg" width="20" alt=""></a></div>';
+    // noinspection HtmlUnknownTarget
+    const announcementElement = `
+        <div class="d-flex mt-2">
+            <textarea class="form-control" rows="2" aria-label="AnnouncementContent"
+                      name="AnnouncementContent-${announcementElementCounter}"
+                      placeholder="內容" aria-describedby="AnnouncementContentError-${announcementElementCounter}"></textarea>
+            <a href="javascript:void(0)" class="my-auto ms-2">
+                <img src="/static/images/trash-fill.svg" width="20" alt="">
+            </a>
+        </div>
+        <span class="error invalid-feedback" id="AnnouncementContentError-${announcementElementCounter}"></span>
+    `;
     announcementSection.append(announcementElement);
+    $(`textarea[name='AnnouncementContent-${announcementElementCounter}']`).rules('add', {'required': true});
+    announcementElementCounter++;
 });
 
+// This is used for giving each extemporeElement a specific name
+// because jQuery validate needs unique name to work
+let motionElementCounter = 0;
 newMotionBtn.on('click', function () {
     // Add a motion to the meeting
     // noinspection HtmlUnknownTarget
@@ -35,7 +50,10 @@ newMotionBtn.on('click', function () {
             <div class="border rounded px-2 flex-fill">
                 <div class=my-2>
                     <h6>案由</h6>
-                    <input class="form-control motion-form" aria-label=MotionDescription>
+                    <input class="form-control motion-form" aria-label=MotionDescription 
+                           name="MotionDescription-${motionElementCounter}" 
+                           aria-describedby="MotionDescriptionError-${motionElementCounter}">
+                    <span class="error invalid-feedback" id="MotionDescriptionError-${motionElementCounter}"></span>
                 </div>
                 <div class=mb-2><h6>狀態</h6>
                     <select class="selectpicker motion-form" data-style=bg-white 
@@ -47,7 +65,10 @@ newMotionBtn.on('click', function () {
                 <div class=mb-2>
                     <h6>內容</h6>
                     <textarea type=text class="form-control motion-form" 
-                              rows=3 aria-label=MotionContent></textarea>
+                              name="MotionContent-${motionElementCounter}"
+                              rows=3 aria-label=MotionContent 
+                              aria-describedby="MotionContentError-${motionElementCounter}"></textarea>
+                    <span class="error invalid-feedback" id="MotionContentError-${motionElementCounter}"></span>
                 </div>
                 <div class=mb-2>
                     <h6>決策</h6>
@@ -67,16 +88,31 @@ newMotionBtn.on('click', function () {
     `;
     motionSection.append(motionElement);
     $('select').selectpicker();
+    $(`input[name='MotionDescription-${motionElementCounter}']`).rules('add', {'required': true});
+    $(`textarea[name='MotionContent-${motionElementCounter}']`).rules('add', {'required': true});
+    motionElementCounter++;
 });
 
+// This is used for giving each extemporeElement a specific name
+// because jQuery validate needs unique name to work
+let extemporeElementCounter = 0;
 newExtemporeBtn.on('click', function () {
     // Add an extempore to the meeting
-    const extemporeElement = '<div class="d-flex mb-2">' +
-        '<textarea class="form-control" rows="2" ' +
-        'aria-label="ExtemporeContent" placeholder="內容"></textarea>' +
-        '<a href="javascript:void(0)" class="my-auto ms-2">' +
-        '<img src="/static/images/trash-fill.svg" width="20" alt=""></a></div>';
+    // noinspection HtmlUnknownTarget
+    const extemporeElement = `
+        <div class="d-flex mt-2">
+            <textarea class="form-control" rows="2" aria-label="ExtemporeContent" 
+                      name="ExtemporeContent-${extemporeElementCounter}"
+                      placeholder="內容" aria-describedby="ExtemporeContentError-${extemporeElementCounter}"></textarea>
+            <a href="javascript:void(0)" class="my-auto ms-2">
+                <img src="/static/images/trash-fill.svg" width="20" alt="">
+            </a>
+        </div>
+        <span class="error invalid-feedback" id="ExtemporeContentError-${extemporeElementCounter}"></span>
+    `;
     extemporeSection.append(extemporeElement);
+    $(`textarea[name='ExtemporeContent-${extemporeElementCounter}']`).rules('add', {'required': true});
+    extemporeElementCounter++;
 });
 
 announcementSection.on('click', 'div > a', function () {
@@ -95,6 +131,17 @@ extemporeSection.on('click', 'div > a', function () {
 })
 
 // Set up the form validator
+jQuery.validator.addMethod('only-one', function (value, element) {
+    // Check if there exists duplicated selection of people for different roles
+    let personList = chairInput.val()
+        .concat(minuteTakerInput.val())
+        .concat(attendeeInput.val())
+        .concat(guestInput.val());
+    let personSet = new Set(personList);
+    return personList.length === personSet.size;
+}, '與會人員只能被指派一種身份');
+
+
 newMeetingForm.validate({
     'errorElement': 'span',
     'rules': {
@@ -102,10 +149,22 @@ newMeetingForm.validate({
         'mTimeInput': 'required',
         'mLocationInput': 'required',
         'mTypeInput': 'required',
-        'mChairInput': 'required',
-        'mMinuteTakerInput': 'required',
-        'mAttendeeInput': 'required',
-        'mGuestInput': 'required',
+        'mChairInput': {
+            'required': true,
+            'only-one': true
+        },
+        'mMinuteTakerInput': {
+            'required': true,
+            'only-one': true
+        },
+        'mAttendeeInput': {
+            'required': true,
+            'only-one': true
+        },
+        'mGuestInput': {
+            'required': true,
+            'only-one': true
+        },
         'mAttachmentInput[]': {
             'accept':
                 'image/jpeg,' +
