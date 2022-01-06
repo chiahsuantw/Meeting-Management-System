@@ -208,7 +208,7 @@ def new_person():
                                    'email': person.email, 'type': person.type.value}})
 
 
-@app.route('/edit/meeting/<int:meeting_id>')
+@app.route('/edit/meeting/<int:meeting_id>', methods=['GET', 'POST'])
 def edit_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(int(meeting_id))
     return render_template('edit-meeting.html', title=meeting.title, meeting=meeting)

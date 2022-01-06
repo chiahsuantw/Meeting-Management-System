@@ -163,6 +163,7 @@ $(document).ready(function () {
             guestInput.children()[index - 1].disabled = true;
         }
     });
+    minuteTakerInput.prop('disabled', 'true');
     $('.selectpicker').selectpicker('refresh');
 });
 
