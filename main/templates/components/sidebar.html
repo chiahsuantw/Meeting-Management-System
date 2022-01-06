@@ -1,24 +1,24 @@
 <div class="d-none d-md-flex flex-column flex-shrink-0 bg-white border-end" id="sidebar" style="width: 72px;">
     <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
-        <li class="nav-item">
+        <li class="nav-item" {% if title and title == '新增會議' %}style="background-color: #e1f5fe"{% endif %}>
             <a href="{{ url_for('create') }}" class="nav-link py-3" title="新增會議">
                 <img src="https://img.icons8.com/fluency/48/000000/add.png"
                      width="40" height="40" alt=""/>
             </a>
         </li>
-        <li>
+        <li class="nav-item" {% if title and title == '會議列表' %}style="background-color: #e1f5fe"{% endif %}>
             <a href="{{ url_for('home') }}" class="nav-link py-3" title="會議列表">
                 <img src="https://img.icons8.com/fluency/48/000000/copybook--v2.png"
                      width="40" height="40" alt=""/>
             </a>
         </li>
-        <li>
+        <li class="nav-item" {% if title and title == '決策追蹤' %}style="background-color: #e1f5fe"{% endif %}>
             <a href="{{ url_for('motion_page') }}" class="nav-link py-3" title="決策追蹤">
                 <img src="https://img.icons8.com/fluency/48/000000/goal.png"
                      width="40" height="40" alt=""/>
             </a>
         </li>
-        <li>
+        <li class="nav-item" {% if title and title == '人員列表' %}style="background-color: #e1f5fe"{% endif %}>
             <a href="{{ url_for('person_page') }}" class="nav-link py-3" title="人員列表">
                 <img src="https://img.icons8.com/fluency/48/000000/conference-foreground-selected.png"
                      width="40" height="40" alt=""/>

@@ -87,5 +87,5 @@ $('#editPersonBtn').on('click', function () {
         return;
     }
 
-    console.log('test');
+    newPersonForm.submit();
 });

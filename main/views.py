@@ -23,14 +23,14 @@ def meeting_page(meeting_id=None):
     meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
     meetings = Meeting.query.order_by(desc(Meeting.time))
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
-    return render_template('meeting.html', meetings=meetings, meeting=meeting, attendees=attendees)
+    return render_template('meeting.html', title='會議列表', meetings=meetings, meeting=meeting, attendees=attendees)
 
 
 @app.route('/motion')
 @login_required
 def motion_page():
     motions = Motion.query
-    return render_template('motion.html', motions=motions)
+    return render_template('motion.html', title='決策追蹤', motions=motions)
 
 
 @app.route('/person')
@@ -39,7 +39,7 @@ def motion_page():
 def person_page(person_id=None):
     person = Person.query.get_or_404(person_id) if person_id else None
     people = Person.query
-    return render_template('person.html', people=people, person=person)
+    return render_template('person.html', title='人員列表', people=people, person=person)
 
 
 @app.route('/get/meeting')
@@ -77,7 +77,7 @@ def person_view():
 @login_required
 def create():
     people = Person.query.all()
-    return render_template('create.html', people=people)
+    return render_template('create.html', title='新增會議', people=people)
 
 
 @app.route('/new/meeting', methods=['POST'])
@@ -211,14 +211,70 @@ def new_person():
 @app.route('/edit/meeting/<int:meeting_id>')
 def edit_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(int(meeting_id))
-    return render_template('edit-meeting.html', meeting=meeting)
+    return render_template('edit-meeting.html', title=meeting.title, meeting=meeting)
 
 
-@app.route('/edit/person/<int:person_id>')
+@app.route('/edit/person/<int:person_id>', methods=['GET', 'POST'])
 @login_required
 def edit_person(person_id):
     person = Person.query.get_or_404(int(person_id))
-    return render_template('edit-person.html', person=person)
+    if request.method == 'POST':
+        form = request.form.to_dict()
+        person.name = form['pNameInput']
+        person.gender = form['pGenderInput']
+        person.phone = form['pPhoneInput']
+        person.email = form['pEmailInput']
+
+        if person.type == 'Expert':
+            person.expert_info = None
+        elif person.type == 'Assistant':
+            person.assistant_info = None
+        elif person.type == 'DeptProf':
+            person.dept_prof_info = None
+        elif person.type == 'OtherProf':
+            person.other_prof_info = None
+        elif person.type == 'Student':
+            person.student_info = None
+
+        person.type = form['pTypeInput']
+
+        if person.type == 'DeptProf':
+            person.add_dept_prof_info(
+                job_title=form['pJobTitleInput'],
+                office_tel=form['pOfficeTelInput']
+            )
+        elif person.type == 'Assistant':
+            person.add_assistant_info(
+                office_tel=form['pOfficeTelInput']
+            )
+        elif person.type == 'OtherProf':
+            person.add_other_prof_info(
+                univ_name=form['pUnivNameInput'],
+                dept_name=form['pDeptNameInput'],
+                job_title=form['pJobTitleInput'],
+                office_tel=form['pOfficeTelInput'],
+                address=form['pAddressInput'],
+                bank_account=form['pBankAccountInput']
+            )
+        elif person.type == 'Expert':
+            person.add_expert_info(
+                company_name=form['pCompanyNameInput'],
+                job_title=form['pJobTitleInput'],
+                office_tel=form['pOfficeTelInput'],
+                address=form['pAddressInput'],
+                bank_account=form['pBankAccountInput']
+            )
+        elif person.type == 'Student':
+            if Student.query.filter_by(student_id=form['studentId']).first():
+                return jsonify({'message': 'Student ID already exists'})
+            person.add_student_info(
+                student_id=form['pStudentIdInput'],
+                program=form['pProgramInput'],
+                study_year=form['pStudyYearInput']
+            )
+        db.session.commit()
+        return redirect(url_for('person_page'))
+    return render_template('edit-person.html', title=person.name, person=person)
 
 
 @app.route('/uploads/<int:file_id>', methods=['GET', 'POST'])
