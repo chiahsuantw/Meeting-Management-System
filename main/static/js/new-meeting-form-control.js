@@ -57,6 +57,7 @@ newMotionBtn.on('click', function () {
                 </div>
                 <div class=mb-2><h6>狀態</h6>
                     <select class="selectpicker motion-form" data-style=bg-white 
+                            name="MotionStatus-${motionElementCounter}"
                             data-width=100% aria-label=MotionStatus>
                         <option value=InDiscussion selected>討論中</option>
                         <option value=InExecution>執行中</option>
@@ -73,11 +74,13 @@ newMotionBtn.on('click', function () {
                 <div class=mb-2>
                     <h6>決策</h6>
                     <textarea type=text class="form-control motion-form" 
+                              name="MotionResolution-${motionElementCounter}"
                               rows=3 aria-label=MotionResolution></textarea>
                 </div>
                 <div class=mb-2>
                     <h6>執行</h6>
                     <textarea type=text class="form-control motion-form" 
+                              name="MotionExecution-${motionElementCounter}"
                               rows=3 aria-label=MotionExecution></textarea>
                 </div>
             </div>
@@ -351,20 +354,7 @@ $('.person-select').on('change', function () {
     // Add selected people to AttendanceCheckList
     if (this.id === 'mAttendeeInput' || this.id === 'mGuestInput') {
         // Clear the section
-        attendanceInput.html('');
-        let personSet = new Set(attendeeInput.val().concat(guestInput.val()));
-        // Add people to the section
-        personSet.forEach(function (value) {
-            const name = $(`#mChairInput option[value=${value}]`).html().trim();
-            attendanceInput.append(`
-                <div>
-                    <a href="javascript:void(0)" style="background-color: #c8e6c9" id="attendace-${value}"
-                       class="attendanceCheck px-2 border border-success 
-                              rounded-pill text-decoration-none text-dark">${name}</a>
-                    <input type="checkbox" class="d-none" autocomplete="off" aria-label="" checked>
-                </div>
-            `);
-        });
+        appendPresentTag();
     }
 });
 
@@ -382,3 +372,20 @@ attendanceInput.on('click', 'div > a', function () {
         $(this).addClass('border border-success');
     }
 });
+
+function appendPresentTag() {
+    attendanceInput.html('');
+    let personSet = new Set(attendeeInput.val().concat(guestInput.val()));
+    // Add people to the section
+    personSet.forEach(function (value) {
+        const name = $(`#mChairInput option[value=${value}]`).html().trim();
+        attendanceInput.append(`
+                <div>
+                    <a href="javascript:void(0)" style="background-color: #c8e6c9" id="attendace-${value}"
+                       class="attendanceCheck px-2 border border-success 
+                              rounded-pill text-decoration-none text-dark">${name}</a>
+                    <input type="checkbox" class="d-none" autocomplete="off" aria-label="" checked>
+                </div>
+            `);
+    });
+}
