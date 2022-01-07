@@ -1,5 +1,7 @@
 import json
-from os import path
+from datetime import timedelta
+from os import path, remove
+from time import mktime
 
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_file, abort
 from flask_login import login_user, logout_user, login_required
@@ -23,7 +25,8 @@ def meeting_page(meeting_id=None):
     meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
     meetings = Meeting.query.order_by(desc(Meeting.time))
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
-    return render_template('meeting.html', title='會議列表', meetings=meetings, meeting=meeting, attendees=attendees)
+    return render_template('meeting.html', title='會議列表', meetings=meetings,
+                           meeting=meeting, attendees=attendees, timedelta=timedelta)
 
 
 @app.route('/motion')
@@ -115,7 +118,7 @@ def meeting_api(meeting_id):
                       'file_path': file.file_path})
 
     meet_info = {'title': meeting.title,
-                 'time': meeting.time,
+                 'time': int(mktime((meeting.time + timedelta(hours=8)).timetuple())) * 1000,
                  'location': meeting.location,
                  'type': meeting.type.name,
                  'chair': meeting.chair_id,
@@ -261,6 +264,7 @@ def new_person():
 
 
 @app.route('/edit/meeting/<int:meeting_id>', methods=['GET', 'POST'])
+@login_required
 def edit_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(int(meeting_id))
     people = Person.query.all()
@@ -328,6 +332,30 @@ def edit_person(person_id):
         db.session.commit()
         return redirect(url_for('person_page'))
     return render_template('edit-person.html', title=person.name, person=person)
+
+
+@app.route('/delete/meeting/<int:meeting_id>')
+@login_required
+def delete_meeting(meeting_id):
+    meeting = Meeting.query.get_or_404(int(meeting_id))
+    for file in meeting.attachments:
+        try:
+            remove(file.file_path)
+        except FileNotFoundError:
+            print('FileNotFoundError: The system cannot find the path specified')
+            abort(500)
+    db.session.delete(meeting)
+    db.session.commit()
+    return redirect(url_for('meeting_page'))
+
+
+@app.route('/delete/person/<int:person_id>')
+@login_required
+def delete_person(person_id):
+    person = Person.query.get_or_404(int(person_id))
+    db.session.delete(person)
+    db.session.commit()
+    return redirect(url_for('person_page'))
 
 
 @app.route('/uploads/<int:file_id>', methods=['GET', 'POST'])

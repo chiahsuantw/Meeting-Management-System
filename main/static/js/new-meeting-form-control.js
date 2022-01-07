@@ -120,6 +120,8 @@ newExtemporeBtn.on('click', function () {
 
 announcementSection.on('click', 'div > a', function () {
     // Delete the announcement
+    let elemIndex = $(this).siblings()[0].name.split('-')[1];
+    $(this).parent().siblings('#AnnouncementContentError-' + elemIndex).remove();
     $(this).parent().remove();
 })
 
@@ -130,6 +132,8 @@ motionSection.on('click', 'div > a', function () {
 
 extemporeSection.on('click', 'div > a', function () {
     // Delete the extempore
+    let elemIndex = $(this).siblings()[0].name.split('-')[1];
+    $(this).parent().siblings('#ExtemporeContentError-' + elemIndex).remove();
     $(this).parent().remove();
 })
 
@@ -290,7 +294,7 @@ $('#newMeetingBtn').on('click', function () {
     let motionList = [];
     let extemporeList = [];
 
-    $('#pAnnouncement').children().each(function () {
+    $('#pAnnouncement').children('div').each(function () {
         announcementList.push($(this).children().val());
     })
 
@@ -314,7 +318,7 @@ $('#newMeetingBtn').on('click', function () {
         })
     }
 
-    $('#pExtempore').children().each(function () {
+    $('#pExtempore').children('div').each(function () {
         extemporeList.push($(this).children().val());
     })
 

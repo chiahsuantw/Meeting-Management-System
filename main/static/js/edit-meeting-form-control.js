@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    let meeting_id = window.location.pathname.split('/').pop()
+    let meeting_id = window.location.pathname.split('/').pop();
 
     $.ajax({
         'url': $SCRIPT_ROOT + '/api/meeting/' + meeting_id,
@@ -7,9 +7,10 @@ $(document).ready(function () {
         'type': 'GET',
         'dataType': 'json',
         'success': function (data) {
-            // console.log(data);
-            titleInput.val(data['title'])
-            locationInput.val(data['location'])
+            titleInput.val(data['title']);
+            let datetime = new Date(data['time']).toISOString();
+            timeInput.val(datetime.substring(0, datetime.length - 1));
+            locationInput.val(data['location']);
             typeInput.val(data['type']);
             chairInput.val(data['chair']);
             minuteTakerInput.val(data['minuteTaker']);
@@ -57,7 +58,6 @@ $(document).ready(function () {
                 }
             });
             chairSpeechInput.text(data['chair_speech']);
-
 
             for (let i = 0; i < data['announcements'].length; i++) {
                 newAnnouncementBtn.click();
