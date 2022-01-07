@@ -192,6 +192,21 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/localization/messages_zh_TW.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            minuteTakerInput.val($('#current-user-id').text());
+            minuteTakerInput.children().each(function (index) {
+                if ($(this).val() === $('#current-user-id').text()) {
+                    oldMinuteTakerIndex = index
+                    chairInput.children()[index].disabled = true;
+                    attendeeInput.children()[index - 1].disabled = true;
+                    guestInput.children()[index - 1].disabled = true;
+                }
+            });
+            minuteTakerInput.prop('disabled', 'true');
+            $('.selectpicker').selectpicker('refresh');
+        });
+    </script>
     <script defer src="{{ url_for('static', filename='js/new-person-form-control.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/new-meeting-form-control.js') }}"></script>
 {% endblock %}

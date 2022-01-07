@@ -80,6 +80,56 @@ def create():
     return render_template('create.html', title='新增會議', people=people)
 
 
+# TODO meeting_api
+@app.route('/api/meeting/<int:meeting_id>')
+def meeting_api(meeting_id):
+    meeting = Meeting.query.get_or_404(int(meeting_id))
+
+    # attendee = []
+    # guest = []
+    # is_present = []
+    # motions = []
+    # files = []
+    #
+    # for att in meeting.attendee_association:
+    #     if att.is_present:
+    #         is_present.append(att)
+    #     if att.is_member:
+    #         attendee.append(attendee)
+    #     else:
+    #         guest.append(att)
+    #
+    # for mot in meeting.motions:
+    #     motion = {'description': mot.description,
+    #               'content': mot.content,
+    #               'status': mot.status.name,
+    #               'resolution': mot.resolution,
+    #               'execution': mot.execution}
+    #     motions.append(motion)
+    #
+    # for file in meeting.attachments:
+    #     files.append({'file_name': file.filename,
+    #                   'file_path': file.file_path})
+
+    # meet_info = {'title': meeting.title,
+    #              'time': meeting.time,
+    #              'location': meeting.location,
+    #              'type': meeting.type.name,
+    #              'chair': meeting.chair_id,
+    #              'minuteTaker': meeting.minute_taker_id,
+    #              'attendee': attendee,
+    #              'guest': guest,
+    #              'is_present': is_present,
+    #              'chair_speech': meeting.chair_speech,
+    #              'announcements': [ann.content for ann in meeting.announcements],
+    #              'motions': motions,
+    #              'extempore': [ext.content for ext in meeting.extempores],
+    #              'files': files}
+
+    # return jsonify(meet_info)
+    return "Hello world"
+
+
 @app.route('/new/meeting', methods=['POST'])
 @login_required
 def new_meeting():
@@ -211,7 +261,8 @@ def new_person():
 @app.route('/edit/meeting/<int:meeting_id>', methods=['GET', 'POST'])
 def edit_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(int(meeting_id))
-    return render_template('edit-meeting.html', title=meeting.title, meeting=meeting)
+    people = Person.query.all()
+    return render_template('edit-meeting.html', title=meeting.title, people=people)
 
 
 @app.route('/edit/person/<int:person_id>', methods=['GET', 'POST'])
