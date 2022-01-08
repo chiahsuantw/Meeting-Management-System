@@ -27,12 +27,12 @@ $(document).ready(function () {
                 let value = $(this).val();
                 let index = $(this).index();
 
-                if (data['chair'].toString() === value) {
+                if (data['chair'] === parseInt(value)) {
                     oldChairIndex = index;
                     minuteTakerBar[index].disabled = true;
                     attendeeBar[index - 1].disabled = true;
                     guestBar[index - 1].disabled = true;
-                } else if (data['minuteTaker'].toString() === value) {
+                } else if (data['minuteTaker'] === parseInt(value)) {
                     oldMinuteTakerIndex = index;
                     chairBar[index].disabled = true;
                     attendeeBar[index - 1].disabled = true;
