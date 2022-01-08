@@ -4,7 +4,7 @@ from os import path, remove
 from time import mktime
 
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_file, abort
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import desc
 from sqlalchemy.exc import DataError
 
@@ -23,7 +23,12 @@ def home():
 @login_required
 def meeting_page(meeting_id=None):
     meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
-    meetings = Meeting.query.order_by(desc(Meeting.time))
+    if current_user.is_admin():
+        meetings = Meeting.query.order_by(desc(Meeting.time))
+    else:
+        user = Attendee.query.filter_by(person_id=current_user.id)
+        meetings = Meeting.query.join(user.subquery()).order_by(desc(Meeting.time)).all()
+
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     return render_template('meeting.html', title='會議列表', meetings=meetings,
                            meeting=meeting, attendees=attendees, timedelta=timedelta)
@@ -32,7 +37,13 @@ def meeting_page(meeting_id=None):
 @app.route('/motion')
 @login_required
 def motion_page():
-    motions = Motion.query.order_by(Motion.status)
+    if current_user.is_admin():
+        motions = Motion.query.order_by(Motion.status)
+    else:
+        user = Attendee.query.filter_by(person_id=current_user.id)
+        meetings = Meeting.query.join(user.subquery()).order_by(desc(Meeting.time))
+        motions = Motion.query.join(meetings.subquery()).order_by(Motion.status)
+
     return render_template('motion.html', title='決策追蹤', motions=motions)
 
 

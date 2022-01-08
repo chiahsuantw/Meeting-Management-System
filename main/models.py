@@ -110,6 +110,9 @@ class Person(db.Model, UserMixin):
     meetings_as_attendee = association_proxy('attendee_association', 'meeting',
                                              creator=lambda meeting: Attendee(meeting=meeting))
 
+    def is_admin(self):
+        return self.email == 'admin'
+
     def add_expert_info(self, company_name, job_title, office_tel, address, bank_account):
         expert = Expert()
         expert.company_name = company_name
