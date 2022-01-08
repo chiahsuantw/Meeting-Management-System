@@ -1,7 +1,17 @@
 let meeting_id;
+
+jQuery.validator.addMethod('duplicate-filename', function (value, element) {
+    let filenameList = [];
+    $('#savedFiles').children().each(function () {
+        filenameList.push($(this).children().attr('title'));
+    });
+    console.log('validate');
+    return !filenameList.includes(value);
+}, '不能與現有的檔案檔名相同');
+
 $(document).ready(function () {
     meeting_id = window.location.pathname.split('/').pop();
-
+    $('#mAttachmentInput').rules('add', {'duplicate-filename': true});
     $.ajax({
         'url': $SCRIPT_ROOT + '/api/meeting/' + meeting_id,
         'data': null,
