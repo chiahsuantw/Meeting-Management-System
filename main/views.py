@@ -5,7 +5,7 @@ from time import mktime
 
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_file, abort
 from flask_login import login_user, logout_user, login_required, current_user
-from sqlalchemy import desc
+from sqlalchemy import desc, or_
 from sqlalchemy.exc import DataError
 
 from main import app
@@ -23,11 +23,24 @@ def home():
 @login_required
 def meeting_page(meeting_id=None):
     meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
+
+    # [Authority Restriction]
+    # Do for meetings when at home_page
     if current_user.is_admin():
         meetings = Meeting.query.order_by(desc(Meeting.time))
     else:
         user = Attendee.query.filter_by(person_id=current_user.id)
-        meetings = Meeting.query.join(user.subquery()).order_by(desc(Meeting.time)).all()
+        meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
+                                                 Meeting.minute_taker_id.like(current_user.id)))
+        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(Meeting.time)
+
+    # [Authority Restriction]
+    # Do for meeting at single meeting checkout
+    if meeting_id and not current_user.is_admin() and \
+            current_user.id != meeting.chair_id and \
+            current_user.id != meeting.minute_taker_id and \
+            current_user not in meeting.attendees:
+        return abort(403)
 
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     return render_template('meeting.html', title='會議列表', meetings=meetings,
@@ -41,7 +54,7 @@ def motion_page():
         motions = Motion.query.order_by(Motion.status)
     else:
         user = Attendee.query.filter_by(person_id=current_user.id)
-        meetings = Meeting.query.join(user.subquery()).order_by(desc(Meeting.time))
+        meetings = Meeting.query.join(user.subquery()).order_by(Meeting.time)
         motions = Motion.query.join(meetings.subquery()).order_by(Motion.status)
 
     return render_template('motion.html', title='決策追蹤', motions=motions)
@@ -62,7 +75,16 @@ def meeting_view():
     meeting_id = request.args.get('id')
     if not meeting_id:
         return abort(400)
+
     meeting = Meeting.query.get_or_404(int(meeting_id))
+
+    # [Authority Restriction]
+    # forbidden unauthorized user get in
+    if not current_user.is_admin() and \
+            current_user.id != meeting.chair_id and \
+            current_user.id != meeting.minute_taker_id and \
+            current_user not in meeting.attendees:
+        return abort(403)
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     return render_template('components/meeting-view.html', meeting=meeting, attendees=attendees)
 
@@ -282,6 +304,11 @@ def new_person():
 @login_required
 def edit_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(int(meeting_id))
+
+    # [Authority Restriction]
+    if not current_user.is_admin() and current_user.id != meeting.minute_taker_id:
+        return abort(403)
+
     people = Person.query.all()
 
     if request.method == 'POST':
@@ -355,6 +382,10 @@ def edit_meeting(meeting_id):
 @app.route('/edit/person/<int:person_id>', methods=['GET', 'POST'])
 @login_required
 def edit_person(person_id):
+    # [Authority Restriction]
+    if not current_user.is_admin():
+        return abort(403)
+
     person = Person.query.get_or_404(int(person_id))
     if request.method == 'POST':
         form = request.form.to_dict()
@@ -419,6 +450,10 @@ def edit_person(person_id):
 @login_required
 def delete_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(int(meeting_id))
+    # [Authority Restriction]
+    if not current_user.is_admin() and current_user.id != meeting.minute_taker_id:
+        return abort(403)
+
     for file in meeting.attachments:
         try:
             remove(file.file_path)
@@ -433,6 +468,9 @@ def delete_meeting(meeting_id):
 @app.route('/delete/person/<int:person_id>')
 @login_required
 def delete_person(person_id):
+    # [Authority Restriction]
+    if not current_user.is_admin():
+        return abort(403)
     person = Person.query.get_or_404(int(person_id))
     db.session.delete(person)
     db.session.commit()
@@ -440,6 +478,7 @@ def delete_person(person_id):
 
 
 @app.route('/uploads/<int:file_id>')
+@login_required
 def download(file_id):
     file = Attachment.query.filter_by(id=file_id).first()
     return send_file(path_or_file=file.file_path, as_attachment=False,
@@ -447,6 +486,7 @@ def download(file_id):
 
 
 @app.route('/delete-file/<int:file_id>', methods=['POST'])
+@login_required
 def delete(file_id):
     file = Attachment.query.filter_by(id=file_id).first_or_404()
     try:
