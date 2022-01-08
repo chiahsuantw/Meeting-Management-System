@@ -95,16 +95,19 @@ $(document).ready(function () {
                 };
 
                 let fileBtn = `
-                    <a href="/uploads/${fileObj['file_id']}" target="_blank"
-                   class="text-dark text-decoration-none" title="${fileObj['file_name'] + '.' + fileObj['file_type']}">
                     <div class="card bg-light">
-                        <div class="card-body d-flex align-items-center">
+                        <div class="card-body d-flex align-items-center" title="${fileObj['file_name'] + '.' + fileObj['file_type']}">
                             <img src="https://img.icons8.com/fluency/240/000000/${fileTypeIcon[fileObj['file_type']]}.png"
                                      width="24" height="24" alt="">
-                            <p class="ms-1 card-text">${fileObj['file_name']}</p>
+                            <p class="mx-1 mb-0 card-text">${fileObj['file_name']}</p>
+                            <div class="deleteFileBtn" id="deleteFileBtn-${fileObj['file_id']}" style="cursor: pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </a>`;
+                `;
                 $('#savedFiles').append(fileBtn);
             });
         }
@@ -192,7 +195,7 @@ $('#editMeetingBtn').on('click', function () {
         'success': (data) => {
             if (data['message'] === 'Success') {
                 // Redirect to homepage if the submission is successful
-                // window.location.href = '/';
+                window.location.href = '/meeting/' + meeting_id;
                 console.log('success')
             } else {
                 // TODO: If validation failed -> show error message
@@ -201,5 +204,22 @@ $('#editMeetingBtn').on('click', function () {
         },
         'contentType': false,
         'processData': false,
+    });
+});
+
+$('#savedFiles').on('click', 'div > div > div', function () {
+    let file_id = $(this).attr('id').split('-')[1];
+    $.ajax({
+        'type': 'POST',
+        'url': $SCRIPT_ROOT + '/delete-file/' + file_id,
+        'success': (data) => {
+            if (data['message'] === 'Success') {
+                console.log('File delete successfully!')
+                $(this).parent().parent().remove();
+            } else {
+                // TODO: If deleting failed -> show error message
+                console.log(data['message']);
+            }
+        },
     });
 });

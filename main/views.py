@@ -32,7 +32,7 @@ def meeting_page(meeting_id=None):
 @app.route('/motion')
 @login_required
 def motion_page():
-    motions = Motion.query
+    motions = Motion.query.order_by(Motion.status)
     return render_template('motion.html', title='決策追蹤', motions=motions)
 
 
@@ -400,7 +400,7 @@ def edit_person(person_id):
                 study_year=form['pStudyYearInput']
             )
         db.session.commit()
-        return redirect(url_for('person_page'))
+        return redirect(url_for('person_page', person_id=person.id))
     return render_template('edit-person.html', title=person.name, person=person)
 
 
@@ -428,11 +428,24 @@ def delete_person(person_id):
     return redirect(url_for('person_page'))
 
 
-@app.route('/uploads/<int:file_id>', methods=['GET', 'POST'])
+@app.route('/uploads/<int:file_id>')
 def download(file_id):
     file = Attachment.query.filter_by(id=file_id).first()
     return send_file(path_or_file=file.file_path, as_attachment=False,
                      download_name=file.filename.split('-', 1)[1])
+
+
+@app.route('/delete-file/<int:file_id>', methods=['POST'])
+def delete(file_id):
+    file = Attachment.query.filter_by(id=file_id).first_or_404()
+    try:
+        remove(file.file_path)
+    except FileNotFoundError:
+        print('FileNotFoundError: The system cannot find the path specified')
+        abort(500)
+    db.session.delete(file)
+    db.session.commit()
+    return jsonify({'message': 'Success'})
 
 
 @app.route('/login', methods=['GET', 'POST'])
