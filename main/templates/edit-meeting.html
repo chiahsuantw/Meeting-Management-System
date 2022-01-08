@@ -132,12 +132,17 @@
                             </div>
                             <div id="pExtempore" class="mb-3"></div>
                         </div>
+
                         <div class="mb-5">
                             <label for="mAttachmentInput" class="form-label fs-5 mb-0">附件</label>
                             <div class="form-text mt-0 mb-1">多重選擇，僅可以上傳圖片與文件</div>
                             <input class="form-control" type="file" id="mAttachmentInput"
                                    aria-describedby="mAttachmentInputError" name="mAttachmentInput[]" multiple>
                             <span class="error invalid-feedback" id="mAttachmentInputError"></span>
+                            {# TODO Finish the upload file deletion and interface optimization #}
+                            <h6>會議存檔</h6>
+                            <div class="d-flex flex-wrap gap-2" id="savedFiles"></div>
+
                         </div>
                     </form>
                     <div class="d-none mb-3" id="newMeetingFormError">
@@ -150,7 +155,7 @@
                         </div>
                     </div>
                     <div class="d-grid col-lg-2 mx-auto">
-                        <button id="newMeetingBtn" class="btn btn-primary">送出修改</button>
+                        <button id="editMeetingBtn" class="btn btn-primary">送出修改</button>
                     </div>
                 </div>
             </div>

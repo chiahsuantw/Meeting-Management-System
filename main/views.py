@@ -114,8 +114,13 @@ def meeting_api(meeting_id):
         motions.append(motion)
 
     for file in meeting.attachments:
-        files.append({'file_name': file.filename,
-                      'file_path': file.file_path})
+        filename = file.filename.split('-', 1)[1]
+        filetype = filename.split('.')[-1]
+        filetype = 'others' if filetype not in ['jpg', 'jpeg', 'png', 'pdf', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'doc',
+                                                'docx'] else filetype
+        files.append({'file_id': file.id,
+                      'file_name': filename[:-len(filetype) - 1],
+                      'file_type': filetype})
 
     meet_info = {'title': meeting.title,
                  'time': int(mktime((meeting.time + timedelta(hours=8)).timetuple())) * 1000,
@@ -143,7 +148,6 @@ def new_meeting():
     files = request.files.getlist('files[]')
 
     print(data)
-    print(data['present'])
 
     meeting = Meeting()
     meeting.title = data['title']
@@ -268,6 +272,72 @@ def new_person():
 def edit_meeting(meeting_id):
     meeting = Meeting.query.get_or_404(int(meeting_id))
     people = Person.query.all()
+
+    if request.method == 'POST':
+        form = request.form
+        data = json.loads(form['json_form'])
+        files = request.files.getlist('files[]')
+
+        print(data)
+        meeting.title = data['title']
+        meeting.time = data['time']
+        meeting.location = data['location']
+        meeting.type = data['type']
+        meeting.chair_id = int(data['chair'])
+        meeting.minute_taker_id = int(data['minuteTaker'])
+        meeting.chair_speech = data['chairSpeech']
+
+        meeting.attendees.clear()
+        for att_id in data['attendee']:
+            person = Person.query.get(int(att_id))
+            meeting.attendees.append(person)
+
+        for gue_id in data['guest']:
+            person = Person.query.get(int(gue_id))
+            meeting.attendees.append(person)
+            meeting.attendee_association[-1].is_member = False
+
+        attendees = Attendee.query.filter_by(meeting_id=meeting.id)
+
+        present = data['present']
+        for attendee in attendees:
+            if attendee.person_id in present:
+                attendee.is_present = True
+            else:
+                attendee.is_present = False
+
+        meeting.announcements.clear()
+        for content in data['announcement']:
+            announcement = Announcement(content)
+            meeting.announcements.append(announcement)
+
+        meeting.motions.clear()
+        for motion_form in data['motion']:
+            motion = Motion(motion_form['MotionDescription'],
+                            motion_form['MotionContent'],
+                            motion_form['MotionStatus'],
+                            motion_form['MotionResolution'],
+                            motion_form['MotionExecution'])
+            meeting.motions.append(motion)
+
+        meeting.extempores.clear()
+        for content in data['extempore']:
+            extempore = Extempore(content)
+            meeting.extempores.append(extempore)
+
+        for file in files:
+            # secure_filename() does not allow Chinese characters
+            filename = str(meeting.id) + '-' + file.filename
+            filepath = path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            attachment = Attachment(filename, filepath)
+            meeting.attachments.append(attachment)
+
+        db.session.commit()
+
+        return jsonify({'message': 'Success'})
+        # return redirect(url_for('meeting_page'))
+
     return render_template('edit-meeting.html', title=meeting.title, people=people)
 
 
