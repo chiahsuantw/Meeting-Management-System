@@ -1,28 +1,30 @@
 {# Control buttons #}
-<div class="d-flex justify-content-end border-bottom">
-    <div class="btn-group m-2" role="group">
-        <a href="{{ url_for('edit_person', person_id=person.id) }}" type="button"
-           class="btn btn-outline-secondary d-flex align-items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                 class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
-                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"></path>
-                <path fill-rule="evenodd"
-                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"></path>
-            </svg>
-            編輯
-        </a>
-        <button type="button" class="btn btn-outline-danger d-flex align-items-center" data-bs-toggle="modal"
-                data-bs-target="#confirmDeleteModal">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                 class="bi bi-trash me-1" viewBox="0 0 16 16">
-                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
-                <path fill-rule="evenodd"
-                      d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
-            </svg>
-            刪除
-        </button>
+{% if current_user.is_admin() %}
+    <div class="d-flex justify-content-end border-bottom">
+        <div class="btn-group m-2" role="group">
+            <a href="{{ url_for('edit_person', person_id=person.id) }}" type="button"
+               class="btn btn-outline-secondary d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"></path>
+                    <path fill-rule="evenodd"
+                          d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"></path>
+                </svg>
+                編輯
+            </a>
+            <button type="button" class="btn btn-outline-danger d-flex align-items-center" data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-trash me-1" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
+                    <path fill-rule="evenodd"
+                          d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+                </svg>
+                刪除
+            </button>
+        </div>
     </div>
-</div>
+{% endif %}
 
 <div class="modal fade" id="confirmDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -61,31 +63,33 @@
             <p class="mb-3">手機：{{ person.phone }}</p>
             <p class="mb-3">電子郵件：{{ person.email }}</p>
         </div>
-        <div class="col-xl-5">
-            <h5 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">詳細資料</h5>
-            {% if person.type.name == 'Expert' %}
-                <p class="mb-3">公司名稱：{{ person.expert_info.company_name }}</p>
-                <p class="mb-3">職稱：{{ person.expert_info.job_title }}</p>
-                <p class="mb-3">辦公室電話：{{ person.expert_info.office_tel }}</p>
-                <p class="mb-3">地址：{{ person.expert_info.address }}</p>
-                <p class="mb-3">銀行帳戶：{{ person.expert_info.bank_account }}</p>
-            {% elif person.type.name == 'Assistant' %}
-                <p class="mb-3">辦公室電話：{{ person.assistant_info.office_tel }}</p>
-            {% elif person.type.name == 'DeptProf' %}
-                <p class="mb-3">職稱：{{ person.dept_prof_info.job_title }}</p>
-                <p class="mb-3">辦公室電話：{{ person.dept_prof_info.office_tel }}</p>
-            {% elif person.type.name == 'OtherProf' %}
-                <p class="mb-3">學校名稱：{{ person.other_prof_info.univ_name }}</p>
-                <p class="mb-3">系所名稱：{{ person.other_prof_info.dept_name }}</p>
-                <p class="mb-3">職稱：{{ person.other_prof_info.job_title }}</p>
-                <p class="mb-3">辦公室電話：{{ person.other_prof_info.office_tel }}</p>
-                <p class="mb-3">地址：{{ person.other_prof_info.address }}</p>
-                <p class="mb-3">銀行帳戶：{{ person.other_prof_info.bank_account }}</p>
-            {% elif person.type.name == 'Student' %}
-                <p class="mb-3">學號：{{ person.student_info.student_id }}</p>
-                <p class="mb-3">學制：{{ person.student_info.program.value }}</p>
-                <p class="mb-3">年級：{{ person.student_info.study_year.value }}</p>
-            {% endif %}
-        </div>
+        {% if current_user.is_admin() %}
+            <div class="col-xl-5">
+                <h5 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">詳細資料</h5>
+                {% if person.type.name == 'Expert' %}
+                    <p class="mb-3">公司名稱：{{ person.expert_info.company_name }}</p>
+                    <p class="mb-3">職稱：{{ person.expert_info.job_title }}</p>
+                    <p class="mb-3">辦公室電話：{{ person.expert_info.office_tel }}</p>
+                    <p class="mb-3">地址：{{ person.expert_info.address }}</p>
+                    <p class="mb-3">銀行帳戶：{{ person.expert_info.bank_account }}</p>
+                {% elif person.type.name == 'Assistant' %}
+                    <p class="mb-3">辦公室電話：{{ person.assistant_info.office_tel }}</p>
+                {% elif person.type.name == 'DeptProf' %}
+                    <p class="mb-3">職稱：{{ person.dept_prof_info.job_title }}</p>
+                    <p class="mb-3">辦公室電話：{{ person.dept_prof_info.office_tel }}</p>
+                {% elif person.type.name == 'OtherProf' %}
+                    <p class="mb-3">學校名稱：{{ person.other_prof_info.univ_name }}</p>
+                    <p class="mb-3">系所名稱：{{ person.other_prof_info.dept_name }}</p>
+                    <p class="mb-3">職稱：{{ person.other_prof_info.job_title }}</p>
+                    <p class="mb-3">辦公室電話：{{ person.other_prof_info.office_tel }}</p>
+                    <p class="mb-3">地址：{{ person.other_prof_info.address }}</p>
+                    <p class="mb-3">銀行帳戶：{{ person.other_prof_info.bank_account }}</p>
+                {% elif person.type.name == 'Student' %}
+                    <p class="mb-3">學號：{{ person.student_info.student_id }}</p>
+                    <p class="mb-3">學制：{{ person.student_info.program.value }}</p>
+                    <p class="mb-3">年級：{{ person.student_info.study_year.value }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 </div>
