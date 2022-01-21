@@ -8,7 +8,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import desc, or_
 from sqlalchemy.exc import DataError
 
-from main import app
+from main import app, mail, Message
 from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee
 
 
@@ -517,3 +517,23 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.route("/sendmail")
+def send_mail():
+    # Subject
+    msg_title = '送出郵件測試'
+    # Sender: (<sender_name>, <sender_email>)
+    msg_sender = ('系務會議系統', 'db112project@hotmail.com')
+    # Receiver: type <list>
+    msg_recipients = ['alan36257407+10@gmail.com']
+    # mail_html
+    msg_html = '<h1>Hey,Flask-mail Can Use HTML</h1>'
+    msg = Message(msg_title,
+                  sender=msg_sender,
+                  recipients=msg_recipients)
+    msg.html = msg_html
+
+    # mail send
+    mail.send(msg)
+    return 'You Send Mail by Flask-Mail Success!!'
