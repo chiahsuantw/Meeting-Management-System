@@ -46,7 +46,7 @@
     {% else %}
         <div class="btn-group m-2" role="group">
             <button type="button" class="btn
-                {% if attendees.filter_by(person_id=current_user.id).first().is_confirmed %}
+                {% if attendees.filter_by(person_id=current_user.id).first().is_confirmed or meeting.chair_confirmed %}
                     btn-primary{% else %}btn-outline-primary
                 {% endif %}
                 d-flex align-items-center" id="confirmBtn">
