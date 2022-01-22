@@ -569,3 +569,26 @@ def send_meeting_modify_request(meeting_id):
     thread = Thread(target=send_async_email, args=[app, msg])
     thread.start()
     return 'Success', 200
+
+
+@app.route('/confirm')
+def confirm_check():
+    person_id = request.args.get('person_id')
+    meeting_id = request.args.get('meeting_id')
+    meeting = Meeting.query.get(meeting_id)
+
+    if request.args.get('confirm') == 'true':
+        if str(meeting.chair_id) == person_id:
+            meeting.chair_confirmed = True
+        else:
+            attendee = Attendee.query.filter_by(person_id=person_id, meeting_id=meeting_id).first()
+            attendee.is_confirmed = True
+    else:
+        if str(meeting.chair_id) == person_id:
+            meeting.chair_confirmed = False
+        else:
+            attendee = Attendee.query.filter_by(person_id=person_id, meeting_id=meeting_id).first()
+            attendee.is_confirmed = False
+
+    db.session.commit()
+    return 'Success', 200

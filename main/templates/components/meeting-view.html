@@ -148,7 +148,8 @@
         {% if meeting.chair %}
             <div class="d-flex flex-wrap gap-1 align-content-start">
                 <a href="{{ url_for('person_page', person_id=meeting.chair_id) }}" style="background-color: #f5f5f5"
-                   class="px-2 border border-secondary rounded-pill text-decoration-none text-dark">
+                   class="px-2 border border-secondary rounded-pill text-decoration-none text-dark"
+                   id="person-{{ meeting.chair_id }}">
                     {{ meeting.chair.name }}
                     {% if meeting.chair_confirmed %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

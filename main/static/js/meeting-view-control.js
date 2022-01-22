@@ -53,7 +53,6 @@ meetingViewArea.on('click', '#send-minute', function () {
 
 meetingViewArea.on('click', '#send-modify', function () {
     let meeting_id = $('#meeting-minutes')[0].attributes.name.value;
-    console.log('meeting Update!', $('#modifyRequestText').val())
     $.ajax({
         'url': $SCRIPT_ROOT + '/mail/modify/' + meeting_id,
         'data': {modify: $('#modifyRequestText').val()},
@@ -65,7 +64,7 @@ meetingViewArea.on('click', '#send-modify', function () {
     $('#toast-minute').toast('show');
 });
 
-meetingViewArea.on('click', '> div > div > button[id="confirmBtn"]', function () {
+meetingViewArea.on('click', '#confirmBtn', function () {
     let checkElem = `
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
              class="bi bi-check mb-1" viewBox="0 0 16 16">
@@ -76,9 +75,33 @@ meetingViewArea.on('click', '> div > div > button[id="confirmBtn"]', function ()
         $(this).removeClass('btn-outline-primary');
         $(this).addClass('btn-primary');
         $('#person-' + $('#current_user_id').text()).append(checkElem);
+        $.ajax({
+            'url': $SCRIPT_ROOT + '/confirm',
+            'data': {
+                person_id: $('#current_user_id').text(),
+                meeting_id: $('#meeting-minutes')[0].attributes.name.value,
+                confirm: true
+            },
+            'type': 'GET',
+            'success': function (data) {
+                console.log('confirm check');
+            }
+        });
     } else {
         $(this).removeClass('btn-primary');
         $(this).addClass('btn-outline-primary');
         $('#person-' + $('#current_user_id').text()).children('svg').remove();
+        $.ajax({
+            'url': $SCRIPT_ROOT + '/confirm',
+            'data': {
+                person_id: parseInt($('#current_user_id').text()),
+                meeting_id: $('#meeting-minutes')[0].attributes.name.value,
+                confirm: false
+            },
+            'type': 'GET',
+            'success': function (data) {
+                console.log('unconfirm check');
+            }
+        });
     }
 });
