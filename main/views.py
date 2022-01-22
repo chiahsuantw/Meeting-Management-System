@@ -1,14 +1,16 @@
 import json
 from datetime import timedelta
 from os import path, remove
+from threading import Thread
 from time import mktime
 
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_file, abort
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
 from sqlalchemy import desc, or_
 from sqlalchemy.exc import DataError
 
-from main import app, mail, Message
+from main import app, mail
 from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee
 
 
@@ -519,21 +521,48 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route("/sendmail")
-def send_mail():
-    # Subject
-    msg_title = '送出郵件測試'
-    # Sender: (<sender_name>, <sender_email>)
-    msg_sender = ('系務會議系統', 'db112project@hotmail.com')
-    # Receiver: type <list>
-    msg_recipients = ['alan36257407+10@gmail.com']
-    # mail_html
-    msg_html = '<h1>Hey,Flask-mail Can Use HTML</h1>'
-    msg = Message(msg_title,
-                  sender=msg_sender,
-                  recipients=msg_recipients)
-    msg.html = msg_html
+def send_async_email(current_app, msg):
+    with current_app.app_context():
+        mail.send(msg)
 
-    # mail send
-    mail.send(msg)
-    return 'You Send Mail by Flask-Mail Success!!'
+
+@app.route('/mail/notice/<int:meeting_id>')
+def send_meeting_notice(meeting_id):
+    meeting = Meeting.query.get_or_404(meeting_id)
+    sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
+    recipients = ['mike900707@gmail.com', 'alan36257407@gmail.com']
+    title = '開會通知 - ' + meeting.title
+    html = '<h1>開會通知</h1>'
+    msg = Message(title, sender=sender, recipients=recipients)
+    msg.html = html
+    thread = Thread(target=send_async_email, args=[app, msg])
+    thread.start()
+    return 'Success', 200
+
+
+@app.route('/mail/minute/<int:meeting_id>')
+def send_meeting_minute(meeting_id):
+    meeting = Meeting.query.get_or_404(meeting_id)
+    sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
+    recipients = ['mike900707@gmail.com', 'alan36257407@gmail.com']
+    title = '會議結果 - ' + meeting.title
+    html = '<h1>會議結果</h1>'
+    msg = Message(title, sender=sender, recipients=recipients)
+    msg.html = html
+    thread = Thread(target=send_async_email, args=[app, msg])
+    thread.start()
+    return 'Success', 200
+
+
+@app.route('/mail/modify/<int:meeting_id>')
+def send_meeting_modify_request(meeting_id):
+    meeting = Meeting.query.get_or_404(meeting_id)
+    title = '請求修改會議紀錄 - ' + meeting.title
+    sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
+    recipients = ['mike900707@gmail.com', 'alan36257407@gmail.com']
+    html = '<h1>請求修改會議紀錄</h1>'
+    msg = Message(title, sender=sender, recipients=recipients)
+    msg.html = html
+    thread = Thread(target=send_async_email, args=[app, msg])
+    thread.start()
+    return 'Success', 200

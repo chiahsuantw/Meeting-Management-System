@@ -15,13 +15,13 @@ app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = path.join(app.root_path, 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 
-# mail information( hotmail account )
-app.config['MAIL_SERVER'] = 'smtp.live.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = "db112project@hotmail.com"
-app.config['MAIL_PASSWORD'] = "project4234"
+# Flask-Mail configurations
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_DEBUG'] = True
+app.config['MAIL_USERNAME'] = '110.database.csie.nuk@gmail.com'
+app.config['MAIL_PASSWORD'] = 'database4234'
 
 # Create upload folder if it doesn't exist
 Path(app.config['UPLOAD_FOLDER']).mkdir(parents=True, exist_ok=True)
