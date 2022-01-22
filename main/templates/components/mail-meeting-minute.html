@@ -1,0 +1,71 @@
+<h1>{{ meeting.title }}</h1>
+<h2>會議資訊</h2>
+<p>
+    {% set weekday = ['一','二','三','四','五','六','日'] %}
+    時 間：民國 {{ meeting.time.date().year - 1911 }} 年
+    {{ meeting.time.date().month }} 月
+    {{ meeting.time.date().day }} 日（星期{{ weekday[meeting.time.date().weekday()] }}）
+    {{ '%02d' % meeting.time.time().hour }} : {{ '%02d' % meeting.time.time().minute }} 整
+</p>
+<p>地 點：{{ meeting.location }}</p>
+<p>類 型：{{ meeting.type.value }}</p>
+<p>主 席：{% if meeting.chair %}{{ meeting.chair.name }}{% endif %}</p>
+<p>紀 錄：{% if meeting.minute_taker %}{{ meeting.minute_taker.name }}{% endif %}</p>
+<p>與會人員：
+    {% for attendee in attendees.filter_by(is_member=True) %}
+        {% if loop.index != 1 %}、{% endif %}
+        {% if attendee.is_present %}
+            {{ attendee.attendee.name }}
+        {% else %}
+            {{ attendee.attendee.name }}（缺席）
+        {% endif %}
+    {% endfor %}
+</p>
+<p>列席人員：
+    {% for attendee in attendees.filter_by(is_member=False) %}
+        {% if loop.index != 1 %}、{% endif %}
+        {% if attendee.is_present %}
+            {{ attendee.attendee.name }}
+        {% else %}
+            {{ attendee.attendee.name }}（缺席）
+        {% endif %}
+    {% endfor %}
+</p>
+<hr>
+
+{% if not agenda %}
+    <h2>主席致詞</h2>
+    {{ meeting.chair_speech }}
+    <hr>
+
+    <h2>報告事項</h2>
+    {% for announcement in meeting.announcements %}
+        <p>{{ loop.index }}.&nbsp;{{ announcement.content }}</p>
+    {% endfor %}
+    <hr>
+{% endif %}
+
+{% if agenda %}
+    <h2>討論事項</h2>
+    {% for motion in meeting.motions %}
+        <p>{{ loop.index }}.&nbsp;{{ motion.description }}</p>
+    {% endfor %}
+{% else %}
+    <h2>討論事項</h2>
+    {% for motion in meeting.motions %}
+        <h3>提案 {{ loop.index }}</h3>
+        <p>案由：{{ motion.description }}</p>
+        <p>狀態：{{ motion.status.value }}</p>
+        <p>內容：{{ motion.content }}</p>
+        <p>決策：{{ motion.resolution }}</p>
+        <p>執行：{{ motion.execution }}</p>
+    {% endfor %}
+    <hr>
+{% endif %}
+
+{% if not agenda %}
+    <h2>臨時動議</h2>
+    {% for extempore in meeting.extempores %}
+        <p>{{ loop.index }}.&nbsp;{{ extempore.content }}</p>
+    {% endfor %}
+{% endif %}
