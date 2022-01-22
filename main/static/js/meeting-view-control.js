@@ -25,6 +25,46 @@ meetingTiles.on('click', function () {
     });
 });
 
+meetingViewArea.on('click', '#send-notice', function () {
+    let meeting_id = $('#meeting-minutes')[0].attributes.name.value;
+    $.ajax({
+        'url': $SCRIPT_ROOT + '/mail/notice/' + meeting_id,
+        'data': null,
+        'type': 'GET',
+        'success': function (data) {
+            console.log('mail sending')
+        }
+    });
+    $('#toast-notice').toast('show');
+});
+
+meetingViewArea.on('click', '#send-minute', function () {
+    let meeting_id = $('#meeting-minutes')[0].attributes.name.value;
+    $.ajax({
+        'url': $SCRIPT_ROOT + '/mail/minute/' + meeting_id,
+        'data': null,
+        'type': 'GET',
+        'success': function (data) {
+            console.log('mail sending')
+        }
+    });
+    $('#toast-minute').toast('show');
+});
+
+meetingViewArea.on('click', '#send-modify', function () {
+    let meeting_id = $('#meeting-minutes')[0].attributes.name.value;
+    console.log('meeting Update!', $('#modifyRequestText').val())
+    $.ajax({
+        'url': $SCRIPT_ROOT + '/mail/modify/' + meeting_id,
+        'data': {modify: $('#modifyRequestText').val()},
+        'type': 'GET',
+        'success': function (data) {
+            console.log('mail sending')
+        }
+    });
+    $('#toast-minute').toast('show');
+});
+
 meetingViewArea.on('click', '> div > div > button[id="confirmBtn"]', function () {
     let checkElem = `
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

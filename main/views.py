@@ -556,6 +556,9 @@ def send_meeting_minute(meeting_id):
 
 @app.route('/mail/modify/<int:meeting_id>')
 def send_meeting_modify_request(meeting_id):
+    modify_request = request.args.get('modify')
+    print(modify_request)
+
     meeting = Meeting.query.get_or_404(meeting_id)
     title = '請求修改會議紀錄 - ' + meeting.title
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')

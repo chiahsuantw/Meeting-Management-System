@@ -20,6 +20,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_DEBUG'] = True
+app.config['TESTING'] = True
 app.config['MAIL_USERNAME'] = '110.database.csie.nuk@gmail.com'
 app.config['MAIL_PASSWORD'] = 'database4234'
 
