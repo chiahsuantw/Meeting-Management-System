@@ -531,7 +531,7 @@ def send_meeting_notice(meeting_id):
     meeting = Meeting.query.get_or_404(meeting_id)
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
-    recipients = ['mike900707@gmail.com', 'alan36257407@gmail.com']
+    recipients = [att.email for att in meeting.attendees] + [meeting.chair.email]
     title = '開會通知 - ' + meeting.title
     msg = Message(title, sender=sender, recipients=recipients)
     msg.html = render_template('components/mail-meeting-minute.html', meeting=meeting, attendees=attendees, agenda=True)
@@ -545,7 +545,7 @@ def send_meeting_minute(meeting_id):
     meeting = Meeting.query.get_or_404(meeting_id)
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
-    recipients = ['mike900707@gmail.com', 'alan36257407@gmail.com']
+    recipients = [att.email for att in meeting.attendees] + [meeting.chair.email]
     title = '會議結果 - ' + meeting.title
     msg = Message(title, sender=sender, recipients=recipients)
     msg.html = render_template('components/mail-meeting-minute.html', meeting=meeting, attendees=attendees)
@@ -562,7 +562,7 @@ def send_meeting_modify_request(meeting_id):
     meeting = Meeting.query.get_or_404(meeting_id)
     title = '請求修改會議紀錄 - ' + meeting.title
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
-    recipients = ['mike900707@gmail.com', 'alan36257407@gmail.com']
+    recipients = [meeting.minute_taker.email]
     html = '<h1>請求修改會議紀錄</h1>'
     msg = Message(title, sender=sender, recipients=recipients)
     msg.html = html
