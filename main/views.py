@@ -34,7 +34,7 @@ def meeting_page(meeting_id=None):
         user = Attendee.query.filter_by(person_id=current_user.id)
         meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
                                                  Meeting.minute_taker_id.like(current_user.id)))
-        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(Meeting.time)
+        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(desc(Meeting.time))
 
     # [Authority Restriction]
     # Do for meeting at single meeting checkout
@@ -56,7 +56,9 @@ def motion_page():
         motions = Motion.query.order_by(Motion.status)
     else:
         user = Attendee.query.filter_by(person_id=current_user.id)
-        meetings = Meeting.query.join(user.subquery()).order_by(Meeting.time)
+        meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
+                                                 Meeting.minute_taker_id.like(current_user.id)))
+        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(desc(Meeting.time))
         motions = Motion.query.join(meetings.subquery()).order_by(Motion.status)
 
     return render_template('motion.html', title='決策追蹤', motions=motions)
@@ -563,7 +565,7 @@ def send_meeting_modify_request(meeting_id):
     title = '請求修改會議紀錄 - ' + meeting.title
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
     recipients = [meeting.minute_taker.email]
-    html = '<h1>請求修改會議紀錄</h1>'
+    html = f'<h1>請求修改會議紀錄</h1><p>會議：{meeting.title}</p><p>來自：{current_user.name}</p><p>{modify_request}</p>'
     msg = Message(title, sender=sender, recipients=recipients)
     msg.html = html
     thread = Thread(target=send_async_email, args=[app, msg])

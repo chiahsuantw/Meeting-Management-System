@@ -58,10 +58,10 @@ meetingViewArea.on('click', '#send-modify', function () {
         'data': {modify: $('#modifyRequestText').val()},
         'type': 'GET',
         'success': function (data) {
-            console.log('mail sending')
+            console.log('mail sending');
+            $('#modifyRequestModal').modal('hide');
         }
     });
-    $('#toast-minute').toast('show');
 });
 
 meetingViewArea.on('click', '#confirmBtn', function () {
