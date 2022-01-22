@@ -31,7 +31,7 @@ meetingViewArea.on('click', '#send-notice', function () {
         'url': $SCRIPT_ROOT + '/mail/notice/' + meeting_id,
         'data': null,
         'type': 'GET',
-        'success': function (data) {
+        'success': function () {
             console.log('mail sending')
         }
     });
@@ -44,11 +44,10 @@ meetingViewArea.on('click', '#send-minute', function () {
         'url': $SCRIPT_ROOT + '/mail/minute/' + meeting_id,
         'data': null,
         'type': 'GET',
-        'success': function (data) {
+        'success': function () {
             console.log('mail sending')
         }
     });
-    $('#toast-minute').toast('show');
 });
 
 meetingViewArea.on('click', '#send-modify', function () {
@@ -57,7 +56,7 @@ meetingViewArea.on('click', '#send-modify', function () {
         'url': $SCRIPT_ROOT + '/mail/modify/' + meeting_id,
         'data': {modify: $('#modifyRequestText').val()},
         'type': 'GET',
-        'success': function (data) {
+        'success': function () {
             console.log('mail sending');
             $('#modifyRequestModal').modal('hide');
         }
@@ -83,7 +82,7 @@ meetingViewArea.on('click', '#confirmBtn', function () {
                 confirm: true
             },
             'type': 'GET',
-            'success': function (data) {
+            'success': function () {
                 console.log('confirm check');
             }
         });
@@ -99,7 +98,7 @@ meetingViewArea.on('click', '#confirmBtn', function () {
                 confirm: false
             },
             'type': 'GET',
-            'success': function (data) {
+            'success': function () {
                 console.log('unconfirm check');
             }
         });
