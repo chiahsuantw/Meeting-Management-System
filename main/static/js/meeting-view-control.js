@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedFunction
+
 const meetingTiles = $('.meetingTile');
 const meetingViewArea = $('#meetingViewArea');
 const meetingViewModal = $('#meetingViewModal');
@@ -32,10 +34,9 @@ meetingViewArea.on('click', '#send-notice', function () {
         'data': null,
         'type': 'GET',
         'success': function () {
-            console.log('mail sending')
+            $('#toast-notice').toast('show');
         }
     });
-    $('#toast-notice').toast('show');
 });
 
 meetingViewArea.on('click', '#send-minute', function () {
@@ -45,20 +46,27 @@ meetingViewArea.on('click', '#send-minute', function () {
         'data': null,
         'type': 'GET',
         'success': function () {
-            console.log('mail sending')
+            $('#toast-minute').toast('show');
         }
     });
 });
 
 meetingViewArea.on('click', '#send-modify', function () {
+    if (!$('#modifyRequestText').val()) {
+        $('#modifyRequestText').addClass('is-invalid');
+        return;
+    }
+
     let meeting_id = $('#meeting-minutes')[0].attributes.name.value;
     $.ajax({
         'url': $SCRIPT_ROOT + '/mail/modify/' + meeting_id,
         'data': {modify: $('#modifyRequestText').val()},
         'type': 'GET',
         'success': function () {
-            console.log('mail sending');
             $('#modifyRequestModal').modal('hide');
+            $('#modifyRequestText').removeClass('is-invalid');
+            $('#modifyRequestText').val('');
+            $('#toast-modify').toast('show');
         }
     });
 });

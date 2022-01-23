@@ -3,5 +3,6 @@ Flask-Login
 Flask-Mail
 Flask-Moment
 Flask-SQLAlchemy
-PyMySQL
 Faker
+PyMySQL
+SQLAlchemy

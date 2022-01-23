@@ -87,6 +87,14 @@
                         aria-label="Close"></button>
             </div>
         </div>
+        <div class="toast fade hide text-white bg-primary border-0 me-2" role="alert"
+             aria-live="assertive" aria-atomic="true" id="toast-modify">
+            <div class="d-flex">
+                <div class="toast-body">修改請求已送出</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -99,8 +107,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <label for="modifyRequestText" class="form-label">內文</label>
-                <textarea class="form-control" id="modifyRequestText" rows="5"></textarea>
+                <form id="requestModifyForm">
+                    <label for="modifyRequestText" class="form-label">內文</label>
+                    <textarea class="form-control" id="modifyRequestText" rows="5" name="modifyRequestText"
+                              aria-describedby="modifyRequestError" required></textarea>
+                    <span class="error invalid-feedback" id="modifyRequestError">必須填寫</span>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
