@@ -1,4 +1,5 @@
 import random
+from datetime import timedelta
 
 from faker import Faker
 
@@ -13,9 +14,10 @@ def add_meetings(num):
         random.shuffle(person)
 
         meeting = Meeting()
-        meeting.title = '會議 ' + str(faker.pyint())
+        meeting.title = faker.sentence()
         meeting.type = random.choice(list(MeetingType))
-        meeting.time = datetime.utcnow()
+        meeting.time = datetime.utcnow() - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23),
+                                                     minutes=random.randint(0, 59))
         meeting.location = faker.address()
         meeting.chair = person.pop()
         meeting.chair_speech = faker.text()
