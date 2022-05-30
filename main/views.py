@@ -1,5 +1,6 @@
 import json
 from datetime import timedelta
+from functools import wraps
 from os import path, remove
 from threading import Thread
 from time import mktime
@@ -14,6 +15,22 @@ from main import app, mail
 from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee
 
 
+def admin_required(func):
+    """
+    限管理員使用路由裝飾器
+    :param func: 路由函式
+    :type func: function
+    """
+
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not current_user.is_admin():
+            abort(403)
+        return func(*args, **kwargs)
+
+    return decorated_view
+
+
 @app.route('/')
 @login_required
 def home():
@@ -22,6 +39,7 @@ def home():
 
 @app.route('/new')
 @login_required
+@admin_required
 def create_meeting_minute_page():
     """
     顯示新增會議頁面
@@ -40,10 +58,6 @@ def meeting_page(meeting_id=None):
     :param meeting_id: 會議編號
     :return: 會議紀律列表
     """
-    meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
-
-    # [Authority Restriction]
-    # Do for meetings when at home_page
     if current_user.is_admin():
         meetings = Meeting.query.order_by(desc(Meeting.time))
     else:
@@ -51,21 +65,14 @@ def meeting_page(meeting_id=None):
         meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
                                                  Meeting.minute_taker_id.like(current_user.id)))
         meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(desc(Meeting.time))
-
-    # [Authority Restriction]
-    # Do for meeting at single meeting checkout
-    if meeting_id and not current_user.is_admin() and \
-            current_user.id != meeting.chair_id and \
-            current_user.id != meeting.minute_taker_id and \
-            current_user not in meeting.attendees:
-        return abort(403)
-
+    meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     return render_template('meeting.html', title='會議列表', meetings=meetings,
                            meeting=meeting, attendees=attendees, timedelta=timedelta)
 
 
 @app.route('/calendar')
+@login_required
 def calendar_page():
     """
     顯示會議行事曆頁面
@@ -125,16 +132,7 @@ def meeting_view():
     meeting_id = request.args.get('id')
     if not meeting_id:
         return abort(400)
-
     meeting = Meeting.query.get_or_404(int(meeting_id))
-
-    # [Authority Restriction]
-    # forbidden unauthorized user get in
-    if not current_user.is_admin() and \
-            current_user.id != meeting.chair_id and \
-            current_user.id != meeting.minute_taker_id and \
-            current_user not in meeting.attendees:
-        return abort(403)
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     return render_template('components/meeting-view.html', meeting=meeting, attendees=attendees)
 
@@ -164,13 +162,14 @@ def person_view():
     """
     person_id = request.args.get('id')
     if not person_id:
-        return abort(400)
+        return abort(404)
     person = Person.query.get_or_404(int(person_id))
     return render_template('components/person-view.html', person=person)
 
 
 @app.route('/new/meeting', methods=['POST'])
 @login_required
+@admin_required
 def new_meeting():
     """
     新增會議記錄 API
@@ -179,8 +178,6 @@ def new_meeting():
     form = request.form
     data = json.loads(form['json_form'])
     files = request.files.getlist('files[]')
-
-    # print(data)
 
     meeting = Meeting()
     meeting.title = data['title']
@@ -235,12 +232,12 @@ def new_meeting():
 
     db.session.add(meeting)
     db.session.commit()
-
     return jsonify({'message': 'Success'})
 
 
 @app.route('/new/person', methods=['POST'])
 @login_required
+@admin_required
 def new_person():
     """
     新增人員 API
@@ -307,6 +304,7 @@ def new_person():
 
 @app.route('/edit/meeting/<int:meeting_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_meeting(meeting_id):
     """
     編輯會議紀錄
@@ -314,11 +312,6 @@ def edit_meeting(meeting_id):
     :return: 編輯會議紀錄頁面
     """
     meeting = Meeting.query.get_or_404(int(meeting_id))
-
-    # [Authority Restriction]
-    if not current_user.is_admin() and current_user.id != meeting.minute_taker_id:
-        return abort(403)
-
     people = Person.query.all()
 
     if request.method == 'POST':
@@ -326,7 +319,6 @@ def edit_meeting(meeting_id):
         data = json.loads(form['json_form'])
         files = request.files.getlist('files[]')
 
-        # print(data)
         meeting.title = data['title']
         meeting.time = data['time']
         meeting.location = data['location']
@@ -382,25 +374,19 @@ def edit_meeting(meeting_id):
             meeting.attachments.append(attachment)
 
         db.session.commit()
-
         return jsonify({'message': 'Success'})
-        # return redirect(url_for('meeting_page'))
-
     return render_template('edit-meeting.html', title=meeting.title, people=people)
 
 
 @app.route('/edit/person/<int:person_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_person(person_id):
     """
     編輯人員資訊
     :param person_id: 人員編號
     :return: 編輯人員資訊頁面
     """
-    # [Authority Restriction]
-    if not current_user.is_admin():
-        return abort(403)
-
     person = Person.query.get_or_404(int(person_id))
     if request.method == 'POST':
         form = request.form.to_dict()
@@ -463,6 +449,7 @@ def edit_person(person_id):
 
 @app.route('/delete/meeting/<int:meeting_id>')
 @login_required
+@admin_required
 def delete_meeting(meeting_id):
     """
     刪除會議記錄
@@ -470,10 +457,6 @@ def delete_meeting(meeting_id):
     :return: 重新導向至會議列表頁面
     """
     meeting = Meeting.query.get_or_404(int(meeting_id))
-    # [Authority Restriction]
-    if not current_user.is_admin() and current_user.id != meeting.minute_taker_id:
-        return abort(403)
-
     for file in meeting.attachments:
         try:
             remove(file.file_path)
@@ -487,15 +470,13 @@ def delete_meeting(meeting_id):
 
 @app.route('/delete/person/<int:person_id>')
 @login_required
+@admin_required
 def delete_person(person_id):
     """
     刪除人員
     :param person_id: 人員編號
     :return: 重新導向至人員列表頁面
     """
-    # [Authority Restriction]
-    if not current_user.is_admin():
-        return abort(403)
     person = Person.query.get_or_404(int(person_id))
     db.session.delete(person)
     db.session.commit()
@@ -504,6 +485,7 @@ def delete_person(person_id):
 
 @app.route('/delete/attachment/<int:file_id>', methods=['POST'])
 @login_required
+@admin_required
 def delete_attachment(file_id):
     """
     刪除附件檔案
@@ -523,6 +505,7 @@ def delete_attachment(file_id):
 
 @app.route('/uploads/<int:file_id>')
 @login_required
+@admin_required
 def download_attachment(file_id):
     """
     下載附件檔案
@@ -536,6 +519,7 @@ def download_attachment(file_id):
 
 @app.route('/api/meeting/<int:meeting_id>')
 @login_required
+@admin_required
 def meeting_api(meeting_id):
     """
     會議記錄 API
@@ -635,6 +619,8 @@ def send_async_email(current_app, msg):
 
 
 @app.route('/mail/notice/<int:meeting_id>')
+@login_required
+@admin_required
 def send_meeting_notice(meeting_id):
     """
     以電子郵件寄送會議通知
@@ -654,6 +640,8 @@ def send_meeting_notice(meeting_id):
 
 
 @app.route('/mail/minute/<int:meeting_id>')
+@login_required
+@admin_required
 def send_meeting_minute(meeting_id):
     """
     以電子郵件寄送會議紀錄
@@ -673,6 +661,7 @@ def send_meeting_minute(meeting_id):
 
 
 @app.route('/mail/modify/<int:meeting_id>')
+@login_required
 def send_meeting_modify_request(meeting_id):
     """
     以電子郵件寄送會議修改請求
@@ -681,8 +670,6 @@ def send_meeting_modify_request(meeting_id):
     :return: HTTP Response 200
     """
     modify_request = request.args.get('modify')
-    # print(modify_request)
-
     meeting = Meeting.query.get_or_404(meeting_id)
     title = '請求修改會議紀錄 - ' + meeting.title
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
@@ -696,6 +683,7 @@ def send_meeting_modify_request(meeting_id):
 
 
 @app.route('/confirm')
+@login_required
 def confirm_meeting_minute():
     """
     與會人員確認會議
