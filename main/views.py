@@ -49,6 +49,18 @@ def meeting_page(meeting_id=None):
                            meeting=meeting, attendees=attendees, timedelta=timedelta)
 
 
+@app.route('/calendar')
+def calendar_page():
+    if current_user.is_admin():
+        meetings = Meeting.query.order_by(desc(Meeting.time))
+    else:
+        user = Attendee.query.filter_by(person_id=current_user.id)
+        meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
+                                                 Meeting.minute_taker_id.like(current_user.id)))
+        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(desc(Meeting.time))
+    return render_template('calendar.html', title='會議行事曆', meetings=meetings)
+
+
 @app.route('/motion')
 @login_required
 def motion_page():
@@ -299,6 +311,7 @@ def new_person():
     except DataError:
         return jsonify({'message': 'Error'})
     finally:
+        # noinspection PyUnresolvedReferences
         return jsonify({'message': 'Success',
                         'person': {'id': person.id, 'name': person.name,
                                    'email': person.email, 'type': person.type.value}})

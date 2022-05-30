@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% include 'components/navbar.html' %}
+    <main class="d-flex flex-fill flex-row overflow-hidden">
+        {% include 'components/sidebar.html' %}
+        <div id='calendar' class="flex-fill"></div>
+    </main>
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css">
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/combine/npm/fullcalendar@5.11.0,npm/fullcalendar@5.11.0/locales/zh-tw.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            let calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'zh-Hant',
+                themeSystem: 'bootstrap5',
+                initialView: 'dayGridMonth',
+                selectable: true,
+                fixedWeekCount: false,
+                buttonText: {today: '今天'},
+                events: [
+                    {% for meeting in meetings %}
+                        {
+                            title: '{{ meeting.title }}',
+                            start: '{{ meeting.time }}',
+                            url: '/meeting/{{ meeting.id }}'
+                        },
+                    {% endfor %}
+                ]
+            });
+            calendar.render();
+            $('.fc-header-toolbar').addClass('px-3 pt-3');
+            $('.fc-scrollgrid').addClass('border-start-0');
+            $('.fc-scrollgrid td:first-of-type').addClass('border-start-0');
+
+            const observer = new ResizeObserver(function () {
+                calendar.updateSize();
+            });
+
+            observer.observe(document.getElementById('calendar'));
+        });
+    </script>
+{% endblock %}
