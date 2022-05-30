@@ -58,13 +58,15 @@ def meeting_page(meeting_id=None):
     :param meeting_id: 會議編號
     :return: 會議紀律列表
     """
+    meetings = Meeting.query.filter(or_(
+        Meeting.chair.has(id=current_user.id),
+        Meeting.minute_taker.has(id=current_user.id),
+        Meeting.attendees.any(id=current_user.id)
+    )).order_by(desc(Meeting.time))
+
     if current_user.is_admin():
         meetings = Meeting.query.order_by(desc(Meeting.time))
-    else:
-        user = Attendee.query.filter_by(person_id=current_user.id)
-        meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
-                                                 Meeting.minute_taker_id.like(current_user.id)))
-        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(desc(Meeting.time))
+
     meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     return render_template('meeting.html', title='會議列表', meetings=meetings,
@@ -78,13 +80,15 @@ def calendar_page():
     顯示會議行事曆頁面
     :return: 會議行事曆頁面
     """
+    meetings = Meeting.query.filter(or_(
+        Meeting.chair.has(id=current_user.id),
+        Meeting.minute_taker.has(id=current_user.id),
+        Meeting.attendees.any(id=current_user.id)
+    ))
+
     if current_user.is_admin():
-        meetings = Meeting.query.order_by(desc(Meeting.time))
-    else:
-        user = Attendee.query.filter_by(person_id=current_user.id)
-        meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
-                                                 Meeting.minute_taker_id.like(current_user.id)))
-        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(desc(Meeting.time))
+        meetings = Meeting.query
+
     return render_template('calendar.html', title='會議行事曆', meetings=meetings)
 
 
@@ -95,14 +99,15 @@ def motion_page():
     顯示討論事項（決策追蹤）列表頁面
     :return: 討論事項列表頁面
     """
+    meetings = Meeting.query.filter(or_(
+        Meeting.chair.has(id=current_user.id),
+        Meeting.minute_taker.has(id=current_user.id),
+        Meeting.attendees.any(id=current_user.id)
+    ))
+    motions = Motion.query.join(meetings.subquery()).order_by(Motion.status)
+
     if current_user.is_admin():
         motions = Motion.query.order_by(Motion.status)
-    else:
-        user = Attendee.query.filter_by(person_id=current_user.id)
-        meetings_main = Meeting.query.filter(or_(Meeting.chair_id.like(current_user.id),
-                                                 Meeting.minute_taker_id.like(current_user.id)))
-        meetings = Meeting.query.join(user.subquery()).union(meetings_main).order_by(desc(Meeting.time))
-        motions = Motion.query.join(meetings.subquery()).order_by(Motion.status)
 
     return render_template('motion.html', title='決策追蹤', motions=motions)
 
@@ -116,7 +121,7 @@ def person_page(person_id=None):
     :param person_id: 人員編號
     :return: 人員列表頁面
     """
-    people = Person.query
+    people = Person.query.order_by(Person.name)
     person = people.get_or_404(person_id) if person_id else None
     return render_template('person.html', title='人員列表', people=people, person=person)
 
@@ -126,7 +131,7 @@ def person_page(person_id=None):
 def meeting_view():
     """
     顯示會議記錄區塊，利用 JavaScript 呼叫並更新前端
-    :query_param id: 會議編號
+    :request.args id: 會議編號
     :return: 會議記錄區塊
     """
     meeting_id = request.args.get('id')
@@ -142,7 +147,7 @@ def meeting_view():
 def motion_view():
     """
     顯示討論事項（決策追蹤）區塊，利用 JavaScript 呼叫並更新前端
-    :query_param id: 討論事項編號
+    :request.args id: 討論事項編號
     :return: 討論事項區塊
     """
     motion_id = request.args.get('id')
@@ -157,7 +162,7 @@ def motion_view():
 def person_view():
     """
     顯示人員資訊區塊，利用 JavaScript 呼叫並更新前端
-    :query_param id: 人員編號
+    :request.args id: 人員編號
     :return: 人員資訊區塊
     """
     person_id = request.args.get('id')
@@ -173,6 +178,8 @@ def person_view():
 def new_meeting():
     """
     新增會議記錄 API
+    :request.form json_form: 新增會議表單
+    :request.files files[]: 附件檔案
     :return: JSON 物件
     """
     form = request.form
@@ -241,6 +248,7 @@ def new_meeting():
 def new_person():
     """
     新增人員 API
+    :request.form: 新增人員表單
     :return: JSON 物件
     """
     form = request.form
@@ -308,6 +316,8 @@ def new_person():
 def edit_meeting(meeting_id):
     """
     編輯會議紀錄
+    :request.form json_form: 編輯會議表單
+    :request.files files[]: 附件檔案
     :param meeting_id: 會議編號
     :return: 編輯會議紀錄頁面
     """
@@ -584,7 +594,7 @@ def meeting_api(meeting_id):
 def login():
     """
     登入使用者
-    :form_param email: 電子郵件
+    :request.form email: 電子郵件
     :return: 登入頁面
     """
     email = request.form.get('email')
@@ -665,7 +675,7 @@ def send_meeting_minute(meeting_id):
 def send_meeting_modify_request(meeting_id):
     """
     以電子郵件寄送會議修改請求
-    :query_param modify: 訊息內容
+    :request.args modify: 訊息內容
     :param meeting_id: 會議編號
     :return: HTTP Response 200
     """
@@ -687,9 +697,9 @@ def send_meeting_modify_request(meeting_id):
 def confirm_meeting_minute():
     """
     與會人員確認會議
-    :query_param person_id: 人員編號
-    :query_param meeting_id: 會議編號
-    :query_param confirm: 確認 或 取消確認
+    :request.args person_id: 人員編號
+    :request.args meeting_id: 會議編號
+    :request.args confirm: 確認 或 取消確認
     :return: HTTP Response 200
     """
     person_id = request.args.get('person_id')
