@@ -221,7 +221,7 @@ $('#savedFiles').on('click', 'div > div > div', function () {
     let file_id = $(this).attr('id').split('-')[1];
     $.ajax({
         'type': 'POST',
-        'url': $SCRIPT_ROOT + '/delete-file/' + file_id,
+        'url': $SCRIPT_ROOT + '/delete/attachment/' + file_id,
         'success': (data) => {
             if (data['message'] === 'Success') {
                 console.log('File delete successfully!')

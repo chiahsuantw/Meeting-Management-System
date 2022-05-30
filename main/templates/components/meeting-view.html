@@ -303,7 +303,7 @@
     <h4 class="mt-5 mb-3 pb-3 fw-bolder border-bottom border-3">附件</h4>
     <div class="d-flex flex-wrap gap-2">
         {% for attachment in meeting.attachments %}
-            <a href="{{ url_for('download', file_id=attachment.id) }}" target="_blank"
+            <a href="{{ url_for('download_attachment', file_id=attachment.id) }}" target="_blank"
                class="text-dark text-decoration-none" title="{{ attachment.filename.split('-', 1)[1] }}">
                 <div class="card bg-light">
                     <div class="card-body d-flex align-items-center">

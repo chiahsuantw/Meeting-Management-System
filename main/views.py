@@ -20,10 +20,26 @@ def home():
     return redirect(url_for('meeting_page'))
 
 
+@app.route('/new')
+@login_required
+def create_meeting_minute_page():
+    """
+    顯示新增會議頁面
+    :return: 新增會議頁面
+    """
+    people = Person.query.all()
+    return render_template('create.html', title='新增會議', people=people)
+
+
 @app.route('/meeting')
 @app.route('/meeting/<int:meeting_id>')
 @login_required
 def meeting_page(meeting_id=None):
+    """
+    顯示會議記錄列表
+    :param meeting_id: 會議編號
+    :return: 會議紀律列表
+    """
     meeting = Meeting.query.get_or_404(meeting_id) if meeting_id else None
 
     # [Authority Restriction]
@@ -51,6 +67,10 @@ def meeting_page(meeting_id=None):
 
 @app.route('/calendar')
 def calendar_page():
+    """
+    顯示會議行事曆頁面
+    :return: 會議行事曆頁面
+    """
     if current_user.is_admin():
         meetings = Meeting.query.order_by(desc(Meeting.time))
     else:
@@ -64,6 +84,10 @@ def calendar_page():
 @app.route('/motion')
 @login_required
 def motion_page():
+    """
+    顯示討論事項（決策追蹤）列表頁面
+    :return: 討論事項列表頁面
+    """
     if current_user.is_admin():
         motions = Motion.query.order_by(Motion.status)
     else:
@@ -80,14 +104,24 @@ def motion_page():
 @app.route('/person/<int:person_id>')
 @login_required
 def person_page(person_id=None):
-    person = Person.query.get_or_404(person_id) if person_id else None
+    """
+    顯示人員列表頁面
+    :param person_id: 人員編號
+    :return: 人員列表頁面
+    """
     people = Person.query
+    person = people.get_or_404(person_id) if person_id else None
     return render_template('person.html', title='人員列表', people=people, person=person)
 
 
 @app.route('/get/meeting')
 @login_required
 def meeting_view():
+    """
+    顯示會議記錄區塊，利用 JavaScript 呼叫並更新前端
+    :query_param id: 會議編號
+    :return: 會議記錄區塊
+    """
     meeting_id = request.args.get('id')
     if not meeting_id:
         return abort(400)
@@ -108,6 +142,11 @@ def meeting_view():
 @app.route('/get/motion')
 @login_required
 def motion_view():
+    """
+    顯示討論事項（決策追蹤）區塊，利用 JavaScript 呼叫並更新前端
+    :query_param id: 討論事項編號
+    :return: 討論事項區塊
+    """
     motion_id = request.args.get('id')
     if not motion_id:
         return abort(400)
@@ -118,6 +157,11 @@ def motion_view():
 @app.route('/get/person')
 @login_required
 def person_view():
+    """
+    顯示人員資訊區塊，利用 JavaScript 呼叫並更新前端
+    :query_param id: 人員編號
+    :return: 人員資訊區塊
+    """
     person_id = request.args.get('id')
     if not person_id:
         return abort(400)
@@ -125,78 +169,18 @@ def person_view():
     return render_template('components/person-view.html', person=person)
 
 
-@app.route('/new')
-@login_required
-def create():
-    people = Person.query.all()
-    return render_template('create.html', title='新增會議', people=people)
-
-
-@app.route('/api/meeting/<int:meeting_id>')
-@login_required
-def meeting_api(meeting_id):
-    meeting = Meeting.query.get_or_404(int(meeting_id))
-
-    attendee = []
-    guest = []
-    att_present = []
-    gue_present = []
-    motions = []
-    files = []
-
-    for att in meeting.attendee_association:
-        if att.is_member:
-            attendee.append(att.person_id)
-            if att.is_present:
-                att_present.append(att.person_id)
-        else:
-            guest.append(att.person_id)
-            if att.is_present:
-                gue_present.append(att.person_id)
-
-    for mot in meeting.motions:
-        motion = {'description': mot.description,
-                  'content': mot.content,
-                  'status': mot.status.name,
-                  'resolution': mot.resolution,
-                  'execution': mot.execution}
-        motions.append(motion)
-
-    for file in meeting.attachments:
-        filename = file.filename.split('-', 1)[1]
-        filetype = filename.split('.')[-1]
-        filetype = 'others' if filetype not in ['jpg', 'jpeg', 'png', 'pdf', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'doc',
-                                                'docx'] else filetype
-        files.append({'file_id': file.id,
-                      'file_name': filename[:-len(filetype) - 1],
-                      'file_type': filetype})
-
-    meet_info = {'title': meeting.title,
-                 'time': int(mktime((meeting.time + timedelta(hours=8)).timetuple())) * 1000,
-                 'location': meeting.location,
-                 'type': meeting.type.name,
-                 'chair': meeting.chair_id,
-                 'minuteTaker': meeting.minute_taker_id,
-                 'attendee': attendee,
-                 'guest': guest,
-                 'is_present': att_present + gue_present,
-                 'chair_speech': meeting.chair_speech,
-                 'announcements': [ann.content for ann in meeting.announcements],
-                 'motions': motions,
-                 'extempore': [ext.content for ext in meeting.extempores],
-                 'files': files}
-
-    return jsonify(meet_info)
-
-
 @app.route('/new/meeting', methods=['POST'])
 @login_required
 def new_meeting():
+    """
+    新增會議記錄 API
+    :return: JSON 物件
+    """
     form = request.form
     data = json.loads(form['json_form'])
     files = request.files.getlist('files[]')
 
-    print(data)
+    # print(data)
 
     meeting = Meeting()
     meeting.title = data['title']
@@ -258,6 +242,10 @@ def new_meeting():
 @app.route('/new/person', methods=['POST'])
 @login_required
 def new_person():
+    """
+    新增人員 API
+    :return: JSON 物件
+    """
     form = request.form
 
     if Person.query.filter_by(email=form['email']).first():
@@ -320,6 +308,11 @@ def new_person():
 @app.route('/edit/meeting/<int:meeting_id>', methods=['GET', 'POST'])
 @login_required
 def edit_meeting(meeting_id):
+    """
+    編輯會議紀錄
+    :param meeting_id: 會議編號
+    :return: 編輯會議紀錄頁面
+    """
     meeting = Meeting.query.get_or_404(int(meeting_id))
 
     # [Authority Restriction]
@@ -333,7 +326,7 @@ def edit_meeting(meeting_id):
         data = json.loads(form['json_form'])
         files = request.files.getlist('files[]')
 
-        print(data)
+        # print(data)
         meeting.title = data['title']
         meeting.time = data['time']
         meeting.location = data['location']
@@ -399,6 +392,11 @@ def edit_meeting(meeting_id):
 @app.route('/edit/person/<int:person_id>', methods=['GET', 'POST'])
 @login_required
 def edit_person(person_id):
+    """
+    編輯人員資訊
+    :param person_id: 人員編號
+    :return: 編輯人員資訊頁面
+    """
     # [Authority Restriction]
     if not current_user.is_admin():
         return abort(403)
@@ -466,6 +464,11 @@ def edit_person(person_id):
 @app.route('/delete/meeting/<int:meeting_id>')
 @login_required
 def delete_meeting(meeting_id):
+    """
+    刪除會議記錄
+    :param meeting_id: 會議編號
+    :return: 重新導向至會議列表頁面
+    """
     meeting = Meeting.query.get_or_404(int(meeting_id))
     # [Authority Restriction]
     if not current_user.is_admin() and current_user.id != meeting.minute_taker_id:
@@ -485,6 +488,11 @@ def delete_meeting(meeting_id):
 @app.route('/delete/person/<int:person_id>')
 @login_required
 def delete_person(person_id):
+    """
+    刪除人員
+    :param person_id: 人員編號
+    :return: 重新導向至人員列表頁面
+    """
     # [Authority Restriction]
     if not current_user.is_admin():
         return abort(403)
@@ -494,17 +502,14 @@ def delete_person(person_id):
     return redirect(url_for('person_page'))
 
 
-@app.route('/uploads/<int:file_id>')
+@app.route('/delete/attachment/<int:file_id>', methods=['POST'])
 @login_required
-def download(file_id):
-    file = Attachment.query.filter_by(id=file_id).first()
-    return send_file(path_or_file=file.file_path, as_attachment=False,
-                     download_name=file.filename.split('-', 1)[1])
-
-
-@app.route('/delete-file/<int:file_id>', methods=['POST'])
-@login_required
-def delete(file_id):
+def delete_attachment(file_id):
+    """
+    刪除附件檔案
+    :param file_id: 檔案編號
+    :return: JSON 物件
+    """
     file = Attachment.query.filter_by(id=file_id).first_or_404()
     try:
         remove(file.file_path)
@@ -516,8 +521,88 @@ def delete(file_id):
     return jsonify({'message': 'Success'})
 
 
+@app.route('/uploads/<int:file_id>')
+@login_required
+def download_attachment(file_id):
+    """
+    下載附件檔案
+    :param file_id: 檔案編號
+    :return: 檔案
+    """
+    file = Attachment.query.filter_by(id=file_id).first()
+    return send_file(path_or_file=file.file_path, as_attachment=False,
+                     download_name=file.filename.split('-', 1)[1])
+
+
+@app.route('/api/meeting/<int:meeting_id>')
+@login_required
+def meeting_api(meeting_id):
+    """
+    會議記錄 API
+    :param meeting_id: 會議編號
+    :return: JSON 物件
+    """
+    meeting = Meeting.query.get_or_404(int(meeting_id))
+
+    attendee = []
+    guest = []
+    att_present = []
+    gue_present = []
+    motions = []
+    files = []
+
+    for att in meeting.attendee_association:
+        if att.is_member:
+            attendee.append(att.person_id)
+            if att.is_present:
+                att_present.append(att.person_id)
+        else:
+            guest.append(att.person_id)
+            if att.is_present:
+                gue_present.append(att.person_id)
+
+    for mot in meeting.motions:
+        motion = {'description': mot.description,
+                  'content': mot.content,
+                  'status': mot.status.name,
+                  'resolution': mot.resolution,
+                  'execution': mot.execution}
+        motions.append(motion)
+
+    for file in meeting.attachments:
+        filename = file.filename.split('-', 1)[1]
+        filetype = filename.split('.')[-1]
+        filetype = 'others' if filetype not in ['jpg', 'jpeg', 'png', 'pdf', 'txt', 'ppt', 'pptx', 'xls', 'xlsx', 'doc',
+                                                'docx'] else filetype
+        files.append({'file_id': file.id,
+                      'file_name': filename[:-len(filetype) - 1],
+                      'file_type': filetype})
+
+    meet_info = {'title': meeting.title,
+                 'time': int(mktime((meeting.time + timedelta(hours=8)).timetuple())) * 1000,
+                 'location': meeting.location,
+                 'type': meeting.type.name,
+                 'chair': meeting.chair_id,
+                 'minuteTaker': meeting.minute_taker_id,
+                 'attendee': attendee,
+                 'guest': guest,
+                 'is_present': att_present + gue_present,
+                 'chair_speech': meeting.chair_speech,
+                 'announcements': [ann.content for ann in meeting.announcements],
+                 'motions': motions,
+                 'extempore': [ext.content for ext in meeting.extempores],
+                 'files': files}
+
+    return jsonify(meet_info)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    登入使用者
+    :form_param email: 電子郵件
+    :return: 登入頁面
+    """
     email = request.form.get('email')
     if email:
         user = Person.query.filter_by(email=email).first()
@@ -526,23 +611,36 @@ def login():
             return redirect(url_for('home'))
         else:
             flash('登入資訊不正確，請再試一次', 'danger')
-
     return render_template('login.html', title='登入')
 
 
 @app.route('/logout')
 def logout():
+    """
+    登出使用者
+    :return: 重新導向至登入頁面
+    """
     logout_user()
     return redirect(url_for('login'))
 
 
 def send_async_email(current_app, msg):
+    """
+    送出電子郵件 (用於異步處理)
+    :param current_app: Flask 實例
+    :param msg: flask_mail.Message 物件
+    """
     with current_app.app_context():
         mail.send(msg)
 
 
 @app.route('/mail/notice/<int:meeting_id>')
 def send_meeting_notice(meeting_id):
+    """
+    以電子郵件寄送會議通知
+    :param meeting_id: 會議編號
+    :return: HTTP Response 200
+    """
     meeting = Meeting.query.get_or_404(meeting_id)
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
@@ -557,6 +655,11 @@ def send_meeting_notice(meeting_id):
 
 @app.route('/mail/minute/<int:meeting_id>')
 def send_meeting_minute(meeting_id):
+    """
+    以電子郵件寄送會議紀錄
+    :param meeting_id: 會議編號
+    :return: HTTP Response 200
+    """
     meeting = Meeting.query.get_or_404(meeting_id)
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
@@ -571,8 +674,14 @@ def send_meeting_minute(meeting_id):
 
 @app.route('/mail/modify/<int:meeting_id>')
 def send_meeting_modify_request(meeting_id):
+    """
+    以電子郵件寄送會議修改請求
+    :query_param modify: 訊息內容
+    :param meeting_id: 會議編號
+    :return: HTTP Response 200
+    """
     modify_request = request.args.get('modify')
-    print(modify_request)
+    # print(modify_request)
 
     meeting = Meeting.query.get_or_404(meeting_id)
     title = '請求修改會議紀錄 - ' + meeting.title
@@ -587,7 +696,14 @@ def send_meeting_modify_request(meeting_id):
 
 
 @app.route('/confirm')
-def confirm_check():
+def confirm_meeting_minute():
+    """
+    與會人員確認會議
+    :query_param person_id: 人員編號
+    :query_param meeting_id: 會議編號
+    :query_param confirm: 確認 或 取消確認
+    :return: HTTP Response 200
+    """
     person_id = request.args.get('person_id')
     meeting_id = request.args.get('meeting_id')
     meeting = Meeting.query.get(meeting_id)
