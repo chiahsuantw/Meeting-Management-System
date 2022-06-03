@@ -12,7 +12,7 @@ from sqlalchemy import desc, or_
 from sqlalchemy.exc import DataError
 
 from main import app, mail
-from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee
+from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee, Feedback
 
 
 def admin_required(func):
@@ -130,13 +130,27 @@ def person_page(person_id=None):
 @login_required
 @admin_required
 def statistics_page():
+    """
+    顯示統計資料頁面
+    :return: 統計資料頁面
+    """
     return render_template('statistics.html', title='統計資料')
 
 
-@app.route('/feedback')
+@app.route('/feedback', methods=['GET', 'POST'])
 @login_required
 def feedback_page():
-    return render_template('feedback.html', title='學生意見')
+    """
+    顯示學生匿名意見
+    :return: 學生意見頁面
+    """
+    if request.method == 'POST':
+        feedback = Feedback(content=request.form['feedbackText'])
+        db.session.add(feedback)
+        db.session.commit()
+        return redirect(url_for('feedback_page'))
+    feedback = Feedback.query.order_by(desc(Feedback.id)).all()
+    return render_template('feedback.html', title='學生意見', feedback=feedback, timedelta=timedelta)
 
 
 @app.route('/get/meeting')

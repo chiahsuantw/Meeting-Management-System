@@ -4,6 +4,55 @@
     {% include 'components/navbar.html' %}
     <main class="d-flex flex-fill flex-row overflow-hidden">
         {% include 'components/sidebar.html' %}
-        <div class="flex-fill"></div>
+        <div class="container-fluid flex-fill py-5 overflow-auto">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8">
+                    <div class="d-flex mt-3 mb-5 align-items-center">
+                        <h1 class="flex-grow-1">學生匿名意見</h1>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                data-bs-target="#newFeedbackModal">新增意見
+                        </button>
+                    </div>
+                    {% for f in feedback %}
+                        <div id="feedback-{{ f.id }}">
+                            <div class="d-flex align-items-end mb-4">
+                                <h3 class="flex-grow-1">意見 #{{ f.id }}</h3>
+                                <p class="mb-2">{{ moment(f.time - timedelta(hours=8)).calendar() }}</p>
+                            </div>
+                            <p>{{ f.content }}</p>
+                            <hr>
+                        </div>
+                    {% endfor %}
+                    {% if not feedback %}
+                        目前沒有任何匿名意見
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </main>
+
+    <div class="modal fade" id="newFeedbackModal" data-bs-backdrop="static" data-bs-keyboard="false"
+         tabindex="-1" aria-labelledby="newFeedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newFeedbackModalLabel">新增意見</h5>
+                    <button type="button" class="btn-close close-new-person" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <form action="" method="POST">
+                    <div class="modal-body">
+                        <label for="feedbackText" class="form-label">內文</label>
+                        <textarea class="form-control" name="feedbackText" rows="5" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger close-new-person" data-bs-dismiss="modal">取消
+                        </button>
+                        <button type="submit" class="btn btn-success">新增</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

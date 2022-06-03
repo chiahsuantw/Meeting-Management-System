@@ -9,3 +9,5 @@ $('#sidebarBtn').on('click', function () {
         sidebar.addClass('d-md-flex');
     }
 });
+
+$('input').attr('autocomplete', 'off');

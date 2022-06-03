@@ -29,7 +29,7 @@ newAnnouncementBtn.on('click', function () {
                       name="AnnouncementContent-${announcementElementCounter}"
                       placeholder="內容" aria-describedby="AnnouncementContentError-${announcementElementCounter}"></textarea>
             <a href="javascript:void(0)" class="my-auto ms-2">
-                <img src="/static/images/trash-fill.svg" width="20" alt="">
+                <i class="bi bi-trash-fill fs-5 text-muted"></i>
             </a>
         </div>
         <span class="error invalid-feedback" id="AnnouncementContentError-${announcementElementCounter}"></span>
@@ -85,7 +85,7 @@ newMotionBtn.on('click', function () {
                 </div>
             </div>
             <a href=javascript:void(0) class="my-auto ms-2">
-                <img src=/static/images/trash-fill.svg width=20 alt="">
+                <i class="bi bi-trash-fill fs-5 text-muted"></i>
             </a>
         </div>
     `;
@@ -108,7 +108,7 @@ newExtemporeBtn.on('click', function () {
                       name="ExtemporeContent-${extemporeElementCounter}"
                       placeholder="內容" aria-describedby="ExtemporeContentError-${extemporeElementCounter}"></textarea>
             <a href="javascript:void(0)" class="my-auto ms-2">
-                <img src="/static/images/trash-fill.svg" width="20" alt="">
+                <i class="bi bi-trash-fill fs-5 text-muted"></i>
             </a>
         </div>
         <span class="error invalid-feedback" id="ExtemporeContentError-${extemporeElementCounter}"></span>
