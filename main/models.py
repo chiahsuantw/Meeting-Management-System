@@ -67,7 +67,7 @@ class Meeting(db.Model):
     type = db.Column(db.Enum(MeetingType), nullable=False)
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     location = db.Column(db.String(50), nullable=False)
-    archived = db.Column(db.Boolean, nullable=False, default=True)
+    archived = db.Column(db.Boolean, nullable=False, default=False)
 
     attachments = db.relationship('Attachment', backref='meeting', cascade='all, delete-orphan')
     announcements = db.relationship('Announcement', backref='meeting', cascade='all, delete-orphan')

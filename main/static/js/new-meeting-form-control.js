@@ -219,7 +219,6 @@ newMeetingForm.validate({
         'mChairInput': 'required',
         'mMinuteTakerInput': 'required',
         'mAttendeeInput': 'required',
-        'mGuestInput': 'required',
         'mAttachmentInput[]': {
             'accept':
                 'image/jpeg,' +

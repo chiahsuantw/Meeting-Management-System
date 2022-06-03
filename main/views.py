@@ -417,7 +417,6 @@ def edit_meeting(meeting_id):
 
 @app.route('/edit/person/<int:person_id>', methods=['GET', 'POST'])
 @login_required
-@admin_required
 def edit_person(person_id):
     """
     編輯人員資訊
@@ -472,8 +471,6 @@ def edit_person(person_id):
                 bank_account=form['pBankAccountInput']
             )
         elif person.type == 'Student':
-            if Student.query.filter_by(student_id=form['studentId']).first():
-                return jsonify({'message': 'Student ID already exists'})
             person.add_student_info(
                 student_id=form['pStudentIdInput'],
                 program=form['pProgramInput'],
@@ -739,6 +736,14 @@ def confirm_meeting_minute():
         else:
             attendee = Attendee.query.filter_by(person_id=person_id, meeting_id=meeting_id).first()
             attendee.is_confirmed = True
+
+        # TODO: archived
+        # all_confirmed = meeting.chair_confirmed
+        # for attendee in meeting.attendees:
+        #     a = Attendee.query.filter_by(person_id=attendee.id, meeting_id=meeting.id).first()
+        #     all_confirmed = all_confirmed and a.is_confirmed
+        # if all_confirmed:
+        #     meeting.archived = True
     else:
         if str(meeting.chair_id) == person_id:
             meeting.chair_confirmed = False
