@@ -67,7 +67,7 @@ class Meeting(db.Model):
     type = db.Column(db.Enum(MeetingType), nullable=False)
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     location = db.Column(db.String(50), nullable=False)
-    is_draft = db.Column(db.Boolean, nullable=False, default=True)
+    archived = db.Column(db.Boolean, nullable=False, default=True)
 
     attachments = db.relationship('Attachment', backref='meeting', cascade='all, delete-orphan')
     announcements = db.relationship('Announcement', backref='meeting', cascade='all, delete-orphan')
@@ -99,6 +99,7 @@ class Person(db.Model, UserMixin):
     gender = db.Column(db.Enum(GenderType), nullable=False)
     phone = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
+    password = db.Column(db.String(50), nullable=False, default='password')
     type = db.Column(db.Enum(PersonType), nullable=False)
 
     expert_info = db.relationship('Expert', backref='basic_info', uselist=False, cascade='all, delete-orphan')
@@ -258,3 +259,9 @@ class Motion(db.Model):
         self.status = status
         self.resolution = resolution
         self.execution = execution
+
+
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    content = db.Column(db.Text, nullable=False)

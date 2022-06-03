@@ -46,7 +46,7 @@ def create_meeting_minute_page():
     :return: 新增會議頁面
     """
     people = Person.query.all()
-    return render_template('create.html', title='新增會議', people=people)
+    return render_template('meeting-new.html', title='新增會議', people=people)
 
 
 @app.route('/meeting')
@@ -104,10 +104,10 @@ def motion_page():
         Meeting.minute_taker.has(id=current_user.id),
         Meeting.attendees.any(id=current_user.id)
     ))
-    motions = Motion.query.join(meetings.subquery()).order_by(Motion.status)
+    motions = Motion.query.join(meetings.subquery()).join(Meeting).order_by(Motion.status, Meeting.time)
 
     if current_user.is_admin():
-        motions = Motion.query.order_by(Motion.status)
+        motions = Motion.query.join(Meeting).order_by(Motion.status, Meeting.time)
 
     return render_template('motion.html', title='決策追蹤', motions=motions)
 
@@ -124,6 +124,19 @@ def person_page(person_id=None):
     people = Person.query.order_by(Person.name)
     person = people.get_or_404(person_id) if person_id else None
     return render_template('person.html', title='人員列表', people=people, person=person)
+
+
+@app.route('/statistics')
+@login_required
+@admin_required
+def statistics_page():
+    return render_template('statistics.html', title='統計資料')
+
+
+@app.route('/feedback')
+@login_required
+def feedback_page():
+    return render_template('feedback.html', title='學生意見')
 
 
 @app.route('/get/meeting')
@@ -385,7 +398,7 @@ def edit_meeting(meeting_id):
 
         db.session.commit()
         return jsonify({'message': 'Success'})
-    return render_template('edit-meeting.html', title=meeting.title, people=people)
+    return render_template('meeting-edit.html', title=meeting.title, people=people)
 
 
 @app.route('/edit/person/<int:person_id>', methods=['GET', 'POST'])
@@ -454,7 +467,7 @@ def edit_person(person_id):
             )
         db.session.commit()
         return redirect(url_for('person_page', person_id=person.id))
-    return render_template('edit-person.html', title=person.name, person=person)
+    return render_template('person-edit.html', title=person.name, person=person)
 
 
 @app.route('/delete/meeting/<int:meeting_id>')

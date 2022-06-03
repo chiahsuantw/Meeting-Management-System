@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% include 'components/navbar.html' %}
+    <main class="d-flex flex-fill flex-row overflow-hidden">
+        {% include 'components/sidebar.html' %}
+        <div class="flex-fill"></div>
+    </main>
+{% endblock %}
