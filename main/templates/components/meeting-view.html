@@ -1,6 +1,8 @@
 {# Control buttons #}
-<div class="d-flex justify-content-end border-bottom">
-    {% if current_user.is_admin() or current_user == meeting.minute_taker %}
+<div id="controlZone" class="d-flex justify-content-end border-bottom">
+    {% if meeting.archived %}
+        <span class="badge bg-secondary fs-5 m-2">已封存</span>
+    {% elif current_user.is_admin() or current_user == meeting.minute_taker %}
         <div class="btn-group m-2" role="group">
             <button type="button" class="btn btn-outline-primary d-flex align-items-center"
                     id="send-notice">

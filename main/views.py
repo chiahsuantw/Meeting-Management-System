@@ -231,8 +231,10 @@ def new_meeting():
         meeting.attendees.append(person)
         meeting.attendee_association[-1].is_member = False
 
-    attendees = Attendee.query.filter_by(meeting_id=meeting.id)
+    db.session.add(meeting)
+    db.session.commit()
 
+    attendees = meeting.attendee_association
     present = data['present']
     for attendee in attendees:
         if attendee.person_id in present:
@@ -264,7 +266,6 @@ def new_meeting():
         attachment = Attachment(filename, filepath)
         meeting.attachments.append(attachment)
 
-    db.session.add(meeting)
     db.session.commit()
     return jsonify({'message': 'Success'})
 
@@ -737,13 +738,14 @@ def confirm_meeting_minute():
             attendee = Attendee.query.filter_by(person_id=person_id, meeting_id=meeting_id).first()
             attendee.is_confirmed = True
 
-        # TODO: archived
-        # all_confirmed = meeting.chair_confirmed
-        # for attendee in meeting.attendees:
-        #     a = Attendee.query.filter_by(person_id=attendee.id, meeting_id=meeting.id).first()
-        #     all_confirmed = all_confirmed and a.is_confirmed
-        # if all_confirmed:
-        #     meeting.archived = True
+        all_confirmed = meeting.chair_confirmed
+        for attendee in meeting.attendees:
+            a = Attendee.query.filter_by(person_id=attendee.id, meeting_id=meeting.id).first()
+            all_confirmed = all_confirmed and a.is_confirmed
+        if all_confirmed:
+            meeting.archived = True
+            db.session.commit()
+            return 'Archived', 200
     else:
         if str(meeting.chair_id) == person_id:
             meeting.chair_confirmed = False
