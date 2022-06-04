@@ -17,11 +17,14 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                <div class="input-group mb-3">
-                    <input name="email" type="email" class="form-control" placeholder="電子郵件"
-                           aria-label="Email" aria-describedby="emailError" required>
+                <input name="email" type="email" class="form-control" placeholder="電子郵件"
+                       aria-label="Email" aria-describedby="emailError" required>
+                <span class="error invalid-feedback" id="emailError"></span>
+                <input name="password" type="password" class="form-control mt-2" placeholder="密碼"
+                       aria-label="Password" aria-describedby="passwordError" required>
+                <span class="error invalid-feedback" id="passwordError"></span>
+                <div class="d-grid mt-2">
                     <button class="btn btn-outline-primary rounded-end" type="submit">登 入</button>
-                    <span class="error invalid-feedback" id="emailError"></span>
                 </div>
             </form>
         </main>
