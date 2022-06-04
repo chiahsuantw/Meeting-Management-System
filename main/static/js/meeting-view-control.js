@@ -71,6 +71,12 @@ meetingViewArea.on('click', '#send-modify', function () {
     });
 });
 
+meetingViewArea.on('click', '#print-minute', function () {
+    let meeting_id = $('#meeting-minutes')[0].attributes.name.value;
+    let printWindow = window.open($SCRIPT_ROOT + '/print/minute/' + meeting_id);
+    printWindow.print();
+});
+
 meetingViewArea.on('click', '#confirmBtn', function () {
     let checkElem = '<i class="bi bi-check mb-1"></i>';
     if ($(this).hasClass('btn-outline-primary')) {

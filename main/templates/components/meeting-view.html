@@ -1,18 +1,24 @@
 {# Control buttons #}
 <div id="controlZone" class="d-flex justify-content-end border-bottom">
     {% if meeting.archived %}
-        <span class="badge bg-secondary fs-5 m-2">已封存</span>
+        <button type="button" class="btn btn-outline-primary d-flex align-items-center m-2" id="print-minute">
+            <i class="bi bi-printer me-1"></i>
+            <text class="d-none d-md-block">列印</text>
+        </button>
+        <button class="btn btn-secondary m-2" disabled>已封存</button>
     {% elif current_user.is_admin() or current_user == meeting.minute_taker %}
         <div class="btn-group m-2" role="group">
-            <button type="button" class="btn btn-outline-primary d-flex align-items-center"
-                    id="send-notice">
+            <button type="button" class="btn btn-outline-primary d-flex align-items-center" id="send-notice">
                 <i class="bi bi-bell me-1"></i>
-                <text class="d-none d-md-block">寄送會議通知</text>
+                <text class="d-none d-md-block">寄送通知</text>
             </button>
-            <button type="button" class="btn btn-outline-primary d-flex align-items-center"
-                    id="send-minute">
+            <button type="button" class="btn btn-outline-primary d-flex align-items-center" id="send-minute">
                 <i class="bi bi-envelope-check me-1"></i>
-                <text class="d-none d-md-block">寄送會議結果</text>
+                <text class="d-none d-md-block">寄送結果</text>
+            </button>
+            <button type="button" class="btn btn-outline-primary d-flex align-items-center" id="print-minute">
+                <i class="bi bi-printer me-1"></i>
+                <text class="d-none d-md-block">列印</text>
             </button>
         </div>
 

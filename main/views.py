@@ -717,6 +717,15 @@ def send_meeting_modify_request(meeting_id):
     return 'Success', 200
 
 
+@app.route('/print/minute/<int:meeting_id>')
+@login_required
+@admin_required
+def print_meeting_minute(meeting_id):
+    meeting = Meeting.query.get_or_404(meeting_id)
+    attendees = Attendee.query.filter_by(meeting_id=meeting_id)
+    return render_template('components/mail-meeting-minute.html', meeting=meeting, attendees=attendees)
+
+
 @app.route('/confirm')
 @login_required
 def confirm_meeting_minute():
