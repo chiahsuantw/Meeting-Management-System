@@ -150,7 +150,7 @@ def feedback_page():
         db.session.commit()
         return redirect(url_for('feedback_page'))
     feedback = Feedback.query.order_by(desc(Feedback.id)).all()
-    return render_template('feedback.html', title='學生意見', feedback=feedback, timedelta=timedelta)
+    return render_template('feedback.html', title='學生意見', feedback=feedback)
 
 
 @app.route('/get/meeting')

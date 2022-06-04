@@ -17,7 +17,7 @@
                         <div id="feedback-{{ f.id }}">
                             <div class="d-flex align-items-end mb-4">
                                 <h3 class="flex-grow-1">意見 #{{ f.id }}</h3>
-                                <p class="mb-2">{{ moment(f.time - timedelta(hours=8)).calendar() }}</p>
+                                <p class="mb-2">{{ moment(f.time).calendar() }}</p>
                             </div>
                             <p>{{ f.content }}</p>
                             <hr>

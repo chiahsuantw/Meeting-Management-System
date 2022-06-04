@@ -65,7 +65,7 @@ class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     type = db.Column(db.Enum(MeetingType), nullable=False)
-    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     location = db.Column(db.String(50), nullable=False)
     archived = db.Column(db.Boolean, nullable=False, default=False)
 
@@ -263,5 +263,5 @@ class Motion(db.Model):
 
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
