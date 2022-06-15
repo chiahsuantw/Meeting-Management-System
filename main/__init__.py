@@ -5,6 +5,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_msearch import Search
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -31,5 +32,6 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 moment = Moment(app)
 mail = Mail(app)
+search = Search(app)
 
 from main import views, models

@@ -153,6 +153,16 @@ def feedback_page():
     return render_template('feedback.html', title='學生意見', feedback=feedback)
 
 
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search_page():
+    search_text = request.form.get('searchText') if request.form.get('searchText') else ''
+    meetings = Meeting.query.all()
+    people = Person.query.all()
+    return render_template('search.html', title='「' + search_text + '」的搜尋結果', search_text=search_text,
+                           meetings=meetings, people=people, timedelta=timedelta)
+
+
 @app.route('/get/meeting')
 @login_required
 def meeting_view():

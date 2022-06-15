@@ -9,9 +9,11 @@
             </svg>
         </a>
         <a class="text-dark text-decoration-none" href="{{ url_for('home') }}"><h4 class="mb-0">會議管理系統</h4></a>
-        <form class="flex-fill d-none d-sm-block px-md-5" style="max-width: 600px">
+        <form class="flex-fill d-none d-sm-block px-md-5" style="max-width: 600px"
+              action="{{ url_for('search_page') }}" method="POST">
             <label for="search-bar" class="d-none"></label>
-            <input id="search-bar" type="search" class="form-control" placeholder="搜尋">
+            <input id="search-bar" name="searchText" type="search" class="form-control" placeholder="搜尋"
+                   {% if search_text %}value="{{ search_text }}"{% endif %} required>
         </form>
         {% if current_user.is_admin() %}
             <a href="{{ url_for('create_meeting_minute_page') }}" class="nav-link ms-auto p-0" title="新增會議">

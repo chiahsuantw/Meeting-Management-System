@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% include 'components/navbar.html' %}
+    <main class="d-flex flex-fill flex-row overflow-hidden">
+        {% include 'components/sidebar.html' %}
+        <div class="container-fluid flex-fill py-5 overflow-auto">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8">
+                    <h1 class="mb-4">「{{ search_text }}」的搜尋結果</h1>
+                    <div class="overflow-auto mb-5">
+                        <div class="d-flex flex-row flex-nowrap gap-3 py-2">
+                            {% for person in people %}
+                                <div class="card"
+                                     onclick="location.href='{{ url_for('person_page', person_id=person.id) }}';"
+                                     style="min-width: fit-content; cursor: pointer;">
+                                    <div class="d-flex align-items-center px-2">
+                                        {% if person.gender.name == 'Female' %}
+                                            <img src="https://img.icons8.com/fluency/100/000000/person-female.png"
+                                                 width="75" height="75" alt=""/>
+                                        {% else %}
+                                            <img src="https://img.icons8.com/fluency/100/000000/person-male.png"
+                                                 width="75" height="75" alt=""/>
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ person.name }}</h5>
+                                            <p class="card-text text-muted">{{ person.type.value }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% for meeting in meetings %}
+                        <div class="mb-5">
+                            <div class="d-flex w-100 align-items-center justify-content-between mb-2">
+                                <a href="{{ url_for('meeting_page', meeting_id=meeting.id) }}"
+                                   class="text-decoration-none">
+                                    <strong class="fs-4 text-nowrap text-truncate">{{ meeting.title }}</strong>
+                                </a>
+                            </div>
+                            <div class="small">{{ meeting.type.value }} ‧
+                                {{ moment(meeting.time - timedelta(hours=8)).calendar() }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
