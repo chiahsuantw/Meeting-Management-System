@@ -166,18 +166,19 @@ def feedback_page():
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def search_page():
-    search_text = request.form.get('searchText') if request.form.get('searchText') else ''
+    if request.method == 'POST':
+        search_text = request.form.get('searchText') if request.form.get('searchText') else ''
+        return redirect(url_for('search_page', query=search_text))
 
-    meeting_list = Meeting.query.msearch(search_text, fields=['title', 'chair_speech'])
-    announcement_list = Meeting.query.join(Announcement.query.msearch(search_text, fields=['content']).subquery())
-    extempore_list = Meeting.query.join(Extempore.query.msearch(search_text, fields=['content']).subquery())
+    query = request.args.get('query')
+    meeting_list = Meeting.query.msearch(query, fields=['title', 'chair_speech'])
+    announcement_list = Meeting.query.join(Announcement.query.msearch(query, fields=['content']).subquery())
+    extempore_list = Meeting.query.join(Extempore.query.msearch(query, fields=['content']).subquery())
     motion_list = Meeting.query.join(
-        Motion.query.msearch(search_text, fields=['description', 'content', 'resolution', 'execution']).subquery())
-
+        Motion.query.msearch(query, fields=['description', 'content', 'resolution', 'execution']).subquery())
     meetings = meeting_list.union(announcement_list, extempore_list, motion_list).order_by(desc(Meeting.time))
-    people = Person.query.msearch(search_text, fields=['name']).order_by(Person.name)
-
-    return render_template('search.html', title='「' + search_text + '」的搜尋結果', search_text=search_text,
+    people = Person.query.msearch(query, fields=['name']).order_by(Person.name)
+    return render_template('search.html', title='「' + query + '」的搜尋結果', search_text=query,
                            meetings=meetings, people=people, timedelta=timedelta)
 
 
