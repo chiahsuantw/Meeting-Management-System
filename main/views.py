@@ -9,7 +9,7 @@ from time import mktime
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_file, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
-from sqlalchemy import desc, or_
+from sqlalchemy import desc, or_, extract
 from sqlalchemy.exc import DataError
 
 from main import app, mail
@@ -135,14 +135,71 @@ def statistics_page():
     顯示統計資料頁面
     :return: 統計資料頁面
     """
-    week_start = datetime.today() - timedelta(days=datetime.today().weekday() + 1)
+    today = datetime.today()
+    year = today.year
+    week_start = today - timedelta(days=today.weekday() + 1)
     week_end = week_start + timedelta(days=6)
+
+    month_str = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
+
+    months_meeting_count = []
+    motion_status_count = [0, 0, 0]
+
+    if today.month <= 2 or today.month >= 9:  # 上學期（9月~隔年2月）
+        if today.month <= 2:
+            year -= 1
+
+        for i in range(1, 3):
+            meetings = Meeting.query.filter(
+                and_(extract('year', Meeting.time) == year + 1, extract('month', Meeting.time) == i))
+            months_meeting_count.append((month_str[i - 1], meetings.count()))
+            for motion in Motion.query.join(meetings.subquery()):
+                if motion.status.value == '討論中':
+                    motion_status_count[0] += 1
+                elif motion.status.value == '執行中':
+                    motion_status_count[1] += 1
+                elif motion.status.value == '結案':
+                    motion_status_count[2] += 1
+
+        for i in range(9, 13):
+            meetings = Meeting.query.filter(
+                and_(extract('year', Meeting.time) == year, extract('month', Meeting.time) == i))
+            months_meeting_count.append((month_str[i - 1], meetings.count()))
+            for motion in Motion.query.join(meetings.subquery()):
+                if motion.status.value == '討論中':
+                    motion_status_count[0] += 1
+                elif motion.status.value == '執行中':
+                    motion_status_count[1] += 1
+                elif motion.status.value == '結案':
+                    motion_status_count[2] += 1
+
+    else:  # 下學期（3月~8月）
+        for i in range(3, 9):
+            meetings = Meeting.query.filter(
+                and_(extract('year', Meeting.time) == year, extract('month', Meeting.time) == i))
+            months_meeting_count.append((month_str[i - 1], meetings.count()))
+            for motion in Motion.query.join(meetings.subquery()):
+                if motion.status.value == '討論中':
+                    motion_status_count[0] += 1
+                elif motion.status.value == '執行中':
+                    motion_status_count[1] += 1
+                elif motion.status.value == '結案':
+                    motion_status_count[2] += 1
+
+    total_motion_status_count = sum(motion_status_count)
+
     data = {
-        'meeting_amount': Meeting.query.filter(and_(Meeting.time > week_start, Meeting.time < week_end)).count(),
-        'motion_amount': Motion.query.join(
+        'week_meeting_count': Meeting.query.filter(and_(Meeting.time > week_start, Meeting.time < week_end)).count(),
+        'week_motion_count': Motion.query.join(
             Meeting.query.filter(and_(Meeting.time > week_start, Meeting.time < week_end)).subquery()).count(),
-        'person_amount': Person.query.count(),
-        'feedback_amount': Feedback.query.count(),
+        'person_count': Person.query.count(),
+        'feedback_count': Feedback.query.count(),
+        'months_meeting_count': months_meeting_count,
+        'semester_motion_status_percentage': [
+            ('討論中', motion_status_count[0] / total_motion_status_count),
+            ('執行中', motion_status_count[1] / total_motion_status_count),
+            ('結案', motion_status_count[2] / total_motion_status_count)
+        ]
     }
     return render_template('statistics.html', title='統計資料', data=data)
 
