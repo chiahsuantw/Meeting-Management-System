@@ -1,6 +1,7 @@
 import json
-from datetime import timedelta
+from datetime import timedelta, datetime
 from functools import wraps
+from operator import and_
 from os import path, remove
 from threading import Thread
 from time import mktime
@@ -134,7 +135,16 @@ def statistics_page():
     顯示統計資料頁面
     :return: 統計資料頁面
     """
-    return render_template('statistics.html', title='統計資料')
+    week_start = datetime.today() - timedelta(days=datetime.today().weekday() + 1)
+    week_end = week_start + timedelta(days=6)
+    data = {
+        'meeting_amount': Meeting.query.filter(and_(Meeting.time > week_start, Meeting.time < week_end)).count(),
+        'motion_amount': Motion.query.join(
+            Meeting.query.filter(and_(Meeting.time > week_start, Meeting.time < week_end)).subquery()).count(),
+        'person_amount': Person.query.count(),
+        'feedback_amount': Feedback.query.count(),
+    }
+    return render_template('statistics.html', title='統計資料', data=data)
 
 
 @app.route('/feedback', methods=['GET', 'POST'])
