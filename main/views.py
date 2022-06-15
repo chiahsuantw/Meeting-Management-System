@@ -149,7 +149,7 @@ def feedback_page():
         db.session.add(feedback)
         db.session.commit()
         return redirect(url_for('feedback_page'))
-    feedback = Feedback.query.order_by(desc(Feedback.id)).all()
+    feedback = Feedback.query.order_by(desc(Feedback.id))
     return render_template('feedback.html', title='學生意見', feedback=feedback)
 
 
@@ -157,8 +157,16 @@ def feedback_page():
 @login_required
 def search_page():
     search_text = request.form.get('searchText') if request.form.get('searchText') else ''
-    meetings = Meeting.query.all()
-    people = Person.query.all()
+
+    meeting_list = Meeting.query.msearch(search_text, fields=['title', 'chair_speech'])
+    announcement_list = Meeting.query.join(Announcement.query.msearch(search_text, fields=['content']).subquery())
+    extempore_list = Meeting.query.join(Extempore.query.msearch(search_text, fields=['content']).subquery())
+    motion_list = Meeting.query.join(
+        Motion.query.msearch(search_text, fields=['description', 'content', 'resolution', 'execution']).subquery())
+
+    meetings = meeting_list.union(announcement_list, extempore_list, motion_list).order_by(desc(Meeting.time))
+    people = Person.query.msearch(search_text, fields=['name']).order_by(Person.name)
+
     return render_template('search.html', title='「' + search_text + '」的搜尋結果', search_text=search_text,
                            meetings=meetings, people=people, timedelta=timedelta)
 
