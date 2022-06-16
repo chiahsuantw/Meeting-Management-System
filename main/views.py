@@ -186,8 +186,6 @@ def statistics_page():
                 elif motion.status.value == '結案':
                     motion_status_count[2] += 1
 
-    total_motion_status_count = sum(motion_status_count)
-
     data = {
         'week_meeting_count': Meeting.query.filter(and_(Meeting.time > week_start, Meeting.time < week_end)).count(),
         'week_motion_count': Motion.query.join(
@@ -196,9 +194,9 @@ def statistics_page():
         'feedback_count': Feedback.query.count(),
         'months_meeting_count': months_meeting_count,
         'semester_motion_status_percentage': [
-            ('討論中', motion_status_count[0] / total_motion_status_count),
-            ('執行中', motion_status_count[1] / total_motion_status_count),
-            ('結案', motion_status_count[2] / total_motion_status_count)
+            ('討論中', motion_status_count[0]),
+            ('執行中', motion_status_count[1]),
+            ('結案', motion_status_count[2])
         ]
     }
     return render_template('statistics.html', title='統計資料', data=data)

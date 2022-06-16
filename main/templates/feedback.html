@@ -9,9 +9,11 @@
                 <div class="col-md-10 col-lg-8">
                     <div class="d-flex mt-3 mb-5 align-items-center">
                         <h1 class="flex-grow-1">學生匿名意見</h1>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                data-bs-target="#newFeedbackModal">新增意見
-                        </button>
+                        {% if current_user.type.value == '學生' %}
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#newFeedbackModal">新增意見
+                            </button>
+                        {% endif %}
                     </div>
                     {% for f in feedback %}
                         <div id="feedback-{{ f.id }}">
