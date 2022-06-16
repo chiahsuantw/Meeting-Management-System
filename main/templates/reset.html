@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="h-100 d-flex justify-content-center">
+        <main class="w-100 m-auto" style="max-width: 330px">
+            <form id="loginForm" action="" method="post">
+                <div class="d-flex justify-content-center align-items-center mb-5">
+                    <img src="{{ url_for('static', filename='images/csie-logo.png') }}" alt="" width="65">
+                    <h1 class="text-center ms-2">會議管理系統</h1>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <input name="oldPassword" type="password" class="form-control mt-2" placeholder="舊密碼"
+                       aria-label="oldPassword" aria-describedby="oldPasswordError" required>
+                <span class="error invalid-feedback" id="oldPasswordError"></span>
+
+                <input name="newPassword" type="password" class="form-control mt-2" placeholder="新密碼"
+                       aria-label="newPassword" aria-describedby="newPasswordError" required>
+                <span class="error invalid-feedback" id="newPasswordError"></span>
+
+                <input name="repeatPassword" type="password" class="form-control mt-2" placeholder="再次輸入密碼"
+                       aria-label="repeatPassword" aria-describedby="repeatPasswordError" required>
+                <span class="error invalid-feedback" id="repeatPasswordError"></span>
+
+                <div class="d-grid d-md-flex gap-2 mt-2">
+                    <a href="{{ url_for('home') }}" class="btn btn-outline-danger flex-grow-1">取消</a>
+                    <button class="btn btn-outline-primary flex-grow-1" type="submit">重設</button>
+                </div>
+            </form>
+        </main>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/i18n/defaults-zh_TW.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="{{ url_for('static', filename='js/login-form-control.js') }}"></script>
+{% endblock %}

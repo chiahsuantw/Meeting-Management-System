@@ -717,9 +717,10 @@ def login():
     :return: 登入頁面
     """
     email = request.form.get('email')
+    password = request.form.get('password')
     if email:
         user = Person.query.filter_by(email=email).first()
-        if user:
+        if user and user.password == password:
             login_user(user, remember=True)
             return redirect(url_for('home'))
         else:
@@ -729,13 +730,13 @@ def login():
 
 @app.route('/recover')
 def recover():
-    return render_template('login.html', title='忘記密碼')
+    return render_template('recover.html', title='忘記密碼')
 
 
 @app.route('/reset')
 @login_required
 def reset():
-    return render_template('login.html', title='重設密碼')
+    return render_template('reset.html', title='重設密碼')
 
 
 @app.route('/logout')

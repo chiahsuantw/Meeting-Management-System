@@ -7,6 +7,15 @@ $('#loginForm').validate({
         },
         'password': {
             'required': true
+        },
+        'newPassword': {
+            'required': true
+        },
+        'oldPassword': {
+            'required': true
+        },
+        'repeatPassword': {
+            'required': true
         }
     },
     'messages': {
@@ -15,6 +24,15 @@ $('#loginForm').validate({
             'email': '請輸入有效的電子郵件'
         },
         'password': {
+            'required': '必須填寫'
+        },
+        'newPassword': {
+            'required': '必須填寫'
+        },
+        'oldPassword': {
+            'required': '必須填寫'
+        },
+        'repeatPassword': {
             'required': '必須填寫'
         }
     }
