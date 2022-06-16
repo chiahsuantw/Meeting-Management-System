@@ -16,14 +16,23 @@
                    {% if search_text %}value="{{ search_text }}"{% endif %} required>
         </form>
         {% if current_user.is_admin() %}
-            <a href="{{ url_for('create_meeting_minute_page') }}" class="nav-link ms-auto p-0" title="新增會議">
-                <img src="https://img.icons8.com/fluency/48/000000/add.png"
-                     width="32" height="32" alt=""/>
-            </a>
+            <div class="d-flex align-items-center ms-auto">
+                <div class="d-flex flex-shrink-0 dropdown">
+                    <a href="#" class="d-block link-dark text-decoration-none"
+                       data-bs-toggle="dropdown">
+                        <img src="https://img.icons8.com/fluency/48/000000/add.png" alt="" width="32"
+                             height="32" class="rounded-circle"/>
+                    </a>
+                    <ul class="dropdown-menu text-small shadow mt-2">
+                        <li><a class="dropdown-item" href="{{ url_for('create_meeting_minute_page') }}">建立會議紀錄</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('add_new_person_page') }}">新增人員資料</a></li>
+                    </ul>
+                </div>
+            </div>
         {% endif %}
         <div class="d-flex align-items-center {% if not current_user.is_admin() %}ms-auto{% endif %}">
             <div class="d-flex flex-shrink-0 dropdown">
-                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2"
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
                    data-bs-toggle="dropdown">
                     <img src="https://img.icons8.com/fluency/48/000000/user-male-circle.png" alt="" width="32"
                          height="32" class="rounded-circle"/>

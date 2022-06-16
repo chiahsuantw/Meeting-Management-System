@@ -47,7 +47,14 @@ def create_meeting_minute_page():
     :return: 新增會議頁面
     """
     people = Person.query.all()
-    return render_template('meeting-new.html', title='新增會議', people=people)
+    return render_template('meeting-new.html', title='建立會議紀錄', people=people)
+
+
+@app.route('/add-person')
+@login_required
+@admin_required
+def add_new_person_page():
+    return render_template('person-new.html', title='新增人員')
 
 
 @app.route('/meeting')

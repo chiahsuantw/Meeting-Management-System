@@ -175,6 +175,11 @@ $('#newPersonBtn').on('click', function () {
         'data': formData,
         'success': (data) => {
             if (data['message'] === 'Success') {
+                if (window.location.pathname === '/add-person') {
+                    window.location.href = '/';
+                    return;
+                }
+
                 // Reset the form
                 newPersonForm.trigger('reset');
                 personType.val('').selectpicker('refresh');
