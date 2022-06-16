@@ -233,12 +233,22 @@ def search_page():
         return redirect(url_for('search_page', query=search_text))
 
     query = request.args.get('query')
+
     meeting_list = Meeting.query.msearch(query, fields=['title', 'chair_speech'])
     announcement_list = Meeting.query.join(Announcement.query.msearch(query, fields=['content']).subquery())
-    extempore_list = Meeting.query.join(Extempore.query.msearch(query, fields=['content']).subquery())
     motion_list = Meeting.query.join(
         Motion.query.msearch(query, fields=['description', 'content', 'resolution', 'execution']).subquery())
-    meetings = meeting_list.union(announcement_list, extempore_list, motion_list).order_by(desc(Meeting.time))
+    extempore_list = Meeting.query.join(Extempore.query.msearch(query, fields=['content']).subquery())
+
+    if current_user.is_admin():
+        meetings = meeting_list.union(announcement_list, extempore_list, motion_list).order_by(desc(Meeting.time))
+    else:
+        meetings = meeting_list.union(announcement_list, extempore_list, motion_list).filter(or_(
+            Meeting.chair.has(id=current_user.id),
+            Meeting.minute_taker.has(id=current_user.id),
+            Meeting.attendees.any(id=current_user.id)
+        )).order_by(desc(Meeting.time))
+
     people = Person.query.msearch(query, fields=['name']).order_by(Person.name)
     return render_template('search.html', title='「' + query + '」的搜尋結果', search_text=query,
                            meetings=meetings, people=people, timedelta=timedelta)
