@@ -145,11 +145,11 @@ def statistics_page():
     months_meeting_count = []
     motion_status_count = [0, 0, 0]
 
-    if today.month <= 2 or today.month >= 9:  # 上學期（9月~隔年2月）
-        if today.month <= 2:
+    if today.month <= 1 or today.month >= 8:  # 上學期（8月~隔年1月）
+        if today.month <= 1:
             year -= 1
 
-        for i in range(1, 3):
+        for i in range(1, 2):
             meetings = Meeting.query.filter(
                 and_(extract('year', Meeting.time) == year + 1, extract('month', Meeting.time) == i))
             months_meeting_count.append((month_str[i - 1], meetings.count()))
@@ -161,7 +161,7 @@ def statistics_page():
                 elif motion.status.value == '結案':
                     motion_status_count[2] += 1
 
-        for i in range(9, 13):
+        for i in range(8, 13):
             meetings = Meeting.query.filter(
                 and_(extract('year', Meeting.time) == year, extract('month', Meeting.time) == i))
             months_meeting_count.append((month_str[i - 1], meetings.count()))
@@ -173,8 +173,8 @@ def statistics_page():
                 elif motion.status.value == '結案':
                     motion_status_count[2] += 1
 
-    else:  # 下學期（3月~8月）
-        for i in range(3, 9):
+    else:  # 下學期（2月~7月）
+        for i in range(2, 8):
             meetings = Meeting.query.filter(
                 and_(extract('year', Meeting.time) == year, extract('month', Meeting.time) == i))
             months_meeting_count.append((month_str[i - 1], meetings.count()))
@@ -235,6 +235,14 @@ def search_page():
     people = Person.query.msearch(query, fields=['name']).order_by(Person.name)
     return render_template('search.html', title='「' + query + '」的搜尋結果', search_text=query,
                            meetings=meetings, people=people, timedelta=timedelta)
+
+
+@app.route('/yearlist')
+@login_required
+@admin_required
+def yearlist_page():
+    meetings = Meeting.query
+    return render_template('yearlist.html', title='歷年會議總表', meetings=meetings, timedelta=timedelta)
 
 
 @app.route('/get/meeting')
@@ -715,6 +723,17 @@ def login():
         else:
             flash('登入資訊不正確，請再試一次', 'danger')
     return render_template('login.html', title='登入')
+
+
+@app.route('/recover')
+def recover():
+    return render_template('login.html', title='忘記密碼')
+
+
+@app.route('/reset')
+@login_required
+def reset():
+    return render_template('login.html', title='重設密碼')
 
 
 @app.route('/logout')
