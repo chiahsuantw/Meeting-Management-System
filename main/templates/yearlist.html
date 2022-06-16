@@ -9,31 +9,34 @@
                 <div class="col-md-10 col-lg-8">
                     <h1 class="mb-4">歷年會議總表</h1>
                     <div class="accordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#yearlist-">
-                                    年
-                                </button>
-                            </h2>
-                            <div id="yearlist-" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                    {% for meeting in meetings %}
-                                        <div class="mb-3">
-                                            <div class="d-flex w-100 align-items-center justify-content-between">
-                                                <a href="{{ url_for('meeting_page', meeting_id=meeting.id) }}"
-                                                   class="text-decoration-none">
-                                                    <strong class="text-nowrap text-truncate">{{ meeting.title }}</strong>
-                                                </a>
+                        {% for year, meetings in data.items() %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#yearlist-{{ year }}" aria-expanded="false"
+                                            aria-controls="yearlist-{{ year }}">
+                                        {{ year }} 年
+                                    </button>
+                                </h2>
+                                <div id="yearlist-{{ year }}" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        {% for meeting in meetings %}
+                                            <div class="mb-3">
+                                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                                    <a href="{{ url_for('meeting_page', meeting_id=meeting.id) }}"
+                                                       class="text-decoration-none">
+                                                        <strong class="text-nowrap text-truncate">{{ meeting.title }}</strong>
+                                                    </a>
+                                                </div>
+                                                <div class="small">{{ meeting.type.value }} ‧
+                                                    {{ moment(meeting.time - timedelta(hours=8)).format('LLLL') }}
+                                                </div>
                                             </div>
-                                            <div class="small">{{ meeting.type.value }} ‧
-                                                {{ moment(meeting.time - timedelta(hours=8)).calendar() }}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

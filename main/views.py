@@ -241,8 +241,10 @@ def search_page():
 @login_required
 @admin_required
 def yearlist_page():
-    meetings = Meeting.query
-    return render_template('yearlist.html', title='歷年會議總表', meetings=meetings, timedelta=timedelta)
+    data = {}
+    for year in Meeting.query.with_entities(extract('year', Meeting.time)).distinct().all():
+        data[str(year[0])] = Meeting.query.filter(extract('year', Meeting.time) == year[0]).order_by(Meeting.time).all()
+    return render_template('yearlist.html', title='歷年會議總表', data=data, timedelta=timedelta)
 
 
 @app.route('/get/meeting')
