@@ -8,14 +8,15 @@ $('#loginForm').validate({
         'password': {
             'required': true
         },
-        'newPassword': {
-            'required': true
-        },
         'oldPassword': {
             'required': true
         },
-        'repeatPassword': {
+        'newPassword': {
             'required': true
+        },
+        'repeatPassword': {
+            'required': true,
+            'equalTo': 'input[name="newPassword"]'
         }
     },
     'messages': {
@@ -26,14 +27,15 @@ $('#loginForm').validate({
         'password': {
             'required': '必須填寫'
         },
-        'newPassword': {
-            'required': '必須填寫'
-        },
         'oldPassword': {
             'required': '必須填寫'
         },
-        'repeatPassword': {
+        'newPassword': {
             'required': '必須填寫'
+        },
+        'repeatPassword': {
+            'required': '必須填寫',
+            'equalTo': '必須和新密碼欄位相同'
         }
     }
 });
