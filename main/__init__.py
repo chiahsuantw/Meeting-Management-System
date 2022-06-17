@@ -23,7 +23,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_DEBUG'] = False
 app.config['TESTING'] = False
 app.config['MAIL_USERNAME'] = '110.database.csie.nuk@gmail.com'
-app.config['MAIL_PASSWORD'] = 'database4234'
+app.config['MAIL_PASSWORD'] = 'mrietnakkcaduuwb'
 
 # Create upload folder if it doesn't exist
 Path(app.config['UPLOAD_FOLDER']).mkdir(parents=True, exist_ok=True)
