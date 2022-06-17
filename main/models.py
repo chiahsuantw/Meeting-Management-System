@@ -66,7 +66,7 @@ class Meeting(db.Model):
     title = db.Column(db.String(200), nullable=False)
     type = db.Column(db.Enum(MeetingType), nullable=False)
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    location = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(100), nullable=False)
     archived = db.Column(db.Boolean, nullable=False, default=False)
 
     attachments = db.relationship('Attachment', backref='meeting', cascade='all, delete-orphan')
@@ -265,3 +265,18 @@ class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
+
+
+class MeetingTemplate(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(100), nullable=False)
+
+    title = db.Column(db.String(200), nullable=False)
+    type = db.Column(db.Enum(MeetingType), nullable=False)
+    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    location = db.Column(db.String(100), nullable=False)
+
+    # chair
+    # minute_taker
+    # attendees
+    # guests
