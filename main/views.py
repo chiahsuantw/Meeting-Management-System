@@ -937,3 +937,18 @@ def confirm_meeting_minute():
 
     db.session.commit()
     return 'Success', 200
+
+
+@app.route('/template/get')
+def get_template():
+    pass
+
+
+@app.route('/template/add', methods=['POST'])
+def add_template():
+    pass
+
+
+@app.route('/template/delete', methods=['POST'])
+def delete_template():
+    pass

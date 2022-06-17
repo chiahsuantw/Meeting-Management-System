@@ -267,6 +267,19 @@ class Feedback(db.Model):
     content = db.Column(db.Text, nullable=False)
 
 
+template_attendee_relations = db.Table(
+    'template_attendee',
+    db.Column('template_id', db.ForeignKey('meeting_template.id')),
+    db.Column('attendee_id', db.ForeignKey('person.id')),
+)
+
+template_guest_relations = db.Table(
+    'template_guest',
+    db.Column('template_id', db.ForeignKey('meeting_template.id')),
+    db.Column('guest_id', db.ForeignKey('person.id')),
+)
+
+
 class MeetingTemplate(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
@@ -276,7 +289,10 @@ class MeetingTemplate(db.Model):
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     location = db.Column(db.String(100), nullable=False)
 
-    # chair
-    # minute_taker
-    # attendees
-    # guests
+    chair_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    chair = db.relationship('Person', foreign_keys=[chair_id], uselist=False, backref='templates_as_chair')
+    minute_taker_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    minute_taker = db.relationship('Person', foreign_keys=[minute_taker_id], uselist=False,
+                                   backref='templates_as_minute_taker')
+    attendees = db.relationship('Person', secondary=template_attendee_relations, backref='templates_as_attendees')
+    guests = db.relationship('Person', secondary=template_guest_relations, backref='templates_as_guests')
