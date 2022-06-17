@@ -13,7 +13,8 @@ from sqlalchemy import desc, or_, extract
 from sqlalchemy.exc import DataError
 
 from main import app, mail
-from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee, Feedback
+from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee, Feedback, \
+    MeetingTemplate
 
 
 def admin_required(func):
@@ -941,14 +942,53 @@ def confirm_meeting_minute():
 
 @app.route('/template/get')
 def get_template():
-    pass
+    template_list = MeetingTemplate.query.all()
+    data = []
+    for template in template_list:
+        attendees = []
+        guests = []
+        for person in template.attendees:
+            attendees.append(person.id)
+        for person in template.guests:
+            guests.append(person.id)
+        data.append({'id': template.id,
+                     'name': template.name,
+                     'title': template.title,
+                     'time': template.time,
+                     'location': template.location,
+                     'type': template.type.name,
+                     'chair': template.chair_id,
+                     'minuteTaker': template.minute_taker_id,
+                     'attendees': attendees,
+                     'guests': guests})
+    return jsonify({'templateList': data})
 
 
-@app.route('/template/add', methods=['POST'])
+@app.route('/template/add', methods=['GET', 'POST'])
 def add_template():
-    pass
+    data = json.loads(request.form['json_form'])
+    template = MeetingTemplate()
+    template.name = data['name']
+    template.title = data['title']
+    template.time = data['time']
+    template.location = data['location']
+    template.type = data['type']
+    template.chair_id = int(data['chair'])
+    template.minute_taker_id = int(data['minuteTaker'])
+    for att_id in data['attendee']:
+        person = Person.query.get(int(att_id))
+        template.attendees.append(person)
+    for gue_id in data['guest']:
+        person = Person.query.get(int(gue_id))
+        template.attendees.append(person)
+    db.session.add(template)
+    db.session.commit()
+    return 'Success', 200
 
 
 @app.route('/template/delete', methods=['POST'])
 def delete_template():
-    pass
+    template = MeetingTemplate.query.filter_by(id=request.form['id']).first()
+    db.session.delete(template)
+    db.session.commit()
+    return 'Success', 200
