@@ -54,6 +54,10 @@ def create_meeting_minute_page():
 @login_required
 @admin_required
 def add_new_person_page():
+    """
+    顯示新增人員資料頁面
+    :return: 新增人員資料頁面
+    """
     return render_template('person-new.html', title='新增人員')
 
 
@@ -228,6 +232,12 @@ def feedback_page():
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def search_page():
+    """
+    全文搜尋功能
+    :request.form searchText: 關鍵字 [POST]
+    :request.args query: 關鍵字
+    :return: 搜尋頁面
+    """
     if request.method == 'POST':
         search_text = request.form.get('searchText') if request.form.get('searchText') else ''
         return redirect(url_for('search_page', query=search_text))
@@ -258,6 +268,10 @@ def search_page():
 @login_required
 @admin_required
 def yearlist_page():
+    """
+    列出歷年會議
+    :return: 歷年會議總表頁面
+    """
     data = {}
     for year in Meeting.query.with_entities(extract('year', Meeting.time)).distinct().all():
         data[str(year[0])] = Meeting.query.filter(extract('year', Meeting.time) == year[0]).order_by(Meeting.time).all()
@@ -745,14 +759,45 @@ def login():
     return render_template('login.html', title='登入')
 
 
-@app.route('/recover')
+@app.route('/recover', methods=['GET', 'POST'])
 def recover():
+    """
+    找回密碼
+    Hack: 為了簡化流程，直接寄送密碼到信箱，而不使用 Token
+    :request.form email: 電子郵件
+    :return: 找回密碼頁面
+    """
+    email = request.form.get('email')
+    person = Person.query.filter_by(email=email).first()
+    if email:
+        flash('若您輸入了正確的電子郵件，請前往信箱查看您的密碼', 'success')
+    if person:
+        sender = ('會議管理系統', '110.database.csie.nuk@gmail.com')
+        recipients = [email]
+        msg = Message('找回您的密碼 - 會議管理系統', sender=sender, recipients=recipients)
+        msg.body = '您的密碼為：' + person.password
+        thread = Thread(target=send_async_email, args=[app, msg])
+        thread.start()
     return render_template('recover.html', title='忘記密碼')
 
 
-@app.route('/reset')
+@app.route('/reset', methods=['GET', 'POST'])
 @login_required
 def reset():
+    """
+    重設密碼
+    :request.form oldPassword: 舊密碼
+    :request.form newPassword: 新密碼
+    :return: 重設密碼頁面
+    """
+    old_password = request.form.get('oldPassword')
+    new_password = request.form.get('newPassword')
+    if current_user.password == old_password:
+        current_user.password = new_password
+        db.session.commit()
+        return redirect(url_for('home'))
+    elif old_password:
+        flash('密碼不正確，請再試一次', 'danger')
     return render_template('reset.html', title='重設密碼')
 
 
@@ -844,6 +889,11 @@ def send_meeting_modify_request(meeting_id):
 @login_required
 @admin_required
 def print_meeting_minute(meeting_id):
+    """
+    列印會議記錄
+    :param meeting_id: 會議編號
+    :return: 列印頁面
+    """
     meeting = Meeting.query.get_or_404(meeting_id)
     attendees = Attendee.query.filter_by(meeting_id=meeting_id)
     return render_template('components/mail-meeting-minute.html', meeting=meeting, attendees=attendees)
