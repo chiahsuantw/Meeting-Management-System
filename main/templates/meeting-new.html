@@ -8,45 +8,43 @@
             <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-8">
                     <h1 class="mt-3 mb-5">建立會議紀錄</h1>
-                    <form id="newMeetingForm" enctype="multipart/form-data">
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between mb-2">
-                                <h3 class="mb-0">會議資訊</h3>
-                                <div class="btn-group" role="group">
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-secondary rounded-start" type="button"
-                                                data-bs-toggle="dropdown" aria-expanded="false"
-                                                data-bs-auto-close="outside">
-                                            儲存模板
-                                        </button>
-                                        <ul class="dropdown-menu p-3" style="min-width: 250px">
-                                            <form class="dropdown-menu p-4">
-                                                <div class="input-group input-group-sm">
-                                                    <input type="text" class="form-control"
-                                                           id="templateNameInput" name="templateNameInput"
-                                                           placeholder="命名模板" aria-label="Save Template"
-                                                           aria-describedby="templateNameInputError" required>
-                                                    <button class="btn btn-success" type="button">
-                                                        儲存
-                                                    </button>
-                                                </div>
-                                                <span class="error invalid-feedback" id="templateNameInputError"></span>
-                                            </form>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-secondary rounded-end" type="button"
-                                                data-bs-toggle="dropdown" aria-expanded="false">
-                                            套用模板
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">樣式一</a></li>
-                                            <li><a class="dropdown-item" href="#">樣式二</a></li>
-                                        </ul>
-                                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h3 class="mb-0">會議資訊</h3>
+                            <div class="btn-group" role="group">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-secondary rounded-start" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false"
+                                            data-bs-auto-close="outside">
+                                        儲存模板
+                                    </button>
+                                    <form id="templateSaveForm" class="dropdown-menu p-3" style="min-width: 250px">
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" class="form-control"
+                                                   id="templateNameInput" name="templateNameInput"
+                                                   placeholder="命名模板" aria-label="Save Template"
+                                                   aria-describedby="templateNameInputError" required>
+                                            <button id="templateSaveBtn" class="btn btn-success" type="button">
+                                                儲存
+                                            </button>
+                                        </div>
+                                        <span class="error invalid-feedback" id="templateNameInputError"></span>
+                                    </form>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-secondary rounded-end" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        套用模板
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">樣式一</a></li>
+                                        <li><a class="dropdown-item" href="#">樣式二</a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <form id="newMeetingForm" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="mTitleInput" class="form-label fs-5">標題</label>
                             <input type="text" class="form-control" id="mTitleInput" name="mTitleInput"
@@ -244,6 +242,7 @@
     {#            $('.selectpicker').selectpicker('refresh');#}
     {#        });#}
     {#    </script>#}
-    <script defer src="{{ url_for('static', filename='js/new-person-form-control.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/new-meeting-form-control.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/meeting-template-control.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/new-person-form-control.js') }}"></script>
 {% endblock %}
