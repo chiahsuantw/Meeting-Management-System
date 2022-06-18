@@ -3,9 +3,8 @@ const templateNameInput = $('#templateNameInput');
 const templateList = $('#templateList');
 let templateContentList = {};
 
-$(document).ready(function () {
-    updateTemplateList()
-});
+// 進入頁面時更新模板列表
+$(document).ready(updateTemplateList);
 
 templateSaveForm.validate({
     'errorElement': 'span',
@@ -14,37 +13,45 @@ templateSaveForm.validate({
     },
 });
 
+// 儲存模板
 $('#templateSaveBtn').on('click', function () {
+    newMeetingForm.addClass('has-validated');
+
     if (!newMeetingForm.valid() || !templateSaveForm.valid()) {
         return;
     }
+
     let formData = new FormData();
-    let meetingTemplate = {};
-    meetingTemplate['name'] = templateNameInput.val();
-    meetingTemplate['title'] = titleInput.val();
-    meetingTemplate['time'] = timeInput.val();
-    meetingTemplate['location'] = locationInput.val();
-    meetingTemplate['type'] = typeInput.val();
-    meetingTemplate['chair'] = chairInput.val();
-    meetingTemplate['minuteTaker'] = minuteTakerInput.val();
-    meetingTemplate['attendee'] = attendeeInput.val();
-    meetingTemplate['guest'] = guestInput.val();
-    formData.append('json_form', JSON.stringify(meetingTemplate));
+    let template = {};
+    template['name'] = templateNameInput.val();
+    template['title'] = titleInput.val();
+    template['time'] = timeInput.val();
+    template['location'] = locationInput.val();
+    template['type'] = typeInput.val();
+    template['chair'] = chairInput.val();
+    template['minuteTaker'] = minuteTakerInput.val();
+    template['attendee'] = attendeeInput.val();
+    template['guest'] = guestInput.val();
+    formData.append('json_form', JSON.stringify(template));
     $.ajax({
         method: 'POST',
         url: $SCRIPT_ROOT + '/template/add',
         data: formData,
         'success': function () {
-            console.log('add template successfully')
             updateTemplateList();
         },
         contentType: false,
         processData: false,
     });
+
+    // 清空輸入
+    templateNameInput.val('');
+    $('#saveTemplateDropdown').children('button').click();
 });
 
+// 套用模板
 templateList.on('click', 'li > a:nth-child(1)', function (e) {
-    let data = templateContentList[$(this).data('id')];
+    let data = JSON.parse(JSON.stringify(templateContentList[$(this).data('id')]));
     titleInput.val(data['title']);
     let datetime = new Date(data['time']).toISOString();
     timeInput.val(datetime.substring(0, datetime.length - 1));
@@ -55,7 +62,7 @@ templateList.on('click', 'li > a:nth-child(1)', function (e) {
     attendeeInput.val(data['attendees']);
     guestInput.val(data['guests']);
 
-    // disable click process
+    // 禁用選項處理
     let chairBar = chairInput.children();
     let minuteTakerBar = minuteTakerInput.children();
     let attendeeBar = attendeeInput.children();
@@ -63,7 +70,6 @@ templateList.on('click', 'li > a:nth-child(1)', function (e) {
     chairInput.children().each(function () {
         let value = $(this).val();
         let index = $(this).index();
-
         if (data['chair'] === parseInt(value)) {
             oldChairIndex = index;
             minuteTakerBar[index].disabled = true;
@@ -88,8 +94,10 @@ templateList.on('click', 'li > a:nth-child(1)', function (e) {
     })
     $('.selectpicker').selectpicker('refresh');
     appendPresentTag();
+    $('#applyTemplateDropdown').children('button').click();
 });
 
+// 刪除模板
 templateList.on('click', 'li > a:nth-child(2)', function (e) {
     let formData = new FormData();
     formData.append('id', $(this).data('id'));
@@ -105,6 +113,7 @@ templateList.on('click', 'li > a:nth-child(2)', function (e) {
     });
 });
 
+// 更新模板列表
 function updateTemplateList() {
     $.ajax({
         method: 'GET',
@@ -125,6 +134,13 @@ function updateTemplateList() {
                             <i class="bi bi-trash-fill text-muted"></i>
                         </a>
                     </li>
+                `);
+            }
+            if (data.templateList.length === 0) {
+                templateList.append(`
+                    <div class="d-flex px-3">
+                        目前沒有模板
+                    </div>
                 `);
             }
         },

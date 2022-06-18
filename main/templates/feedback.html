@@ -25,7 +25,7 @@
                             <hr>
                         </div>
                     {% endfor %}
-                    {% if not feedback %}
+                    {% if not feedback.all() %}
                         目前沒有任何匿名意見
                     {% endif %}
                 </div>

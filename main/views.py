@@ -149,8 +149,8 @@ def statistics_page():
     """
     today = datetime.today()
     year = today.year
-    week_start = today - timedelta(days=today.weekday() + 1)
-    week_end = week_start + timedelta(days=6)
+    week_start = (today - timedelta(days=today.weekday() + 1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    week_end = (week_start + timedelta(days=6)).replace(hour=23, minute=59, second=59, microsecond=0)
 
     month_str = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
 
@@ -980,7 +980,7 @@ def add_template():
         template.attendees.append(person)
     for gue_id in data['guest']:
         person = Person.query.get(int(gue_id))
-        template.attendees.append(person)
+        template.guests.append(person)
     db.session.add(template)
     db.session.commit()
     return 'Success', 200

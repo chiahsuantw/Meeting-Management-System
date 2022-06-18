@@ -12,7 +12,7 @@
                         <div class="d-flex justify-content-between mb-2">
                             <h3 class="mb-0">會議資訊</h3>
                             <div class="btn-group" role="group">
-                                <div class="btn-group">
+                                <div id="saveTemplateDropdown" class="btn-group">
                                     <button class="btn btn-sm btn-secondary rounded-start" type="button"
                                             data-bs-toggle="dropdown" aria-expanded="false"
                                             data-bs-auto-close="outside">
@@ -31,9 +31,10 @@
                                         <span class="error invalid-feedback" id="templateNameInputError"></span>
                                     </form>
                                 </div>
-                                <div class="btn-group">
+                                <div id="applyTemplateDropdown" class="btn-group">
                                     <button class="btn btn-sm btn-secondary rounded-end" type="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                            aria-expanded="false">
                                         套用模板
                                     </button>
                                     <ul class="dropdown-menu" style="min-width: 250px" id="templateList"></ul>
