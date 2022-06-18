@@ -176,7 +176,7 @@ $('#newPersonBtn').on('click', function () {
         'success': (data) => {
             if (data['message'] === 'Success') {
                 if (window.location.pathname === '/add-person') {
-                    window.location.href = '/';
+                    window.location.href = '/person';
                     return;
                 }
 

@@ -125,12 +125,13 @@ function updateTemplateList() {
                 templateContentList[data.templateList[i]['id']] = data.templateList[i];
                 templateList.append(`
                     <li class="d-flex">
-                        <a class="dropdown-item" data-id=${data.templateList[i]['id']} href="#">
+                        <a class="dropdown-item" data-id=${data.templateList[i]['id']} style="cursor: pointer">
                             ${data.templateList[i]['name']}
                         </a>
-                        <a class="d-flex align-items-center px-3" data-id=${data.templateList[i]['id']} href="#"
+                        <a class="d-flex align-items-center px-3" data-id=${data.templateList[i]['id']}
                            onmouseover="this.style.background='#E9ECEF'"
-                           onmouseout="this.style.background=''">
+                           onmouseout="this.style.background=''"
+                           style="cursor: pointer">
                             <i class="bi bi-trash-fill text-muted"></i>
                         </a>
                     </li>
