@@ -149,6 +149,8 @@ def statistics_page():
     today = datetime.today()
     year = today.year
     week_start = (today - timedelta(days=today.weekday() + 1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    if today.weekday() == 6:
+        week_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
     week_end = (week_start + timedelta(days=6)).replace(hour=23, minute=59, second=59, microsecond=0)
 
     month_str = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
@@ -274,7 +276,8 @@ def yearlist_page():
     """
     data = {}
     for year in Meeting.query.with_entities(extract('year', Meeting.time)).distinct().all():
-        data[str(year[0])] = Meeting.query.filter(extract('year', Meeting.time) == year[0]).order_by(Meeting.time).all()
+        data[str(year[0])] = Meeting.query.filter(
+            extract('year', Meeting.time) == year[0]).order_by(desc(Meeting.time)).all()
     return render_template('yearlist.html', title='歷年會議總表', data=data, timedelta=timedelta)
 
 
