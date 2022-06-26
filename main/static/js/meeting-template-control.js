@@ -49,8 +49,26 @@ $('#templateSaveBtn').on('click', function () {
     $('#saveTemplateDropdown').children('button').click();
 });
 
+function enableALlOptions() {
+    chairInput.children().each(function () {
+        $(this).attr('disabled', false);
+    });
+    minuteTakerInput.children().each(function () {
+        $(this).attr('disabled', false);
+    });
+    attendeeInput.children().each(function () {
+        $(this).attr('disabled', false);
+    });
+    guestInput.children().each(function () {
+        $(this).attr('disabled', false);
+    });
+    $('.selectpicker').selectpicker('refresh');
+    appendPresentTag();
+}
+
 // 套用模板
 templateList.on('click', 'li > a:nth-child(1)', function (e) {
+    enableALlOptions();
     let data = JSON.parse(JSON.stringify(templateContentList[$(this).data('id')]));
     titleInput.val(data['title']);
     let datetime = new Date(data['time']).toISOString();
@@ -94,7 +112,7 @@ templateList.on('click', 'li > a:nth-child(1)', function (e) {
     })
     $('.selectpicker').selectpicker('refresh');
     appendPresentTag();
-    $('#applyTemplateDropdown').children('button').click();
+    $('#applyTemplateDropdown').children('button').click(); // 關閉 Dropdown
 });
 
 // 刪除模板

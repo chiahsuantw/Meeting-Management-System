@@ -93,7 +93,7 @@ meetingViewArea.on('click', '#confirmBtn', function () {
             'type': 'GET',
             'success': function (data) {
                 if (data === 'Archived') {
-                    $('#controlZone').html('<span class="badge bg-secondary fs-5 m-2">已封存</span>');
+                    $('#controlZone').html('<button class="btn btn-secondary m-2" disabled>已封存</button>');
                 }
             }
         });

@@ -1,5 +1,5 @@
 import json
-from datetime import timedelta, datetime
+from datetime import timedelta
 from functools import wraps
 from operator import and_
 from os import path, remove
@@ -13,8 +13,7 @@ from sqlalchemy import desc, or_, extract
 from sqlalchemy.exc import DataError
 
 from main import app, mail
-from main.models import Person, db, Student, Attachment, Meeting, Announcement, Motion, Extempore, Attendee, Feedback, \
-    MeetingTemplate
+from main.models import *
 
 
 def admin_required(func):

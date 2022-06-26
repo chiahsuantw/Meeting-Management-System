@@ -1,10 +1,12 @@
 {# Control buttons #}
 <div id="controlZone" class="d-flex justify-content-end border-bottom">
     {% if meeting.archived %}
-        <button type="button" class="btn btn-outline-primary d-flex align-items-center m-2" id="print-minute">
-            <i class="bi bi-printer me-1"></i>
-            <text class="d-none d-md-block">列印</text>
-        </button>
+        {% if current_user.is_admin() %}
+            <button type="button" class="btn btn-outline-primary d-flex align-items-center m-2" id="print-minute">
+                <i class="bi bi-printer me-1"></i>
+                <text class="d-none d-md-block">列印</text>
+            </button>
+        {% endif %}
         <button class="btn btn-secondary m-2" disabled>已封存</button>
     {% elif current_user.is_admin() or current_user == meeting.minute_taker %}
         <div class="btn-group m-2" role="group">
