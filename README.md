@@ -1,5 +1,4 @@
 # Meeting-Management-System
-[Web APP] The term project of CSC031 Database System
 
 ![](https://i.imgur.com/9NQIboi.jpg)
 ![](https://i.imgur.com/bLfz5vi.jpg)
